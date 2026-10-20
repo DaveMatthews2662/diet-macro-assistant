@@ -4,192 +4,116 @@ import subprocess
 from typing import List, Dict, Any, Tuple
 from meat_recipes import MEAT_RECIPES
 
-# Comprehensive natural-language food database (supports both raw & cooked measurements!)
+# Comprehensive natural-language food database (cups for liquids, grams for everything else)
 COMMON_FOOD_DB: List[Dict[str, Any]] = [
-    # Eggs & Dairy
-    {"keywords": ["egg white", "liquid egg whites"], "name": "H-E-B Liquid Egg Whites", "unit": "tbsp", "default_qty": 6, "cal": 8.3, "p": 1.8, "f": 0.0, "c": 0.0, "fib": 0.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["whole egg", "eggs", "egg"], "name": "Whole Large Egg", "unit": "egg", "default_qty": 1, "cal": 70.0, "p": 6.0, "f": 5.0, "c": 0.0, "fib": 0.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["fairlife shake", "fairlife 30g", "chocolate protein shake", "fairlife protein"], "name": "Fairlife 30g Chocolate Protein Shake", "unit": "shake", "default_qty": 1, "cal": 150.0, "p": 30.0, "f": 2.5, "c": 4.0, "fib": 1.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["premier protein", "premier shake"], "name": "Premier Protein Shake (30g)", "unit": "shake", "default_qty": 1, "cal": 160.0, "p": 30.0, "f": 3.0, "c": 5.0, "fib": 1.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["fairlife milk", "fat free milk", "milk"], "name": "Fairlife Fat-Free Milk (1 cup)", "unit": "cup", "default_qty": 1, "cal": 80.0, "p": 13.0, "f": 0.0, "c": 6.0, "fib": 0.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["oikos", "yogurt", "strawberry yogurt", "greek yogurt"], "name": "Oikos Pro 20g Protein Strawberry Yogurt", "unit": "cup", "default_qty": 1, "cal": 140.0, "p": 20.0, "f": 3.0, "c": 8.0, "fib": 0.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["cottage cheese"], "name": "Low-Fat Cottage Cheese (1/2 cup)", "unit": "serving", "default_qty": 1, "cal": 90.0, "p": 13.0, "f": 2.5, "c": 5.0, "fib": 0.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["mozzarella"], "name": "Reduced-Fat Mozzarella Cheese (1/4 cup)", "unit": "serving", "default_qty": 1, "cal": 70.0, "p": 7.0, "f": 4.5, "c": 1.0, "fib": 0.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["tillamook", "cheddar packet", "sharp cheddar"], "name": "Tillamook Sharp Cheddar Packet", "unit": "packet", "default_qty": 1, "cal": 90.0, "p": 5.0, "f": 7.0, "c": 0.0, "fib": 0.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["babybel"], "name": "Babybel Cheese", "unit": "piece", "default_qty": 1, "cal": 70.0, "p": 5.0, "f": 5.0, "c": 0.0, "fib": 0.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["laughing cow"], "name": "Laughing Cow Light Cheese Wedge", "unit": "wedge", "default_qty": 1, "cal": 25.0, "p": 2.0, "f": 1.5, "c": 1.0, "fib": 0.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["whey", "protein powder", "scoop of protein"], "name": "Whey Protein Powder", "unit": "scoop", "default_qty": 1, "cal": 120.0, "p": 24.0, "f": 1.5, "c": 3.0, "fib": 0.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["fit pb", "peanut powder", "pb2"], "name": "Fit PB Roasted Peanut Powder (2 tbsp)", "unit": "serving", "default_qty": 1, "cal": 60.0, "p": 7.0, "f": 1.5, "c": 5.0, "fib": 2.0, "is_gummy": False, "is_meat": False},
+    # Liquids (measured in cups)
+    {"keywords": ["fairlife milk", "fat free milk", "milk"], "meal": "Milk", "ingredient": "Fairlife Fat-Free Ultra-Filtered Milk", "unit": "cup", "default_qty": 1.0, "cal": 80.0, "p": 13.0, "f": 0.0, "c": 6.0, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["fairlife shake", "fairlife 30g", "chocolate protein shake"], "meal": "Protein Shake", "ingredient": "Fairlife 30g Chocolate Protein Shake", "unit": "cup", "default_qty": 1.4, "cal": 107.0, "p": 21.4, "f": 1.8, "c": 2.8, "fib": 0.7, "is_gummy": False},
+    {"keywords": ["premier protein", "premier shake"], "meal": "Protein Shake", "ingredient": "Premier Protein Shake, Chocolate", "unit": "cup", "default_qty": 1.4, "cal": 115.0, "p": 21.4, "f": 2.1, "c": 3.5, "fib": 0.7, "is_gummy": False},
+    {"keywords": ["egg white", "liquid egg whites"], "meal": "Eggs", "ingredient": "H-E-B Cage-Free Liquid Egg Whites", "unit": "cup", "default_qty": 0.5, "cal": 120.0, "p": 26.0, "f": 0.0, "c": 0.0, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["beef broth", "broth"], "meal": "Beef Broth", "ingredient": "H-E-B Beef Broth", "unit": "cup", "default_qty": 1.0, "cal": 15.0, "p": 3.0, "f": 0.0, "c": 1.0, "fib": 0.0, "is_gummy": False},
 
-    # Meats (base values per 1 oz RAW; if measured COOKED, automatically multiplied by 1.33x since 4 oz raw -> ~3 oz cooked)
-    {"keywords": ["chicken breast", "chicken"], "name": "Chicken Breast", "unit": "oz", "default_qty": 6, "cal": 30.0, "p": 6.5, "f": 0.4, "c": 0.0, "fib": 0.0, "is_gummy": False, "is_meat": True},
-    {"keywords": ["ground beef", "93/7 beef", "taco beef", "smash patties", "beef"], "name": "93/7 Ground Beef", "unit": "oz", "default_qty": 6, "cal": 42.5, "p": 6.0, "f": 2.0, "c": 0.0, "fib": 0.0, "is_gummy": False, "is_meat": True},
-    {"keywords": ["steak", "flat iron", "sirloin"], "name": "Sliced Steak / Flat Iron", "unit": "oz", "default_qty": 6, "cal": 40.0, "p": 6.0, "f": 1.7, "c": 0.0, "fib": 0.0, "is_gummy": False, "is_meat": True},
-    {"keywords": ["ribeye"], "name": "Costco Ribeye Steak", "unit": "oz", "default_qty": 6, "cal": 70.0, "p": 5.5, "f": 5.2, "c": 0.0, "fib": 0.0, "is_gummy": False, "is_meat": True},
-    {"keywords": ["shrimp"], "name": "Gulf Shrimp", "unit": "oz", "default_qty": 6, "cal": 23.0, "p": 5.3, "f": 0.2, "c": 0.0, "fib": 0.0, "is_gummy": False, "is_meat": True},
-    {"keywords": ["pork tenderloin", "pork"], "name": "Pork Tenderloin", "unit": "oz", "default_qty": 6, "cal": 31.0, "p": 6.0, "f": 0.6, "c": 0.0, "fib": 0.0, "is_gummy": False, "is_meat": True},
-    {"keywords": ["white fish", "tilapia", "cod", "fish"], "name": "White Fish Fillet", "unit": "oz", "default_qty": 6, "cal": 25.0, "p": 5.6, "f": 0.3, "c": 0.0, "fib": 0.0, "is_gummy": False, "is_meat": True},
-    {"keywords": ["sliced turkey", "deli turkey", "turkey"], "name": "Sliced Deli Turkey", "unit": "oz", "default_qty": 4, "cal": 25.0, "p": 5.0, "f": 0.4, "c": 0.5, "fib": 0.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["canned tuna", "tuna"], "name": "Canned Tuna", "unit": "can", "default_qty": 1, "cal": 110.0, "p": 25.0, "f": 1.0, "c": 0.0, "fib": 0.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["canned chicken"], "name": "Canned Chicken", "unit": "can", "default_qty": 1, "cal": 120.0, "p": 26.0, "f": 2.0, "c": 0.0, "fib": 0.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["bacon"], "name": "Bacon", "unit": "slice", "default_qty": 2, "cal": 40.0, "p": 3.0, "f": 3.0, "c": 0.0, "fib": 0.0, "is_gummy": False, "is_meat": False},
+    # Solid Foods (measured in grams - cal/macros per 1g so any gram input scales accurately!)
+    {"keywords": ["whole egg", "eggs", "egg"], "meal": "Eggs", "ingredient": "USDA Large Whole Eggs", "unit": "g", "default_qty": 150.0, "cal": 1.4, "p": 0.12, "f": 0.10, "c": 0.0, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["oikos", "yogurt", "strawberry yogurt", "greek yogurt"], "meal": "Yogurt", "ingredient": "Oikos Pro 20g Protein Strawberry Yogurt", "unit": "g", "default_qty": 150.0, "cal": 0.87, "p": 0.133, "f": 0.02, "c": 0.047, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["cottage cheese"], "meal": "Cottage Cheese", "ingredient": "H-E-B Low-Fat Cottage Cheese", "unit": "g", "default_qty": 113.0, "cal": 0.80, "p": 0.115, "f": 0.022, "c": 0.044, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["mozzarella"], "meal": "Cheese", "ingredient": "H-E-B Reduced-Fat Shredded Mozzarella", "unit": "g", "default_qty": 28.0, "cal": 2.5, "p": 0.25, "f": 0.16, "c": 0.035, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["tillamook", "cheddar packet", "sharp cheddar"], "meal": "Cheese", "ingredient": "Tillamook Sharp Cheddar Packet", "unit": "g", "default_qty": 21.0, "cal": 4.28, "p": 0.238, "f": 0.333, "c": 0.0, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["babybel"], "meal": "Cheese", "ingredient": "Babybel Original Cheese Round", "unit": "g", "default_qty": 21.0, "cal": 3.33, "p": 0.238, "f": 0.238, "c": 0.0, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["laughing cow"], "meal": "Cheese", "ingredient": "The Laughing Cow Light Wedge", "unit": "g", "default_qty": 21.0, "cal": 1.32, "p": 0.095, "f": 0.071, "c": 0.047, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["whey", "protein powder"], "meal": "Protein Shake", "ingredient": "Whey Protein Powder", "unit": "g", "default_qty": 31.0, "cal": 3.87, "p": 0.774, "f": 0.048, "c": 0.097, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["fit pb", "peanut powder", "pb2"], "meal": "Peanut Powder", "ingredient": "Fit PB Organic Roasted Peanut Powder", "unit": "g", "default_qty": 16.0, "cal": 3.75, "p": 0.438, "f": 0.094, "c": 0.312, "fib": 0.125, "is_gummy": False},
 
-    # Grains, Bread, Oats, Pasta, Beans
-    {"keywords": ["protein oatmeal", "instant oatmeal", "oatmeal packet"], "name": "H-E-B Protein Instant Oatmeal", "unit": "packet", "default_qty": 1, "cal": 170.0, "p": 10.0, "f": 2.5, "c": 27.0, "fib": 4.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["rolled oats", "oats", "oatmeal"], "name": "Rolled Oats (1/2 cup)", "unit": "serving", "default_qty": 1, "cal": 150.0, "p": 5.0, "f": 2.5, "c": 27.0, "fib": 4.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["sara lee", "delightful bread", "keto bread"], "name": "Sara Lee Delightful Bread", "unit": "slice", "default_qty": 2, "cal": 45.0, "p": 2.5, "f": 0.5, "c": 9.5, "fib": 3.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["sourdough"], "name": "Sourdough Bread", "unit": "slice", "default_qty": 1, "cal": 130.0, "p": 5.0, "f": 0.5, "c": 26.0, "fib": 1.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["bagel", "thomas bagel"], "name": "Thomas' Bagel", "unit": "bagel", "default_qty": 1, "cal": 270.0, "p": 10.0, "f": 1.5, "c": 53.0, "fib": 2.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["carb balance", "mission tortilla", "tortilla"], "name": "Mission Carb Balance Flour Tortilla", "unit": "tortilla", "default_qty": 1, "cal": 70.0, "p": 5.0, "f": 2.0, "c": 19.0, "fib": 15.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["wasa", "crispbread"], "name": "Wasa Sourdough Crispbread", "unit": "slice", "default_qty": 2, "cal": 45.0, "p": 1.5, "f": 0.25, "c": 10.0, "fib": 2.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["bibigo", "sticky rice"], "name": "Bibigo Sticky White Rice Bowl", "unit": "bowl", "default_qty": 1, "cal": 310.0, "p": 5.0, "f": 1.0, "c": 70.0, "fib": 1.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["ready rice", "ben's original", "jasmine rice", "white rice", "brown rice", "rice"], "name": "Cooked Rice (1 cup)", "unit": "cup", "default_qty": 1, "cal": 210.0, "p": 4.5, "f": 0.5, "c": 45.0, "fib": 1.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["banza", "chickpea mac"], "name": "Banza Chickpea Cheddar Mac & Cheese", "unit": "serving", "default_qty": 1, "cal": 260.0, "p": 16.0, "f": 4.5, "c": 41.0, "fib": 5.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["chickpea pasta", "chickpea elbows", "chickpea shells", "higher harvest"], "name": "Higher Harvest Chickpea Pasta (2 oz dry)", "unit": "serving", "default_qty": 1, "cal": 190.0, "p": 12.0, "f": 3.0, "c": 34.0, "fib": 8.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["barilla", "spaghetti", "pasta"], "name": "Barilla Protein+ Spaghetti (2 oz dry)", "unit": "serving", "default_qty": 1, "cal": 190.0, "p": 10.0, "f": 1.0, "c": 38.0, "fib": 5.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["black beans", "pinto beans", "kidney beans", "navy beans", "beans"], "name": "Beans (1/2 cup)", "unit": "serving", "default_qty": 1, "cal": 110.0, "p": 7.0, "f": 0.5, "c": 20.0, "fib": 6.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["edamame"], "name": "H-E-B Edamame (1 cup)", "unit": "cup", "default_qty": 1, "cal": 180.0, "p": 18.0, "f": 8.0, "c": 14.0, "fib": 8.0, "is_gummy": False, "is_meat": False},
+    # Meats (in grams)
+    {"keywords": ["chicken breast", "chicken"], "meal": "Chicken", "ingredient": "Chicken Breast", "unit": "g", "default_qty": 170.0, "cal": 1.20, "p": 0.23, "f": 0.02, "c": 0.0, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["ground beef", "93/7 beef", "taco beef", "smash patties", "beef"], "meal": "Ground Beef", "ingredient": "93/7 Lean Ground Beef", "unit": "g", "default_qty": 170.0, "cal": 1.50, "p": 0.21, "f": 0.07, "c": 0.0, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["steak", "flat iron", "sirloin", "top round"], "meal": "Steak", "ingredient": "Lean Steak / Top Round", "unit": "g", "default_qty": 170.0, "cal": 1.65, "p": 0.26, "f": 0.06, "c": 0.0, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["ribeye"], "meal": "Ribeye Steak", "ingredient": "Costco USDA Choice Ribeye Steak", "unit": "g", "default_qty": 170.0, "cal": 2.50, "p": 0.20, "f": 0.19, "c": 0.0, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["shrimp"], "meal": "Shrimp", "ingredient": "Shrimp, Cooked from Fresh", "unit": "g", "default_qty": 150.0, "cal": 0.99, "p": 0.24, "f": 0.003, "c": 0.0, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["pork tenderloin", "pork"], "meal": "Pork Tenderloin", "ingredient": "Pork Tenderloin", "unit": "g", "default_qty": 170.0, "cal": 1.20, "p": 0.22, "f": 0.03, "c": 0.0, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["white fish", "tilapia", "cod", "fish"], "meal": "White Fish", "ingredient": "White Fish Fillet", "unit": "g", "default_qty": 170.0, "cal": 0.96, "p": 0.20, "f": 0.015, "c": 0.0, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["sliced turkey", "deli turkey", "honey turkey", "turkey"], "meal": "Turkey", "ingredient": "H-E-B Honey Turkey Breast Deli Meat", "unit": "g", "default_qty": 112.0, "cal": 1.25, "p": 0.172, "f": 0.027, "c": 0.006, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["canned tuna", "tuna"], "meal": "Tuna", "ingredient": "Canned Chunk Light Tuna", "unit": "g", "default_qty": 113.0, "cal": 0.97, "p": 0.22, "f": 0.009, "c": 0.0, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["canned chicken"], "meal": "Canned Chicken", "ingredient": "Canned Chicken Breast", "unit": "g", "default_qty": 112.0, "cal": 1.07, "p": 0.23, "f": 0.018, "c": 0.0, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["bacon"], "meal": "Bacon", "ingredient": "H-E-B Bacon", "unit": "g", "default_qty": 24.0, "cal": 3.33, "p": 0.25, "f": 0.25, "c": 0.0, "fib": 0.0, "is_gummy": False},
 
-    # Fruits, Veggies, Cereals, Snacks
-    {"keywords": ["banana"], "name": "Medium Banana", "unit": "banana", "default_qty": 1, "cal": 105.0, "p": 1.3, "f": 0.4, "c": 27.0, "fib": 3.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["apple"], "name": "Medium Apple", "unit": "apple", "default_qty": 1, "cal": 95.0, "p": 0.5, "f": 0.3, "c": 25.0, "fib": 4.5, "is_gummy": False, "is_meat": False},
-    {"keywords": ["orange"], "name": "Medium Orange", "unit": "orange", "default_qty": 1, "cal": 65.0, "p": 1.2, "f": 0.2, "c": 15.0, "fib": 3.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["avocado"], "name": "Avocado (1/2 medium)", "unit": "half", "default_qty": 1, "cal": 120.0, "p": 1.5, "f": 11.0, "c": 6.0, "fib": 5.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["blueberries", "blueberry"], "name": "Blueberries (1 cup)", "unit": "cup", "default_qty": 1, "cal": 80.0, "p": 1.0, "f": 0.5, "c": 19.0, "fib": 4.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["strawberries", "strawberry"], "name": "Strawberries (1 cup)", "unit": "cup", "default_qty": 1, "cal": 50.0, "p": 1.0, "f": 0.0, "c": 12.0, "fib": 3.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["kashi", "kashi go"], "name": "Kashi GO Cereal (1 cup)", "unit": "cup", "default_qty": 1, "cal": 190.0, "p": 10.0, "f": 2.5, "c": 38.0, "fib": 10.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["cheerios"], "name": "Honey Nut Cheerios Protein", "unit": "serving", "default_qty": 1, "cal": 160.0, "p": 7.0, "f": 2.5, "c": 29.0, "fib": 3.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["rice cake", "rice cakes"], "name": "Quaker Rice Cake", "unit": "cake", "default_qty": 2, "cal": 35.0, "p": 1.0, "f": 0.0, "c": 7.5, "fib": 0.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["quest chips", "protein chips", "quest"], "name": "Quest Protein Chips (1 bag)", "unit": "bag", "default_qty": 1, "cal": 140.0, "p": 19.0, "f": 5.0, "c": 4.0, "fib": 1.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["good thins"], "name": "Good Thins Corn Snacks", "unit": "serving", "default_qty": 1, "cal": 130.0, "p": 2.0, "f": 3.5, "c": 23.0, "fib": 1.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["popcorn"], "name": "Popcorn (3 cups)", "unit": "serving", "default_qty": 1, "cal": 120.0, "p": 2.0, "f": 4.0, "c": 19.0, "fib": 3.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["halo top", "ice cream"], "name": "Halo Top Vanilla Bean (2/3 cup)", "unit": "serving", "default_qty": 1, "cal": 100.0, "p": 6.0, "f": 3.0, "c": 18.0, "fib": 2.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["peanut butter"], "name": "Peanut Butter (1 tbsp)", "unit": "tbsp", "default_qty": 1, "cal": 95.0, "p": 4.0, "f": 8.0, "c": 3.0, "fib": 1.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["olive oil", "avocado oil"], "name": "Cooking Oil (1 tsp)", "unit": "tsp", "default_qty": 1, "cal": 40.0, "p": 0.0, "f": 4.5, "c": 0.0, "fib": 0.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["butter", "kerrygold"], "name": "Kerrygold Butter (1 tsp)", "unit": "tsp", "default_qty": 1, "cal": 34.0, "p": 0.0, "f": 3.8, "c": 0.0, "fib": 0.0, "is_gummy": False, "is_meat": False},
-    {"keywords": ["fiber gummies", "fiber gummy", "gummies"], "name": "Fiber Gummies", "unit": "serving", "default_qty": 1, "cal": 30.0, "p": 0.0, "f": 0.0, "c": 10.0, "fib": 10.0, "is_gummy": True, "is_meat": False},
-    {"keywords": ["burrito", "el monterey"], "name": "El Monterey Bean & Cheese Burrito", "unit": "burrito", "default_qty": 1, "cal": 300.0, "p": 10.0, "f": 9.0, "c": 44.0, "fib": 5.0, "is_gummy": False, "is_meat": False},
+    # Breads, Grains, Beans, Fruits, Snacks (in grams)
+    {"keywords": ["higher harvest bread", "low-carb bread", "wheat bread"], "meal": "Sandwich / Toast", "ingredient": "H-E-B Higher Harvest Low-Carb Wheat Bread", "unit": "g", "default_qty": 28.0, "cal": 2.14, "p": 0.214, "f": 0.036, "c": 0.428, "fib": 0.285, "is_gummy": False},
+    {"keywords": ["sara lee", "delightful bread", "keto bread"], "meal": "Sandwich / Toast", "ingredient": "Sara Lee Delightful Keto-Friendly Bread", "unit": "g", "default_qty": 45.0, "cal": 2.0, "p": 0.111, "f": 0.022, "c": 0.422, "fib": 0.133, "is_gummy": False},
+    {"keywords": ["sourdough"], "meal": "Toast", "ingredient": "Easy Tiger Sourdough Bread", "unit": "g", "default_qty": 40.0, "cal": 2.45, "p": 0.10, "f": 0.0, "c": 0.462, "fib": 0.025, "is_gummy": False},
+    {"keywords": ["bagel"], "meal": "Bagel", "ingredient": "Thomas' Plain Bagel", "unit": "g", "default_qty": 95.0, "cal": 2.84, "p": 0.105, "f": 0.016, "c": 0.558, "fib": 0.021, "is_gummy": False},
+    {"keywords": ["carb balance", "mission tortilla", "tortilla"], "meal": "Tacos / Wrap", "ingredient": "Mission Carb Balance Flour Tortilla", "unit": "g", "default_qty": 43.0, "cal": 1.63, "p": 0.116, "f": 0.046, "c": 0.442, "fib": 0.348, "is_gummy": False},
+    {"keywords": ["protein oatmeal", "instant oatmeal", "oatmeal packet"], "meal": "Oatmeal", "ingredient": "H-E-B Protein Instant Oatmeal", "unit": "g", "default_qty": 43.0, "cal": 3.95, "p": 0.232, "f": 0.058, "c": 0.628, "fib": 0.093, "is_gummy": False},
+    {"keywords": ["rolled oats", "oats", "oatmeal"], "meal": "Oatmeal", "ingredient": "Old Fashioned Rolled Oats", "unit": "g", "default_qty": 40.0, "cal": 3.75, "p": 0.125, "f": 0.062, "c": 0.675, "fib": 0.10, "is_gummy": False},
+    {"keywords": ["bibigo", "sticky rice"], "meal": "Rice Bowl", "ingredient": "Bibigo Cooked Sticky White Rice", "unit": "g", "default_qty": 210.0, "cal": 1.48, "p": 0.024, "f": 0.005, "c": 0.333, "fib": 0.005, "is_gummy": False},
+    {"keywords": ["rice", "white rice", "jasmine rice", "brown rice"], "meal": "Rice", "ingredient": "Rice, White, Cooked", "unit": "g", "default_qty": 100.0, "cal": 1.47, "p": 0.03, "f": 0.003, "c": 0.30, "fib": 0.005, "is_gummy": False},
+    {"keywords": ["black beans", "pinto beans", "kidney beans", "navy beans", "beans"], "meal": "Beans", "ingredient": "Black Beans, Dried, Cooked", "unit": "g", "default_qty": 130.0, "cal": 1.14, "p": 0.077, "f": 0.005, "c": 0.17, "fib": 0.073, "is_gummy": False},
+    {"keywords": ["banana"], "meal": "Banana", "ingredient": "Fresh Banana", "unit": "g", "default_qty": 118.0, "cal": 0.89, "p": 0.011, "f": 0.003, "c": 0.228, "fib": 0.026, "is_gummy": False},
+    {"keywords": ["apple"], "meal": "Apple", "ingredient": "H-E-B Red Apples, Sliced", "unit": "g", "default_qty": 182.0, "cal": 0.545, "p": 0.003, "f": 0.002, "c": 0.136, "fib": 0.024, "is_gummy": False},
+    {"keywords": ["orange"], "meal": "Orange", "ingredient": "Fresh Navel Orange", "unit": "g", "default_qty": 131.0, "cal": 0.47, "p": 0.009, "f": 0.001, "c": 0.118, "fib": 0.024, "is_gummy": False},
+    {"keywords": ["avocado", "avacado"], "meal": "Avocado", "ingredient": "Hass Avocado", "unit": "g", "default_qty": 50.0, "cal": 1.67, "p": 0.02, "f": 0.15, "c": 0.08, "fib": 0.068, "is_gummy": False},
+    {"keywords": ["kashi", "kashi go"], "meal": "Cereal", "ingredient": "Kashi GO Protein + Fiber Cereal", "unit": "g", "default_qty": 30.0, "cal": 3.89, "p": 0.20, "f": 0.133, "c": 0.40, "fib": 0.19, "is_gummy": False},
+    {"keywords": ["cheerios"], "meal": "Cereal", "ingredient": "General Mills Cheerios Protein, Honey Nut", "unit": "g", "default_qty": 30.0, "cal": 3.78, "p": 0.167, "f": 0.04, "c": 0.56, "fib": 0.037, "is_gummy": False},
+    {"keywords": ["granola", "purely elizabeth"], "meal": "Granola", "ingredient": "Purely Elizabeth Chocolate Sea Salt Granola", "unit": "g", "default_qty": 30.0, "cal": 4.33, "p": 0.10, "f": 0.20, "c": 0.567, "fib": 0.067, "is_gummy": False},
+    {"keywords": ["cashew", "cashews"], "meal": "Cashews", "ingredient": "Cashews, Raw", "unit": "g", "default_qty": 28.0, "cal": 5.33, "p": 0.182, "f": 0.439, "c": 0.303, "fib": 0.032, "is_gummy": False},
+    {"keywords": ["good thins"], "meal": "Crackers", "ingredient": "Good Thins Gluten-Free Snacks", "unit": "g", "default_qty": 30.0, "cal": 4.19, "p": 0.12, "f": 0.107, "c": 0.583, "fib": 0.033, "is_gummy": False},
+    {"keywords": ["quest", "protein chips"], "meal": "Chips", "ingredient": "Quest Protein Chips", "unit": "g", "default_qty": 32.0, "cal": 4.38, "p": 0.594, "f": 0.156, "c": 0.125, "fib": 0.031, "is_gummy": False},
+    {"keywords": ["butter", "kerrygold"], "meal": "Butter", "ingredient": "Kerrygold Salted Butter", "unit": "g", "default_qty": 14.0, "cal": 7.14, "p": 0.0, "f": 0.80, "c": 0.0, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["olive oil", "avocado oil"], "meal": "Oil", "ingredient": "Extra Virgin Olive Oil", "unit": "g", "default_qty": 13.0, "cal": 9.18, "p": 0.0, "f": 1.0, "c": 0.0, "fib": 0.0, "is_gummy": False},
+    {"keywords": ["fiber gummies", "fiber gummy", "gummies"], "meal": "Fiber Gummies", "ingredient": "H-E-B Vitamin Fiber Gummies", "unit": "g", "default_qty": 6.0, "cal": 1.67, "p": 0.0, "f": 0.0, "c": 0.0, "fib": 0.667, "is_gummy": True},
 ]
 
-WORD_NUMS = {
-    "a": 1.0,
-    "an": 1.0,
-    "one": 1.0,
-    "two": 2.0,
-    "three": 3.0,
-    "four": 4.0,
-    "five": 5.0,
-    "six": 6.0,
-    "seven": 7.0,
-    "eight": 8.0,
-    "half": 0.5,
-}
 
-
-def detect_slot(segment: str, current_slot: str) -> str:
-    s = segment.lower()
-    if any(k in s for k in ["pre-workout", "pre workout", "preworkout", "before gym", "before lifting"]):
-        return "Pre-workout"
-    if any(k in s for k in ["breakfast", "morning"]):
-        return "Breakfast"
-    if any(k in s for k in ["lunch", "midday", "noon"]):
-        return "Lunch"
-    if any(k in s for k in ["dinner", "supper", "tonight", "evening"]):
-        return "Dinner"
-    if any(k in s for k in ["snack", "midnight", "late night", "dessert", "after dinner"]):
-        return "Snacks"
-    return current_slot
-
-
-def extract_multiplier(phrase: str, unit: str, default_qty: float) -> Tuple[float, str]:
+def parse_amount_from_text(phrase: str, unit: str, default_qty: float) -> Tuple[float, str]:
     p = phrase.lower()
-    oz_m = re.search(r"(\d+(?:\.\d+)?)\s*(?:oz|ounces?)", p)
-    if oz_m and unit == "oz":
-        val = float(oz_m.group(1))
-        return val, f"{val:g} oz"
+    if unit == "cup":
+        cup_m = re.search(r"(\d+(?:\.\d+)?)\s*cups?", p)
+        if cup_m:
+            val = float(cup_m.group(1))
+            return val, f"{val:g} cup" if val == 1 else f"{val:g} cups"
+        return default_qty, f"{default_qty:g} cup" if default_qty == 1 else f"{default_qty:g} cups"
 
-    frac_m = re.search(r"(\d+)\s*/\s*(\d+)", p)
-    if frac_m:
-        val = float(frac_m.group(1)) / float(frac_m.group(2))
-        return val / default_qty if default_qty else val, f"{val:g} {unit}"
+    # Check explicit grams e.g. "150g" or "150 grams"
+    g_m = re.search(r"(\d+(?:\.\d+)?)\s*(?:g|grams?)\b", p)
+    if g_m:
+        val = float(g_m.group(1))
+        return val, f"{val:g}g"
 
-    num_m = re.search(r"\b(\d+(?:\.\d+)?)\b", p)
-    if num_m:
-        val = float(num_m.group(1))
-        if val not in (93, 7, 30, 20, 70, 90, 170):
-            return val, f"{val:g} {unit}"
+    # Check oz and convert to grams (1 oz = 28.35g, rounded to nearest gram)
+    oz_m = re.search(r"(\d+(?:\.\d+)?)\s*(?:oz|ounces?)\b", p)
+    if oz_m:
+        grams = round(float(oz_m.group(1)) * 28.35)
+        return float(grams), f"{grams}g"
 
-    for w, n in WORD_NUMS.items():
-        if re.search(rf"\b{w}\b", p):
-            if w in ("a", "an") and unit == "oz":
-                return default_qty, f"{default_qty:g} oz"
-            return n, f"{n:g} {unit}"
-
-    return default_qty, f"{default_qty:g} {unit}"
+    return default_qty, f"{int(default_qty)}g"
 
 
 def parse_natural_language_day(text: str, default_meat_state: str = "Raw") -> List[Dict[str, Any]]:
     """
-    Parse a natural-language paragraph (typed or voice-to-text) into structured meal slot rows.
-    Respects 'raw' vs 'cooked' weights!
+    Parse natural language or 'meal - ingredient - amount' lines into:
+    Meal | Ingredient | Measured Amount | Calories | Protein | Fat | Carbs | Fiber | Gummy Fiber
     """
     if not text.strip():
         return []
 
-    normalized = re.sub(
-        r"\b(for\s+(?:pre-?workout|breakfast|lunch|dinner|snacks?|midnight\s+snack))\b",
-        r". \1",
-        text,
-        flags=re.IGNORECASE,
-    )
-    sentences = re.split(r"[.\n;]+", normalized)
-
-    current_slot = "Breakfast"
     parsed_items: List[Dict[str, Any]] = []
 
-    for sent in sentences:
-        sent = sent.strip()
-        if not sent:
+    for raw_line in re.split(r"[\n;]+", text):
+        line = raw_line.strip()
+        if not line:
             continue
-        current_slot = detect_slot(sent, current_slot)
 
-        clauses = re.split(r"\b(?:and|plus|with)\b|,|\+", sent, flags=re.IGNORECASE)
+        # Check if user typed "meal - ingredient - 40g" format directly
+        dash_parts = [p.strip() for p in line.split("-") if p.strip()]
+        explicit_meal = dash_parts[0].title() if len(dash_parts) >= 2 else None
+        search_target = " ".join(dash_parts[1:]) if len(dash_parts) >= 2 else line
+
+        clauses = [search_target] if explicit_meal else re.split(r"\b(?:and|plus|with)\b|,|\+", line, flags=re.IGNORECASE)
         for clause in clauses:
             c_clean = clause.strip()
             if not c_clean:
                 continue
-            current_slot = detect_slot(c_clean, current_slot)
 
-            # Check if phrase specifies "cooked" or "raw"
-            is_cooked = "cooked" in c_clean.lower() or (default_meat_state == "Cooked" and "raw" not in c_clean.lower())
-            state_label = "Cooked" if is_cooked else "Raw"
-
-            # First check if it matches one of the 35 Meat Recipes by name
-            matched_recipe = None
-            for rec in MEAT_RECIPES:
-                if rec["name"].lower() in c_clean.lower():
-                    matched_recipe = rec
-                    break
-
-            if matched_recipe:
-                est = matched_recipe["est_macros"]
-                mult = 1.33 if is_cooked else 1.0
-                parsed_items.append(
-                    {
-                        "Meal Slot": current_slot,
-                        "Raw / Cooked": state_label,
-                        "Food / Item": f"{matched_recipe['name']} ({est['portion']} - {state_label})",
-                        "Calories": int(round(est["cal"] * mult)),
-                        "Protein (g)": round(float(est["p"]) * mult, 1),
-                        "Fat (g)": round(float(est["f"]) * mult, 1),
-                        "Carbs (g)": round(float(est["c"]), 1),
-                        "Fiber (g)": 0.0,
-                        "Is Gummy Fiber": False,
-                    }
-                )
-                continue
-
-            # Otherwise match against COMMON_FOOD_DB
             matched_db = None
             for entry in COMMON_FOOD_DB:
                 for kw in entry["keywords"]:
@@ -200,21 +124,19 @@ def parse_natural_language_day(text: str, default_meat_state: str = "Raw") -> Li
                     break
 
             if matched_db:
-                qty, qty_label = extract_multiplier(c_clean, matched_db["unit"], matched_db["default_qty"])
-                # If it's meat weighed cooked, 1 oz cooked ≈ 1.33 oz raw
-                cook_mult = 1.33 if (matched_db.get("is_meat") and is_cooked) else 1.0
-                item_state = state_label if matched_db.get("is_meat") else "As Packaged"
+                qty, amt_label = parse_amount_from_text(c_clean, matched_db["unit"], matched_db["default_qty"])
+                meal_label = explicit_meal if explicit_meal else matched_db["meal"]
                 parsed_items.append(
                     {
-                        "Meal Slot": current_slot,
-                        "Raw / Cooked": item_state,
-                        "Food / Item": f"{matched_db['name']} ({qty_label}{' ' + state_label.lower() if matched_db.get('is_meat') else ''})",
-                        "Calories": int(round(matched_db["cal"] * qty * cook_mult)),
-                        "Protein (g)": round(matched_db["p"] * qty * cook_mult, 1),
-                        "Fat (g)": round(matched_db["f"] * qty * cook_mult, 1),
-                        "Carbs (g)": round(matched_db["c"] * qty, 1),
-                        "Fiber (g)": round(matched_db["fib"] * qty, 1),
-                        "Is Gummy Fiber": bool(matched_db["is_gummy"]),
+                        "Meal": meal_label,
+                        "Ingredient": matched_db["ingredient"],
+                        "Measured Amount": amt_label,
+                        "Calories": int(round(matched_db["cal"] * qty)),
+                        "Protein": round(matched_db["p"] * qty, 1),
+                        "Fat": round(matched_db["f"] * qty, 1),
+                        "Carbs": round(matched_db["c"] * qty, 1),
+                        "Fiber": round(matched_db["fib"] * qty, 1),
+                        "Gummy Fiber": bool(matched_db["is_gummy"]),
                     }
                 )
 
@@ -222,9 +144,6 @@ def parse_natural_language_day(text: str, default_meat_state: str = "Raw") -> Li
 
 
 def run_windows_ocr_on_image(image_path: str) -> str:
-    """
-    Use Windows 10/11 built-in native OCR (Windows.Media.Ocr) via PowerShell to extract text from a receipt image offline.
-    """
     abs_path = os.path.abspath(image_path).replace("'", "''")
     ps_script = f"""
     Add-Type -AssemblyName System.Runtime.WindowsRuntime
@@ -266,9 +185,6 @@ def run_windows_ocr_on_image(image_path: str) -> str:
 
 
 def parse_receipt_text_into_items(raw_text: str) -> List[Dict[str, Any]]:
-    """
-    Parse OCR or pasted grocery receipt text into candidate items (either Raw Meat or Kitchen Inventory).
-    """
     results: List[Dict[str, Any]] = []
     if not raw_text.strip():
         return results
