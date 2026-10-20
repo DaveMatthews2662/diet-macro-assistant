@@ -1,9 +1,3 @@
-# Deli & Canned Meats
-- H-E-B Honey Turkey Breast Deli Meat (Sliced)
-- Starkist / H-E-B Chunk Light Canned Tuna in Water
-- Canned White Meat Chicken Breast in Water
-- H-E-B Thick Cut / Center Cut Bacon
-
 # Frozen Meat & Seafood
 - H-E-B Italian Style Meatballs (Frozen, Raw)
 - Foster Farms Take Out Crispy Chicken Wings (Frozen)
@@ -14,7 +8,9 @@
 - Kirkland Signature (Costco) USDA Choice Ribeye Steaks (Frozen)
 - Boneless Skinless Chicken Breast Fillets (Frozen)
 
-# Dairy, Eggs & Protein Supplements
+# Dairy & Refrigerated
+- H-E-B Honey Turkey Breast Deli Meat (Sliced)
+- H-E-B Thick Cut / Center Cut Bacon
 - USDA Large Whole Eggs
 - H-E-B Cage-Free 100% Liquid Egg Whites
 - Fairlife Fat-Free Ultra-Filtered Lactose-Free Milk
@@ -31,11 +27,9 @@
 - Grated Parmesan Cheese
 - H-E-B Sour Cream
 - Kerrygold Pure Irish Salted Butter
-- Zero-Calorie Spray Butter
-- Whey Protein Isolate / Concentrate Powder
-- Fit PB Organic Roasted Peanut Powder (60 kcal, 7g Protein)
+- Jell-O Sugar-Free Ready-to-Eat Strawberry Gelatin Cups
 
-# Produce (Fresh & Frozen)
+# Produce
 - Fresh Bananas (Raw)
 - H-E-B Red Apples (Fresh / Sliced)
 - Fresh Navel Oranges (Raw)
@@ -43,12 +37,8 @@
 - Fresh Whole / Baby Carrots
 - Fresh Garlic Cloves
 - Fresh Cilantro Leaves
-- H-E-B Premier Shelled Edamame (Frozen)
-- H-E-B Whole Frozen Blueberries
-- H-E-B Whole Frozen Strawberries
-- Frozen Sliced Bananas
 
-# Bread, Tortillas & Bakery
+# Bakery & Bread
 - Thomas' Plain / Original Bagels
 - Sara Lee Delightful 45-Calorie Keto-Friendly Bread
 - H-E-B Higher Harvest Low-Carb Lifestyle Wheat Bread
@@ -56,11 +46,11 @@
 - Mission Carb Balance Soft Taco Flour Tortillas (70 kcal)
 - Wasa Sourdough Swedish Style Crispbread Crackers
 
-# Grains, Rice, Oats & Pasta
-- Old Fashioned Rolled Oats (Dry)
-- H-E-B Protein Instant Oatmeal Packets (170 kcal, 10g Protein)
-- Long-Grain White Rice (Dry / Cooked)
-- Whole-Grain Brown Rice (Dry / Cooked)
+# Pantry & Canned
+- Starkist / H-E-B Chunk Light Canned Tuna in Water
+- Canned White Meat Chicken Breast in Water
+- Whey Protein Isolate / Concentrate Powder
+- Fit PB Organic Roasted Peanut Powder (60 kcal, 7g Protein)
 - Bibigo Cooked Sticky White Rice (Microwave Individual Bowls)
 - Hill Country Fare Quick Heat Long-Grain White Rice
 - Ben's Original Ready Rice: Roasted Chicken
@@ -74,9 +64,6 @@
 - Higher Harvest by H-E-B Gluten-Free Organic Chickpea Shells (12g Protein)
 - Kraft Original Macaroni & Cheese Dinner
 - Assorted Traditional Semolina Pasta
-- Italian Style Seasoned Bread Crumbs
-
-# Canned Beans, Broths & Sauces
 - H-E-B Canned Black Beans (Drained / Cooked)
 - H-E-B Canned Pinto Beans
 - Dark Red Kidney Beans (Canned)
@@ -87,38 +74,38 @@
 - H-E-B Beef Broth
 - Marinara / Traditional Pasta Sauce
 - Green Chile Enchilada Sauce
+- Creamy Peanut Butter
 
-# Cereals, Granola & Snacks
+# Frozen
+- H-E-B Premier Shelled Edamame (Frozen)
+- H-E-B Whole Frozen Blueberries
+- H-E-B Whole Frozen Strawberries
+- Frozen Sliced Bananas
+- El Monterey Bean & Cheese Burritos (Frozen)
+- Red Baron Classic Crust Four Cheese Pizza (Frozen)
+
+# Desserts, Candy & Snacks
 - Kashi GO Protein + Fiber Cereal: Mixed Berry Crunch (10g Protein, 10g Fiber)
 - Kashi GO Protein + Fiber Cereal: Chocolate Crunch (10g Protein, 10g Fiber)
 - General Mills Cheerios Protein: Honey Nut
-- Purely Elizabeth Ancient Grain Granola: Chocolate Sea Salt
-- Quaker Lightly Salted Rice Cakes
 - Good Thins Gluten-Free Corn & Rice Snacks (130 kcal)
 - Quest Tortilla Style Protein Chips
 - Hill Country Fare Microwave Popcorn: Light Butter
 - Hill Country Fare Microwave Popcorn: Kettle Corn
-- El Monterey Bean & Cheese Burritos (Frozen)
-- Red Baron Classic Crust Four Cheese Pizza (Frozen)
 - Raw / Roasted Cashews
 - Mixed Trail Mix
 - Seedless Raisins
-
-# Sweets & Treats
 - Halo Top Light Ice Cream: Vanilla Bean
 - H-E-B Creamy Creations Orange Sherbet
-- Jell-O Sugar-Free Ready-to-Eat Strawberry Gelatin Cups
 - Hershey's Milk Chocolate Kisses
 - Hershey's Semi-Sweet Chocolate Chips
-- Hershey's Chocolate Syrup
 - Lindt Excellence 90% Cocoa Supreme Dark Chocolate Bar
-- Lindt Excellence Caramel with a Touch of Sea Salt Dark Chocolate Bar
-- Unsweetened / Cinnamon Applesauce
 
-# Condiments, Baking & Spices
+# Oils & Condiments
+- Zero-Calorie Spray Butter
+- Hershey's Chocolate Syrup
 - Extra Virgin Olive Oil
 - Pure Avocado Oil
-- Creamy Peanut Butter
 - H-E-B Real Mayonnaise
 - Soy Sauce
 - Tomato Ketchup
@@ -130,9 +117,27 @@
 - 100% Lemon Juice
 - Minced Garlic (Jarred)
 - Minced Ginger (Jarred)
+
+# Baking & Grains
+- Old Fashioned Rolled Oats (Dry)
+- H-E-B Protein Instant Oatmeal Packets (170 kcal, 10g Protein)
+- Long-Grain White Rice (Dry / Cooked)
+- Whole-Grain Brown Rice (Dry / Cooked)
+- Italian Style Seasoned Bread Crumbs
 - All-Purpose Enriched White Flour
 - Granulated White Sugar
 - Pure Vanilla Extract
+
+# Drinks
+- Zero-Calorie Diet Soda (A&W Zero Sugar Root Beer, etc.)
+- Gatorade Zero (G Zero, All Flavors, 20 fl oz)
+- H-E-B Vitamin Fiber Gummies (Peach, Strawberry & Berry — Max 10g Fiber/Day)
+
+# Spices & Seasonings
+- Purely Elizabeth Ancient Grain Granola: Chocolate Sea Salt
+- Quaker Lightly Salted Rice Cakes
+- Lindt Excellence Caramel with a Touch of Sea Salt Dark Chocolate Bar
+- Unsweetened / Cinnamon Applesauce
 - Kosher Salt
 - Fine Sea Salt
 - Lawry's Seasoned Salt
@@ -155,8 +160,3 @@
 - Dried Oregano Leaves
 - Dried Rosemary Leaves
 - Ground Nutmeg
-
-# Drinks & Supplements
-- Zero-Calorie Diet Soda (A&W Zero Sugar Root Beer, etc.)
-- Gatorade Zero (G Zero, All Flavors, 20 fl oz)
-- H-E-B Vitamin Fiber Gummies (Peach, Strawberry & Berry — Max 10g Fiber/Day)

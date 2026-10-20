@@ -7,6 +7,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 from inventory_manager import (
     CATEGORIES,
+    SIDEBAR_FILTER_OPTIONS,
     load_inventory,
     save_inventory,
     load_raw_meats,
@@ -14,6 +15,8 @@ from inventory_manager import (
 )
 from meat_recipes import MEAT_RECIPES
 from nl_logger_and_receipt import (
+    MEAL_GROUPS,
+    UNIT_OPTIONS,
     parse_natural_language_day,
     parse_receipt_text_into_items,
     run_windows_ocr_on_image,
@@ -26,27 +29,45 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# High-contrast styling: solid dark cards (#1e293b) with bright white text (#f8fafc)
-# so text is ALWAYS crisp and readable even if a phone browser forces Light Mode!
+# High-contrast styling:
+# - padding-top: 3.8rem so top tabs are NEVER cut off by Streamlit's top bar
+# - solid dark cards (#1e293b) with bright white text (#ffffff)
 st.markdown(
     """
     <style>
     .block-container {
-        padding-top: 1.2rem !important;
-        padding-bottom: 1.5rem !important;
+        padding-top: 3.8rem !important;
+        padding-bottom: 2.0rem !important;
     }
-    /* Make top navigation tabs huge, bold, and high-contrast */
+    /* Make top navigation tabs prominent, readable, and never cut off */
+    div[data-baseweb="tab-list"] {
+        gap: 8px !important;
+        background-color: #0f172a !important;
+        padding: 8px 10px !important;
+        border-radius: 10px !important;
+        border: 1px solid #334155 !important;
+        margin-bottom: 14px !important;
+    }
     button[data-baseweb="tab"] {
-        font-size: 1.02rem !important;
+        font-size: 0.98rem !important;
         font-weight: 700 !important;
         padding: 10px 16px !important;
+        color: #e2e8f0 !important;
+        background-color: #1e293b !important;
+        border-radius: 8px !important;
+        border: 1px solid #475569 !important;
+    }
+    button[data-baseweb="tab"][aria-selected="true"] {
+        background-color: #22c55e !important;
+        color: #052e16 !important;
+        border-color: #22c55e !important;
     }
     .crono-card {
         background-color: #1e293b !important;
         color: #f8fafc !important;
         border: 1px solid #334155 !important;
         border-radius: 12px;
-        padding: 14px 18px;
+        padding: 16px 20px;
         margin-bottom: 12px;
         box-shadow: 0 2px 6px rgba(0,0,0,0.25);
     }
@@ -54,28 +75,28 @@ st.markdown(
         display: flex;
         justify-content: space-between;
         font-weight: 700;
-        font-size: 0.96rem;
-        margin-bottom: 8px;
+        font-size: 1.0rem;
+        margin-bottom: 12px;
         color: #ffffff !important;
     }
     .rings-row {
         display: flex;
         justify-content: space-around;
         align-items: center;
-        gap: 8px;
-        margin-bottom: 10px;
+        gap: 14px;
+        margin-bottom: 16px;
         flex-wrap: wrap;
     }
     .ring-item {
         text-align: center;
         flex: 1;
-        min-width: 90px;
+        min-width: 135px;
     }
     .ring-label {
-        font-size: 0.80rem;
-        color: #e2e8f0 !important;
-        margin-top: 3px;
-        font-weight: 600;
+        font-size: 0.92rem;
+        color: #ffffff !important;
+        margin-top: 6px;
+        font-weight: 700;
     }
     .target-row {
         margin-bottom: 8px;
@@ -83,7 +104,7 @@ st.markdown(
     .target-top {
         display: flex;
         justify-content: space-between;
-        font-size: 0.85rem;
+        font-size: 0.88rem;
         margin-bottom: 3px;
         color: #ffffff !important;
     }
@@ -101,6 +122,26 @@ st.markdown(
     .target-bar-fill {
         height: 100%;
         border-radius: 5px;
+    }
+    .meal-group-hdr {
+        background-color: #1e293b !important;
+        color: #ffffff !important;
+        border: 1px solid #475569 !important;
+        border-left: 4px solid #22c55e !important;
+        border-radius: 8px;
+        padding: 7px 14px;
+        margin-top: 10px;
+        margin-bottom: 4px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.92rem;
+        font-weight: 700;
+    }
+    .meal-group-sub {
+        font-size: 0.80rem;
+        color: #cbd5e1 !important;
+        font-weight: 600;
     }
     .micro-section {
         background-color: #1e293b !important;
@@ -136,24 +177,48 @@ st.markdown(
         margin-top: 6px;
         margin-bottom: 12px;
     }
+    .sidebar-inv-box {
+        background-color: #1e293b !important;
+        border: 1px solid #334155 !important;
+        border-radius: 8px;
+        padding: 10px 12px;
+        max-height: 420px;
+        overflow-y: auto;
+        font-size: 0.83rem;
+        color: #f8fafc !important;
+    }
+    .sidebar-inv-item {
+        padding: 4px 0;
+        border-bottom: 1px solid #334155;
+        color: #f8fafc !important;
+    }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
 
-def svg_ring(value_text: str, unit_text: str, pct: int, color: str = "#3b82f6", size: int = 82) -> str:
+def svg_ring(value_text: str, unit_text: str, pct: int, color: str = "#3b82f6", size: int = 136) -> str:
+    """Large, high-contrast SVG ring where inner text never touches the circle stroke."""
     pct_clamped = min(100, max(0, pct))
-    r = 32
+    r = 52
     c = 2 * 3.14159 * r
     offset = c - (pct_clamped / 100.0) * c
+    val_font = 22 if size >= 120 else 14
+    unit_font = 11.5 if size >= 120 else 9.5
+    cx = size // 2
+    cy = size // 2
+    if size < 100:
+        r = 30
+        c = 2 * 3.14159 * r
+        offset = c - (pct_clamped / 100.0) * c
     return (
-        f'<svg width="{size}" height="{size}" viewBox="0 0 82 82">'
-        f'<circle cx="41" cy="41" r="{r}" fill="none" stroke="#334155" stroke-width="8"/>'
-        f'<circle cx="41" cy="41" r="{r}" fill="none" stroke="{color}" stroke-width="8" '
-        f'stroke-dasharray="{c:.1f}" stroke-dashoffset="{offset:.1f}" stroke-linecap="round" transform="rotate(-90 41 41)"/>'
-        f'<text x="41" y="39" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="700">{value_text}</text>'
-        f'<text x="41" y="53" text-anchor="middle" fill="#cbd5e1" font-size="9.5">{unit_text}</text>'
+        f'<svg width="{size}" height="{size}" viewBox="0 0 {size} {size}">'
+        f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="none" stroke="#334155" stroke-width="10"/>'
+        f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="none" stroke="{color}" stroke-width="10" '
+        f'stroke-dasharray="{c:.1f}" stroke-dashoffset="{offset:.1f}" stroke-linecap="round" transform="rotate(-90 {cx} {cy})"/>'
+        f'<text x="{cx}" y="{cy - 3}" text-anchor="middle" fill="#ffffff" font-size="{val_font}" font-weight="800">{value_text}</text>'
+        f'<text x="{cx}" y="{cy + 16}" text-anchor="middle" fill="#e2e8f0" font-size="{unit_font}" font-weight="600">{unit_text}</text>'
         f'</svg>'
     )
 
@@ -174,9 +239,9 @@ def render_cronometer_targets_card(
     rem_ceil = max(0, 2100 - t_cal)
     cal_pct = int(round(t_cal / 1900 * 100))
 
-    ring1 = svg_ring(str(t_cal), "kcal", cal_pct, "#3b82f6")
-    ring2 = svg_ring("1900", "base (2100 max)", 100, "#94a3b8")
-    ring3 = svg_ring(str(rem_ceil), "left to 2100", int(round(rem_ceil / 2100 * 100)), "#22c55e")
+    ring1 = svg_ring(str(t_cal), "kcal", cal_pct, "#3b82f6", 136)
+    ring2 = svg_ring("1900", "2100 max", 100, "#94a3b8", 136)
+    ring3 = svg_ring(str(rem_ceil), "kcal left", int(round(rem_ceil / 2100 * 100)), "#22c55e", 136)
 
     rows_data = [
         ("🔥 Energy", f"{t_cal} / 1900 kcal ({rem_base} to base • {rem_ceil} to 2100 ceiling)", cal_pct, "#38bdf8"),
@@ -212,7 +277,7 @@ def render_cronometer_targets_card(
         f'<div class="crono-card-title"><span>🎯 Daily Summary & Equal-Priority Targets</span><span>CONSUMED %</span></div>'
         f'<div class="rings-row">'
         f'<div class="ring-item">{ring1}<div class="ring-label">Consumed</div></div>'
-        f'<div class="ring-item">{ring2}<div class="ring-label">Target / Ceiling</div></div>'
+        f'<div class="ring-item">{ring2}<div class="ring-label">Target (2,100 Ceiling)</div></div>'
         f'<div class="ring-item">{ring3}<div class="ring-label">Remaining</div></div>'
         f'</div>'
         f'{"".join(bars_html)}'
@@ -237,7 +302,7 @@ def render_detailed_nutrients_dropdown(t_cal: int, t_p: float, t_c: float, t_f: 
         ("Potassium", int(round(93 * scale)), "#ec4899"),
     ]
     h_rings = "".join(
-        f'<div class="ring-item" style="min-width:72px;">{svg_ring(f"{pct}%", "", pct, col, 68)}<div class="ring-label">{lbl}</div></div>'
+        f'<div class="ring-item" style="min-width:80px;">{svg_ring(f"{pct}%", "", pct, col, 78)}<div class="ring-label" style="font-size:0.80rem;">{lbl}</div></div>'
         for lbl, pct, col in highlights
     )
     st.markdown(
@@ -324,6 +389,52 @@ def render_detailed_nutrients_dropdown(t_cal: int, t_p: float, t_c: float, t_f: 
         )
 
 
+def normalize_entry_row(row: dict) -> dict:
+    """Ensure every food entry has Group, Meal, Ingredient, Amount, Unit, Calories, Protein, Fat, Carbs, Fiber, Water (oz)."""
+    grp = row.get("Group") or "Snacks"
+    if grp not in MEAL_GROUPS:
+        grp = "Gummy fibers" if "gumm" in str(row.get("Ingredient", "")).lower() else "Snacks"
+
+    amt = row.get("Amount")
+    unit = row.get("Unit")
+    if amt is None or unit is None:
+        m_str = str(row.get("Measured Amount", "1 serving")).strip()
+        m_match = re.match(r"^(\d+(?:\.\d+)?)\s*([a-zA-Z\s]+)", m_str)
+        if m_match:
+            amt = float(m_match.group(1))
+            u_raw = m_match.group(2).strip().lower()
+            if u_raw.startswith("cup"):
+                unit = "cups"
+            elif u_raw == "g" or u_raw.startswith("gram"):
+                unit = "g"
+            elif "oz" in u_raw:
+                unit = "oz"
+            elif "gumm" in u_raw:
+                unit = "gummies"
+            else:
+                unit = "1 unit"
+        else:
+            amt = 1.0
+            unit = "1 unit"
+
+    if unit not in UNIT_OPTIONS:
+        unit = "1 unit"
+
+    return {
+        "Group": grp,
+        "Meal": str(row.get("Meal", "")),
+        "Ingredient": str(row.get("Ingredient", "")),
+        "Amount": float(amt),
+        "Unit": unit,
+        "Calories": int(float(row.get("Calories", 0) or 0)),
+        "Protein": round(float(row.get("Protein", 0.0) or 0.0), 1),
+        "Fat": round(float(row.get("Fat", 0.0) or 0.0), 1),
+        "Carbs": round(float(row.get("Carbs", 0.0) or 0.0), 1),
+        "Fiber": round(float(row.get("Fiber", 0.0) or 0.0), 1),
+        "Water (oz)": round(float(row.get("Water (oz)", 0.0) or 0.0), 1),
+    }
+
+
 # Initialize session state cleanly
 if "inventory" not in st.session_state:
     st.session_state.inventory = load_inventory()
@@ -349,12 +460,14 @@ if "draft_day_items" not in st.session_state:
                 saved_logs = json.load(f)
             if saved_logs and isinstance(saved_logs, list):
                 latest = saved_logs[0]
-                initial_draft = latest.get("entries", [])
+                initial_draft = [normalize_entry_row(x) for x in latest.get("entries", [])]
                 initial_water = float(latest.get("water_drank_oz", 64.0))
         except Exception:
             initial_draft = []
     st.session_state.draft_day_items = initial_draft
     st.session_state.water_drank_oz = initial_water
+else:
+    st.session_state.draft_day_items = [normalize_entry_row(x) for x in st.session_state.draft_day_items]
 
 if "water_drank_oz" not in st.session_state:
     st.session_state.water_drank_oz = 64.0
@@ -363,7 +476,9 @@ if "receipt_candidates" not in st.session_state:
     st.session_state.receipt_candidates = []
 
 
-# Sidebar summary
+# ==============================================================================
+# LEFT SIDEBAR: TARGETS, RAW MEAT & FULL INVENTORY LIST WITH 16-OPTION DROPDOWN
+# ==============================================================================
 with st.sidebar:
     st.title("🥩 Macro & Pantry HQ")
     st.markdown(
@@ -384,11 +499,45 @@ with st.sidebar:
     else:
         for rm in st.session_state.raw_meats:
             st.markdown(f"- **{rm['name']}**: `{rm.get('amount', '')}`")
+
     st.divider()
-    st.caption(f"📦 Kitchen Inventory: **{len(st.session_state.inventory)} items** (Unlimited)")
+    st.markdown(f"### 📦 Kitchen Inventory ({len(st.session_state.inventory)} Items)")
+    sidebar_cat_pick = st.selectbox(
+        "Filter Inventory",
+        options=SIDEBAR_FILTER_OPTIONS,
+        index=0,
+    )
+    sidebar_search = st.text_input("Quick Search", placeholder="Filter items...", label_visibility="collapsed")
+
+    sidebar_items = st.session_state.inventory
+    if sidebar_cat_pick != "All":
+        if sidebar_cat_pick.startswith("Good "):
+            sidebar_items = [x for x in sidebar_items if sidebar_cat_pick in x.get("tags", "")]
+        else:
+            sidebar_items = [x for x in sidebar_items if x.get("category") == sidebar_cat_pick]
+
+    if sidebar_search.strip():
+        sq = sidebar_search.strip().lower()
+        sidebar_items = [x for x in sidebar_items if sq in x.get("name", "").lower() or sq in x.get("category", "").lower()]
+
+    st.caption(f"Showing **{len(sidebar_items)}** items ({sidebar_cat_pick}):")
+    inv_rows_html = []
+    for it in sidebar_items:
+        p_val = float(it.get("protein_g", 0))
+        fib_val = float(it.get("fiber_g", 0))
+        cal_val = int(float(it.get("calories", 0)))
+        badge = f" <span style='color:#94a3b8; font-size:0.75rem;'>({cal_val} kcal | {p_val:g}P | {fib_val:g}Fib)</span>" if cal_val > 0 else ""
+        inv_rows_html.append(f"<div class='sidebar-inv-item'>• {it['name']}{badge}</div>")
+
+    st.markdown(
+        f"<div class='sidebar-inv-box'>{''.join(inv_rows_html) if inv_rows_html else 'No matching items'}</div>",
+        unsafe_allow_html=True,
+    )
 
 
-# Main Navigation Tabs (Big & Bold at the top)
+# ==============================================================================
+# TOP NAVIGATION TABS (NEVER CUT OFF)
+# ==============================================================================
 tab_logger, tab_inv, tab_raw_meat, tab_recipes, tab_workout = st.tabs([
     "📊 Daily Log & Talk-to-Text",
     "📦 Kitchen Inventory (141 Items)",
@@ -398,20 +547,16 @@ tab_logger, tab_inv, tab_raw_meat, tab_recipes, tab_workout = st.tabs([
 ])
 
 # ==============================================================================
-# TAB 1: DAILY LOG, TARGETS, WATER & TALK-TO-TEXT (ALL VISIBLE)
+# TAB 1: DAILY LOG, TARGETS, WATER, TALK-TO-TEXT & 7 MEAL GROUPS
 # ==============================================================================
 with tab_logger:
-    cols_order = ["Meal", "Ingredient", "Measured Amount", "Calories", "Protein", "Fat", "Carbs", "Fiber", "Water (oz)", "Gummy Fiber"]
+    cols_order = ["Group", "Meal", "Ingredient", "Amount", "Unit", "Calories", "Protein", "Fat", "Carbs", "Fiber", "Water (oz)"]
     if st.session_state.draft_day_items:
-        draft_df = pd.DataFrame(st.session_state.draft_day_items)
-        for c in cols_order:
-            if c not in draft_df.columns:
-                draft_df[c] = False if c == "Gummy Fiber" else (0.0 if c in ("Calories", "Protein", "Fat", "Carbs", "Fiber", "Water (oz)") else "")
-        draft_df = draft_df[cols_order]
+        draft_df = pd.DataFrame([normalize_entry_row(x) for x in st.session_state.draft_day_items])[cols_order]
     else:
         draft_df = pd.DataFrame(columns=cols_order)
 
-    # Calculate live totals
+    # Calculate live totals across all groups
     t_cal = int(draft_df["Calories"].fillna(0).sum()) if len(draft_df) else 0
     t_p = round(float(draft_df["Protein"].fillna(0).sum()), 1) if len(draft_df) else 0.0
     t_f = round(float(draft_df["Fat"].fillna(0).sum()), 1) if len(draft_df) else 0.0
@@ -422,13 +567,13 @@ with tab_logger:
     total_water_oz = round(food_water_oz + drank_water_oz, 1)
 
     if len(draft_df):
-        gummy_mask = draft_df["Gummy Fiber"].fillna(False).astype(bool)
+        gummy_mask = (draft_df["Group"] == "Gummy fibers") | draft_df["Ingredient"].str.contains("gumm", case=False, na=False)
         t_fib_gummy = round(float(draft_df.loc[gummy_mask, "Fiber"].fillna(0).sum()), 1)
     else:
         t_fib_gummy = 0.0
     t_fib_food = round(max(0.0, t_fib - t_fib_gummy), 1)
 
-    # Top bar: Switch between Today (Oct 19) & Yesterday (Oct 18) using a button so it NEVER loops!
+    # Top bar: Switch between Today (Oct 19) & Yesterday (Oct 18)
     logs = []
     if os.path.exists("DailyLogs.json"):
         try:
@@ -443,7 +588,7 @@ with tab_logger:
         picked_day_idx = st.selectbox("Select Saved Day", range(len(day_labels)), format_func=lambda i: day_labels[i], label_visibility="collapsed")
     with top_c2:
         if st.button("📂 Load Day", use_container_width=True) and logs:
-            st.session_state.draft_day_items = logs[picked_day_idx].get("entries", [])
+            st.session_state.draft_day_items = [normalize_entry_row(x) for x in logs[picked_day_idx].get("entries", [])]
             st.session_state.water_drank_oz = float(logs[picked_day_idx].get("water_drank_oz", 64.0))
             st.rerun()
     with top_c3:
@@ -456,7 +601,7 @@ with tab_logger:
             st.session_state.show_detailed_nutrients = not st.session_state.show_detailed_nutrients
             st.rerun()
 
-    # 1. TARGETS & RINGS CARD
+    # 1. TARGETS & RINGS CARD (With Bigger, Crystal-Clear Rings)
     render_cronometer_targets_card(
         t_cal, t_p, t_c, t_f, t_fib, t_fib_food, t_fib_gummy, total_water_oz, food_water_oz, drank_water_oz
     )
@@ -483,7 +628,7 @@ with tab_logger:
     if st.session_state.show_detailed_nutrients:
         render_detailed_nutrients_dropdown(t_cal, t_p, t_c, t_f, t_fib, total_water_oz)
 
-    # 3. WIDE-OPEN TALK-TO-TEXT & NATURAL LANGUAGE FOOD LOGGER (Never hidden!)
+    # 3. WIDE-OPEN TALK-TO-TEXT & NATURAL LANGUAGE FOOD LOGGER
     st.markdown("#### 🎙️ Enter Food or Water (Talk-to-Text or Natural Language)")
     nl_col1, nl_col2 = st.columns([1.05, 1.95], gap="medium")
     with nl_col1:
@@ -552,11 +697,15 @@ with tab_logger:
             height=145,
         )
     with nl_col2:
-        nl_input = st.text_area(
-            "🗣️ Type or Dictate Food / Water (e.g. 'just drank 32 oz of water' or 'avocado toast - sourdough - 40g'):",
-            height=82,
-            placeholder="avocado toast - sourdough - 40g\navocado toast - avocado - 50g\napple - apple - 182g\njust drank 32 oz of water",
-        )
+        grp_col, txt_col = st.columns([0.9, 2.1])
+        with grp_col:
+            target_group_pick = st.selectbox("Add into Group", options=MEAL_GROUPS, index=4)
+        with txt_col:
+            nl_input = st.text_area(
+                "🗣️ Type or Dictate Food / Water:",
+                height=72,
+                placeholder="1 gatorade zero\navocado toast - sourdough - 40g\njust drank 32 oz of water",
+            )
         b1, b2, b3 = st.columns([1.4, 1.3, 1.1])
         if b1.button("➕ Add to Today's Log", type="primary", use_container_width=True):
             low_in = nl_input.lower()
@@ -566,16 +715,16 @@ with tab_logger:
                 if oz_m:
                     st.session_state.water_drank_oz += float(oz_m.group(1))
                     added_any = True
-            parsed = parse_natural_language_day(nl_input)
+            parsed = parse_natural_language_day(nl_input, default_group=target_group_pick)
             if parsed:
                 st.session_state.draft_day_items.extend(parsed)
                 added_any = True
             if added_any:
                 st.rerun()
             else:
-                st.warning("Type at least one food or water amount (e.g. '3 eggs' or 'drank 32 oz water').")
+                st.warning("Type at least one food or water amount (e.g. '1 gatorade' or 'drank 32 oz water').")
         if b2.button("🔄 Replace Today's Table", use_container_width=True):
-            parsed = parse_natural_language_day(nl_input)
+            parsed = parse_natural_language_day(nl_input, default_group=target_group_pick)
             if parsed:
                 st.session_state.draft_day_items = parsed
                 st.rerun()
@@ -583,45 +732,89 @@ with tab_logger:
             st.session_state.draft_day_items = []
             st.rerun()
 
-    # 4. FOOD ENTRIES TABLE
-    st.markdown("#### 📋 Today's Food Entries (`Meal - Ingredient - Measured Amount`)")
-    edited_draft = st.data_editor(
-        draft_df,
-        column_config={
-            "Meal": st.column_config.TextColumn("Meal", width="medium"),
-            "Ingredient": st.column_config.TextColumn("Ingredient", width="large"),
-            "Measured Amount": st.column_config.TextColumn("Measured Amount", width="small"),
-            "Calories": st.column_config.NumberColumn("Calories", min_value=0, max_value=3000, default=0, width="small"),
-            "Protein": st.column_config.NumberColumn("Protein (g)", format="%.1f", min_value=0.0, default=0.0, width="small"),
-            "Fat": st.column_config.NumberColumn("Fat (g)", format="%.1f", min_value=0.0, default=0.0, width="small"),
-            "Carbs": st.column_config.NumberColumn("Carbs (g)", format="%.1f", min_value=0.0, default=0.0, width="small"),
-            "Fiber": st.column_config.NumberColumn("Fiber (g)", format="%.1f", min_value=0.0, default=0.0, width="small"),
-            "Water (oz)": st.column_config.NumberColumn("Water (oz)", format="%.1f", min_value=0.0, default=0.0, width="small"),
-            "Gummy Fiber": st.column_config.CheckboxColumn("Gummy Fiber", width="small", default=False),
-        },
-        num_rows="dynamic",
-        use_container_width=True,
-        hide_index=True,
-        height=380,
-        key="draft_day_editor",
-    )
+    # 4. TODAY'S FOOD ENTRIES BROKEN UP INTO THE 7 GROUPS (WITH TINY SEPARATION & UNIT DROPDOWN)
+    st.markdown("#### 📋 Today's Food Entries (Grouped by Meal Slot)")
+    group_icons = {
+        "Pre Workout": "⚡",
+        "Breakfast": "🍳",
+        "Lunch": "🥪",
+        "Dinner": "🍽️",
+        "Snacks": "🥨",
+        "Midnight Snacks": "🌙",
+        "Gummy fibers": "🍬",
+    }
+
+    group_cols = ["Meal", "Ingredient", "Amount", "Unit", "Calories", "Protein", "Fat", "Carbs", "Fiber", "Water (oz)"]
+    updated_all_entries = []
+
+    for grp_name in MEAL_GROUPS:
+        grp_df = draft_df[draft_df["Group"] == grp_name][group_cols].copy() if len(draft_df) else pd.DataFrame(columns=group_cols)
+        g_cal = int(grp_df["Calories"].fillna(0).sum()) if len(grp_df) else 0
+        g_p = round(float(grp_df["Protein"].fillna(0).sum()), 1) if len(grp_df) else 0.0
+        g_f = round(float(grp_df["Fat"].fillna(0).sum()), 1) if len(grp_df) else 0.0
+        g_c = round(float(grp_df["Carbs"].fillna(0).sum()), 1) if len(grp_df) else 0.0
+        g_fib = round(float(grp_df["Fiber"].fillna(0).sum()), 1) if len(grp_df) else 0.0
+        g_wat = round(float(grp_df["Water (oz)"].fillna(0).sum()), 1) if len(grp_df) else 0.0
+
+        icon = group_icons.get(grp_name, "🍽️")
+        sub_label = (
+            f"{g_cal} kcal &nbsp;•&nbsp; {g_p:g}g P &nbsp;•&nbsp; {g_f:g}g F &nbsp;•&nbsp; {g_c:g}g C &nbsp;•&nbsp; {g_fib:g}g Fib &nbsp;•&nbsp; {g_wat:g} oz Water"
+            if len(grp_df)
+            else "0 items — click '+' row below to add"
+        )
+        st.markdown(
+            f'<div class="meal-group-hdr"><span>{icon} {grp_name}</span><span class="meal-group-sub">{sub_label}</span></div>',
+            unsafe_allow_html=True,
+        )
+
+        edited_grp = st.data_editor(
+            grp_df,
+            column_config={
+                "Meal": st.column_config.TextColumn("Meal", width="medium", default=grp_name),
+                "Ingredient": st.column_config.TextColumn("Ingredient", width="large", default=""),
+                "Amount": st.column_config.NumberColumn("Amount", format="%.1f", min_value=0.0, default=1.0, width="small"),
+                "Unit": st.column_config.SelectboxColumn("Unit", options=UNIT_OPTIONS, default="g", width="small", required=True),
+                "Calories": st.column_config.NumberColumn("Calories", min_value=0, max_value=3000, default=0, width="small"),
+                "Protein": st.column_config.NumberColumn("Protein (g)", format="%.1f", min_value=0.0, default=0.0, width="small"),
+                "Fat": st.column_config.NumberColumn("Fat (g)", format="%.1f", min_value=0.0, default=0.0, width="small"),
+                "Carbs": st.column_config.NumberColumn("Carbs (g)", format="%.1f", min_value=0.0, default=0.0, width="small"),
+                "Fiber": st.column_config.NumberColumn("Fiber (g)", format="%.1f", min_value=0.0, default=0.0, width="small"),
+                "Water (oz)": st.column_config.NumberColumn("Water (oz)", format="%.1f", min_value=0.0, default=0.0, width="small"),
+            },
+            num_rows="dynamic",
+            use_container_width=True,
+            hide_index=True,
+            key=f"editor_{grp_name}",
+        )
+
+        for _, r in edited_grp.iterrows():
+            if str(r.get("Ingredient", "")).strip() or str(r.get("Meal", "")).strip():
+                row_dict = r.to_dict()
+                row_dict["Group"] = grp_name
+                updated_all_entries.append(normalize_entry_row(row_dict))
+
+        # Tiny visual separation between each group
+        st.markdown("<div style='height: 6px;'></div>", unsafe_allow_html=True)
 
     sc1, sc2 = st.columns([1, 3])
     with sc1:
         log_date_str = st.text_input("Date", value=datetime.now().strftime("%Y-%m-%d"), label_visibility="collapsed")
     with sc2:
         if st.button("💾 Save Today's Log to DailyLogs.json", type="primary", use_container_width=True):
-            entries_list = edited_draft.to_dict(orient="records")
-            st.session_state.draft_day_items = entries_list
-            t_cal_s = int(edited_draft["Calories"].fillna(0).sum()) if len(edited_draft) else 0
-            t_p_s = round(float(edited_draft["Protein"].fillna(0).sum()), 1) if len(edited_draft) else 0.0
-            t_f_s = round(float(edited_draft["Fat"].fillna(0).sum()), 1) if len(edited_draft) else 0.0
-            t_c_s = round(float(edited_draft["Carbs"].fillna(0).sum()), 1) if len(edited_draft) else 0.0
-            t_fib_s = round(float(edited_draft["Fiber"].fillna(0).sum()), 1) if len(edited_draft) else 0.0
-            fw_s = round(float(edited_draft["Water (oz)"].fillna(0).sum()), 1) if len(edited_draft) else 0.0
+            st.session_state.draft_day_items = updated_all_entries
+            save_df = pd.DataFrame(updated_all_entries) if updated_all_entries else pd.DataFrame(columns=cols_order)
+            t_cal_s = int(save_df["Calories"].fillna(0).sum()) if len(save_df) else 0
+            t_p_s = round(float(save_df["Protein"].fillna(0).sum()), 1) if len(save_df) else 0.0
+            t_f_s = round(float(save_df["Fat"].fillna(0).sum()), 1) if len(save_df) else 0.0
+            t_c_s = round(float(save_df["Carbs"].fillna(0).sum()), 1) if len(save_df) else 0.0
+            t_fib_s = round(float(save_df["Fiber"].fillna(0).sum()), 1) if len(save_df) else 0.0
+            fw_s = round(float(save_df["Water (oz)"].fillna(0).sum()), 1) if len(save_df) else 0.0
             tw_s = round(fw_s + float(st.session_state.water_drank_oz), 1)
-            g_mask = edited_draft["Gummy Fiber"].fillna(False).astype(bool) if len(edited_draft) else pd.Series([], dtype=bool)
-            t_gummy_s = round(float(edited_draft.loc[g_mask, "Fiber"].fillna(0).sum()), 1) if len(edited_draft) else 0.0
+            if len(save_df):
+                g_mask = (save_df["Group"] == "Gummy fibers") | save_df["Ingredient"].str.contains("gumm", case=False, na=False)
+                t_gummy_s = round(float(save_df.loc[g_mask, "Fiber"].fillna(0).sum()), 1)
+            else:
+                t_gummy_s = 0.0
             t_food_s = round(max(0.0, t_fib_s - t_gummy_s), 1)
 
             new_entry = {
@@ -641,7 +834,7 @@ with tab_logger:
                     "water_food_oz": fw_s,
                     "water_total_oz": tw_s,
                 },
-                "entries": entries_list,
+                "entries": updated_all_entries,
             }
             existing_logs = []
             if os.path.exists("DailyLogs.json"):
@@ -668,7 +861,7 @@ with tab_logger:
 with tab_inv:
     header_col1, header_col2 = st.columns([1.8, 1.2])
     with header_col1:
-        st.subheader("📦 Kitchen Inventory (141 Items — Assumed Unlimited)")
+        st.subheader(f"📦 Kitchen Inventory ({len(st.session_state.inventory)} Items — Assumed Unlimited)")
     with header_col2:
         toggle_label = (
             "🙈 Hide Macro Counts (Simple View)"
@@ -683,33 +876,21 @@ with tab_inv:
             st.session_state.show_macros = not st.session_state.show_macros
             st.rerun()
 
-    f_col1, f_col2, f_col3 = st.columns([2.2, 1.3, 1.3])
+    f_col1, f_col2 = st.columns([1.5, 1.5])
     with f_col1:
-        smart_filter = st.radio(
-            "⚡ Smart Filter",
-            options=[
-                "All Items",
-                "🥩 Lean Protein",
-                "🌾 High Whole-Food Fiber",
-                "⚡ Pre-Workout Carbs",
-                "🌙 Midnight Snacks",
-            ],
-            horizontal=True,
-        )
+        inv_filter_pick = st.selectbox("📂 Filter by Category or Macro Option", SIDEBAR_FILTER_OPTIONS, key="main_inv_filter")
     with f_col2:
-        cat_filter = st.selectbox("📂 Category", ["All Categories"] + CATEGORIES)
-    with f_col3:
         search_query = st.text_input("🔍 Search Kitchen", placeholder="e.g., oats, beans, kashi, yogurt...")
 
     df_all = pd.DataFrame(st.session_state.inventory)
     df_all["_orig_idx"] = df_all.index
 
     mask = pd.Series([True] * len(df_all))
-    if smart_filter != "All Items":
-        mask &= df_all["tags"].fillna("").str.contains(re.escape(smart_filter), case=False, na=False)
-
-    if cat_filter != "All Categories":
-        mask &= df_all["category"] == cat_filter
+    if inv_filter_pick != "All":
+        if inv_filter_pick.startswith("Good "):
+            mask &= df_all["tags"].fillna("").str.contains(re.escape(inv_filter_pick), case=False, na=False)
+        else:
+            mask &= df_all["category"] == inv_filter_pick
 
     if search_query.strip():
         q = search_query.strip()
@@ -728,7 +909,7 @@ with tab_inv:
     column_config = {
         "name": st.column_config.TextColumn("Food Item", width="large", required=True),
         "category": st.column_config.SelectboxColumn("Category", options=CATEGORIES, width="medium"),
-        "tags": st.column_config.TextColumn("Smart Tags", width="medium"),
+        "tags": st.column_config.TextColumn("Macro Options", width="medium"),
         "serving_size": st.column_config.TextColumn("Serving Size", width="small"),
         "calories": st.column_config.NumberColumn("Calories", format="%d kcal", min_value=0, max_value=3000),
         "protein_g": st.column_config.NumberColumn("Protein (g)", format="%.1fg", min_value=0.0, max_value=200.0),
@@ -800,80 +981,114 @@ with tab_raw_meat:
     rm_left, rm_right = st.columns([1.2, 1.8], gap="large")
     with rm_left:
         with st.container(border=True):
-            st.markdown("#### ➕ Add Raw Meat")
-            rm_name = st.text_input("Raw Meat Type / Cut", placeholder="e.g., 93/7 Lean Ground Beef, Flat Iron Steak")
-            rm_amount = st.text_input("Amount", placeholder="e.g., 2 lbs")
-            if st.button("🥩 Add to Raw Meat List", type="primary", use_container_width=True):
-                if rm_name.strip():
-                    st.session_state.raw_meats.append(
-                        {
-                            "name": rm_name.strip(),
-                            "amount": rm_amount.strip() or "In Fridge",
-                            "added_on": datetime.now().strftime("%Y-%m-%d"),
-                        }
-                    )
-                    save_raw_meats(st.session_state.raw_meats)
-                    st.rerun()
+            st.markdown("#### ➕ Log Fresh Raw Meat")
+            meat_type = st.selectbox(
+                "Raw Meat Type",
+                [
+                    "93/7 Lean Ground Beef",
+                    "Chicken Breast (Boneless Skinless)",
+                    "Chicken Thighs (Boneless Skinless)",
+                    "Fresh Gulf Shrimp (Peeled)",
+                    "Sliced Steak (Flat Iron / Sirloin / Top Round)",
+                    "Ribeye Steak (Fresh)",
+                    "Pork Tenderloin",
+                    "White Fish Fillets (Tilapia / Cod / Mahi)",
+                ],
+            )
+            custom_meat = st.text_input("Or custom cut:", placeholder="e.g., Flank Steak")
+            meat_amount = st.text_input("Amount / Weight Bought", placeholder="e.g., 2 lbs")
+            if st.button("🥩 Add to Raw Meat Fridge", type="primary", use_container_width=True):
+                chosen_meat = custom_meat.strip() if custom_meat.strip() else meat_type
+                st.session_state.raw_meats.append(
+                    {
+                        "name": chosen_meat,
+                        "amount": meat_amount.strip() if meat_amount.strip() else "In Fridge",
+                        "notes": "Fresh Raw Meat",
+                    }
+                )
+                save_raw_meats(st.session_state.raw_meats)
+                st.rerun()
 
     with rm_right:
         with st.container(border=True):
-            st.markdown("#### 🧊 Current Raw Meat in Fridge")
+            st.markdown("#### 🧊 Current Raw Meat in Fridge (`RawMeatStock.json`)")
             if not st.session_state.raw_meats:
-                st.info("**0 Raw Meats in fridge right now.**")
+                st.warning("Currently `0` (Empty).")
             else:
-                for idx, rm in enumerate(st.session_state.raw_meats):
-                    rc1, rc2, rc3 = st.columns([2, 1.2, 0.8])
-                    rc1.markdown(f"**🥩 {rm['name']}**")
-                    rc2.markdown(f"`{rm.get('amount', '')}`")
-                    if rc3.button("🗑️ Gone", key=f"del_rm_{idx}"):
-                        st.session_state.raw_meats.pop(idx)
-                        save_raw_meats(st.session_state.raw_meats)
-                        st.rerun()
+                rm_df = pd.DataFrame(st.session_state.raw_meats)
+                edited_rm = st.data_editor(
+                    rm_df,
+                    column_config={
+                        "name": st.column_config.TextColumn("Raw Meat Cut", width="large", required=True),
+                        "amount": st.column_config.TextColumn("Amount / Weight", width="medium"),
+                        "notes": st.column_config.TextColumn("Notes", width="medium"),
+                    },
+                    num_rows="dynamic",
+                    use_container_width=True,
+                    hide_index=True,
+                    key="raw_meat_editor",
+                )
+                b_rm1, b_rm2 = st.columns(2)
+                if b_rm1.button("💾 Save Raw Meat Updates", type="primary", use_container_width=True):
+                    st.session_state.raw_meats = edited_rm.to_dict(orient="records")
+                    save_raw_meats(st.session_state.raw_meats)
+                    st.rerun()
+                if b_rm2.button("🧹 Clear All Raw Meat (Reset to 0)", use_container_width=True):
+                    st.session_state.raw_meats = []
+                    save_raw_meats([])
+                    st.rerun()
 
     st.divider()
-    st.subheader("🧾 Upload a Grocery Receipt (Photo or Text)")
-    rc_up1, rc_up2 = st.columns(2)
-    with rc_up1:
-        uploaded_receipt = st.file_uploader("📸 Upload Receipt Image (PNG / JPG)", type=["png", "jpg", "jpeg", "webp"])
-    with rc_up2:
-        pasted_receipt_text = st.text_area("📋 Or Paste Receipt Text", height=100)
-
-    if st.button("🔍 Scan Receipt", type="primary"):
-        extracted_text = pasted_receipt_text.strip()
+    st.subheader("🧾 Upload Grocery Receipt (Image, Screenshot, or Text)")
+    rc1, rc2 = st.columns(2, gap="large")
+    with rc1:
+        uploaded_receipt = st.file_uploader("📸 Upload Receipt Image (PNG / JPG)", type=["png", "jpg", "jpeg"])
         if uploaded_receipt is not None:
-            temp_path = "temp_receipt_upload.png"
-            with open(temp_path, "wb") as f:
-                f.write(uploaded_receipt.getvalue())
-            ocr_out = run_windows_ocr_on_image(temp_path)
-            if os.path.exists(temp_path):
-                os.remove(temp_path)
-            if ocr_out:
-                extracted_text = (extracted_text + "\n" + ocr_out).strip()
-        if extracted_text:
-            st.session_state.receipt_candidates = parse_receipt_text_into_items(extracted_text)
+            if st.button("🔍 Scan Receipt Image with Windows OCR", type="primary", use_container_width=True):
+                temp_path = os.path.join(".", f"_temp_receipt_{uploaded_receipt.name}")
+                with open(temp_path, "wb") as f:
+                    f.write(uploaded_receipt.getbuffer())
+                ocr_text = run_windows_ocr_on_image(temp_path)
+                try:
+                    os.remove(temp_path)
+                except Exception:
+                    pass
+                if ocr_text:
+                    st.session_state.receipt_candidates = parse_receipt_text_into_items(ocr_text)
+                    st.rerun()
+
+    with rc2:
+        pasted_receipt = st.text_area(
+            "📋 Or Paste H-E-B / Costco Order Text:",
+            height=100,
+            placeholder="93/7 Lean Ground Beef 2.0 lbs\nFairlife Fat-Free Milk\nOikos Pro 20g Strawberry Yogurt",
+        )
+        if st.button("⚙️ Parse Pasted Receipt Text", use_container_width=True):
+            st.session_state.receipt_candidates = parse_receipt_text_into_items(pasted_receipt)
+            st.rerun()
 
     if st.session_state.receipt_candidates:
         cand_df = pd.DataFrame(st.session_state.receipt_candidates)
-        edited_cand = st.data_editor(cand_df, use_container_width=True, hide_index=True)
-        if st.button("✅ Add Checked Items", type="primary"):
-            for _, row in edited_cand.iterrows():
-                if not row.get("Add"):
+        edited_cand = st.data_editor(cand_df, num_rows="dynamic", use_container_width=True, hide_index=True)
+        if st.button("✅ Add Checked Items to Inventory / Raw Meat Stock", type="primary"):
+            for _, r in edited_cand.iterrows():
+                if not r.get("Add"):
                     continue
-                r_name = str(row["Item Name"]).strip()
-                if "Raw Meat" in str(row.get("Destination", "")):
-                    st.session_state.raw_meats.append(
-                        {
-                            "name": r_name,
-                            "amount": str(row.get("Raw Meat Weight (if meat)", "")).strip() or "In Fridge",
-                            "added_on": datetime.now().strftime("%Y-%m-%d"),
-                        }
-                    )
+                nm = str(r.get("Item Name", "")).strip()
+                dest = str(r.get("Destination", ""))
+                wt = str(r.get("Raw Meat Weight (if meat)", "")).strip()
+                if not nm:
+                    continue
+                if "Raw Meat" in dest:
+                    st.session_state.raw_meats.append({"name": nm, "amount": wt if wt else "In Fridge", "notes": "From Receipt"})
                 else:
-                    if not any(x["name"].lower() == r_name.lower() for x in st.session_state.inventory):
+                    cat_m = re.search(r"\((.*?)\)", dest)
+                    chosen_cat = cat_m.group(1) if cat_m else str(r.get("Category", CATEGORIES[0]))
+                    if not any(x["name"].lower() == nm.lower() for x in st.session_state.inventory):
                         st.session_state.inventory.append(
                             {
-                                "name": r_name,
-                                "category": str(row.get("Category", "Cereals, Granola & Snacks")),
+                                "name": nm,
+                                "category": chosen_cat,
                                 "tags": "",
                                 "serving_size": "1 serving",
                                 "calories": 0.0,
@@ -889,166 +1104,118 @@ with tab_raw_meat:
             st.rerun()
 
 # ==============================================================================
-# TAB 4: 35 RAW MEAT MEAL OPTIONS & CLICKABLE SUPER-SIMPLE RECIPES
+# TAB 4: 35 RAW MEAT SIMPLE RECIPES
 # ==============================================================================
 with tab_recipes:
     st.subheader("🍳 35 Raw Meat Meal Options (Click Any Meal for the Super-Simple Recipe)")
-    r_col1, r_col2, r_col3 = st.columns([1.8, 1.3, 1.2])
-    with r_col1:
-        meat_type_filter = st.radio(
-            "🥩 Filter by Raw Meat Type",
-            options=["All (35)", "Chicken", "Shrimp", "Sliced Steak", "Ground Beef", "Pork Tenderloin", "White Fish"],
-            horizontal=True,
+    rf1, rf2, rf3 = st.columns([1.4, 1.4, 1.2])
+    with rf1:
+        meat_groups = ["All 35 Meals"] + sorted(list({r["meat"] for r in MEAT_RECIPES}))
+        picked_meat_group = st.selectbox("🥩 Filter by Raw Meat Type", meat_groups)
+    with rf2:
+        stock_filter = st.selectbox(
+            "🥫 Kitchen Ingredient Status",
+            ["All Meals", "✅ 100% In Kitchen Now (26 Meals)", "🛒 Needs 1–2 Quick Add-Ons (9 Meals)"],
         )
-    with r_col2:
-        status_filter = st.selectbox(
-            "🏠 Kitchen Ingredient Status",
-            options=["All Recipes", "✅ Ready to Make (In Kitchen)", "🛒 Needs Store Item"],
-        )
-    with r_col3:
-        method_filter = st.selectbox(
-            "🔥 Cooking Method",
-            options=["All Methods", "Cast Iron", "Pan", "Air Fry", "Oven", "Broil"],
-        )
+    with rf3:
+        method_filter = st.selectbox("🔥 Cooking Method", ["All Methods", "Air Fryer", "Skillet", "Sheet Pan", "Oven", "Pot"])
 
     filtered_recipes = []
     for r in MEAT_RECIPES:
-        if meat_type_filter != "All (35)" and r["meat_type"] != meat_type_filter:
+        if picked_meat_group != "All 35 Meals" and r["meat"] != picked_meat_group:
             continue
-        if status_filter == "✅ Ready to Make (In Kitchen)" and not r["status"].startswith("Ready to Make"):
+        if stock_filter.startswith("✅") and r["missing_from_kitchen"]:
             continue
-        if status_filter == "🛒 Needs Store Item" and not r["status"].startswith("Needs Store Item"):
+        if stock_filter.startswith("🛒") and not r["missing_from_kitchen"]:
             continue
-        if method_filter != "All Methods" and method_filter.lower() not in r["recommended_method"].lower():
+        if method_filter != "All Methods" and method_filter.lower() not in r["cook_method"].lower():
             continue
         filtered_recipes.append(r)
 
-    df_recipes = pd.DataFrame(
-        [
+    recipe_rows = []
+    for r in filtered_recipes:
+        missing_list = r["missing_from_kitchen"]
+        status_badge = "✅ 100% In Kitchen" if not missing_list else f"🛒 Needs: {', '.join(missing_list)}"
+        recipe_rows.append(
             {
-                "Meat Type": r["meat_type"],
-                "Recipe / Style Name": r["name"],
-                "Ingredients & Seasonings": r["ingredients"],
-                "Quick Cooking Method": r["quick_method"],
-                "Status": r["status"],
-                "Calories": r["calories_tier"],
-                "Recommended Cooking Method": r["recommended_method"],
-                "Difficulty": r["difficulty"],
-                "Prep + Cook Time": r["time"],
+                "ID": r["id"],
+                "Meal Style": r["name"],
+                "Raw Meat": r["meat"],
+                "Cook Method": r["cook_method"],
+                "Time": r["prep_time"],
+                "Kitchen Status": status_badge,
+                "Calories": r["macros_per_serving"]["cal"],
+                "Protein (g)": r["macros_per_serving"]["p"],
+                "Fat (g)": r["macros_per_serving"]["f"],
+                "Carbs (g)": r["macros_per_serving"]["c"],
             }
-            for r in filtered_recipes
-        ]
-    )
+        )
 
+    rec_df = pd.DataFrame(recipe_rows)
     selection_event = st.dataframe(
-        df_recipes,
+        rec_df,
         use_container_width=True,
         hide_index=True,
+        height=300,
         on_select="rerun",
         selection_mode="single-row",
-        height=300,
     )
 
-    if selection_event and selection_event.selection and selection_event.selection.rows:
-        sel_row_idx = selection_event.selection.rows[0]
-        if 0 <= sel_row_idx < len(filtered_recipes):
-            st.session_state.selected_recipe_name = filtered_recipes[sel_row_idx]["name"]
+    if selection_event and selection_event.selection and selection_event.selection.get("rows"):
+        sel_idx = selection_event.selection["rows"][0]
+        if 0 <= sel_idx < len(filtered_recipes):
+            st.session_state.selected_recipe_name = filtered_recipes[sel_idx]["name"]
 
-    st.markdown("##### 👇 Tap any recipe button below to view the Super-Simple Recipe:")
-    btn_cols = st.columns(4)
-    for idx, r in enumerate(filtered_recipes):
-        is_selected = r["name"] == st.session_state.selected_recipe_name
-        badge = "✅" if r["status"].startswith("Ready") else "🛒"
-        with btn_cols[idx % 4]:
-            if st.button(
-                f"{badge} {r['name']}",
-                key=f"rec_btn_{idx}_{r['name']}",
-                type="primary" if is_selected else "secondary",
-                use_container_width=True,
-            ):
-                st.session_state.selected_recipe_name = r["name"]
-                st.rerun()
+    recipe_names_list = [r["name"] for r in filtered_recipes] if filtered_recipes else [r["name"] for r in MEAT_RECIPES]
+    current_idx = recipe_names_list.index(st.session_state.selected_recipe_name) if st.session_state.selected_recipe_name in recipe_names_list else 0
+    chosen_recipe_name = st.selectbox("📖 Open Recipe Card:", options=recipe_names_list, index=current_idx)
+    st.session_state.selected_recipe_name = chosen_recipe_name
+    active_recipe = next((r for r in MEAT_RECIPES if r["name"] == chosen_recipe_name), MEAT_RECIPES[0])
 
-    active_recipe = next(
-        (r for r in MEAT_RECIPES if r["name"] == st.session_state.selected_recipe_name),
-        filtered_recipes[0] if filtered_recipes else MEAT_RECIPES[0],
+    m_info = active_recipe["macros_per_serving"]
+    missing_items = active_recipe["missing_from_kitchen"]
+    missing_html = (
+        "<span style='color:#4ade80; font-weight:700;'>✅ Every single pantry/spice ingredient is already in your Kitchen Inventory!</span>"
+        if not missing_items
+        else f"<span style='color:#facc15; font-weight:700;'>🛒 Needs from store: {', '.join(missing_items)}</span>"
     )
 
-    if active_recipe:
-        est = active_recipe["est_macros"]
-        status_icon = "✅ Ready to Make with Kitchen Seasonings" if active_recipe["status"].startswith("Ready") else f"🛒 {active_recipe['status']}"
-        st.markdown(
-            f"""
-            <div class="recipe-box">
-                <h3 style="margin-top:0; margin-bottom:6px; color:#ffffff;">🍽️ {active_recipe['name']} ({active_recipe['meat_type']})</h3>
-                <p style="margin-top:0; color:#e2e8f0;">
-                    <b>⏱️ Time:</b> {active_recipe['time']} &nbsp;|&nbsp;
-                    <b>🔥 Best Method:</b> {active_recipe['recommended_method']} &nbsp;|&nbsp;
-                    <b>⚡ Difficulty:</b> {active_recipe['difficulty']} &nbsp;|&nbsp;
-                    <b>🏷️Calories Tier:</b> {active_recipe['calories_tier']} &nbsp;|&nbsp;
-                    <b>{status_icon}</b>
-                </p>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        rc1, rc2, rc3 = st.columns([1.2, 1.8, 1])
-        with rc1:
-            with st.container(border=True):
-                st.markdown("#### 🛒 What to Grab (1 Serving)")
-                for item_line in active_recipe["what_to_grab"]:
-                    st.markdown(f"- {item_line}")
-        with rc2:
-            with st.container(border=True):
-                st.markdown("#### 👨‍🍳 Super Duper Simple Steps")
-                for step_line in active_recipe["simple_steps"]:
-                    st.markdown(f"**{step_line}**")
-        with rc3:
-            with st.container(border=True):
-                st.markdown(f"#### 📊 Macros ({est['portion']} / ~128g cooked)")
-                st.metric("Calories", f"~{est['cal']} kcal")
-                st.markdown(f"- **Protein:** `{est['p']}g`\n- **Fat:** `{est['f']}g`\n- **Carbs:** `{est['c']}g`")
+    st.markdown(
+        f"""
+        <div class="recipe-box">
+            <h3 style="margin-top:0; margin-bottom:6px; color:#ffffff;">🍳 #{active_recipe['id']}: {active_recipe['name']}</h3>
+            <p style="margin:0 0 8px 0; font-size:0.95rem; color:#e2e8f0;">
+                <b>🥩 Meat:</b> <code>{active_recipe['meat']}</code> &nbsp;|&nbsp;
+                <b>🔥 Method:</b> <code>{active_recipe['cook_method']}</code> &nbsp;|&nbsp;
+                <b>⏱️ Time:</b> <code>{active_recipe['prep_time']}</code>
+            </p>
+            <p style="margin:0 0 8px 0; font-size:0.95rem; color:#ffffff;">
+                <b>📊 Macros (per 6 oz raw / ~4.5 oz cooked meat serving):</b>
+                <code>{m_info['cal']} kcal</code> • <code>{m_info['p']}g Protein</code> • <code>{m_info['f']}g Fat</code> • <code>{m_info['c']}g Carbs</code> • <code>{m_info['fib']}g Fiber</code>
+            </p>
+            <p style="margin:0; font-size:0.92rem;">{missing_html}</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    rc_left, rc_right = st.columns([1.1, 1.9], gap="large")
+    with rc_left:
+        st.markdown("#### 🧂 What You Grab")
+        for ing in active_recipe["kitchen_ingredients"]:
+            st.markdown(f"- ✅ **{ing}**")
+        for m_ing in active_recipe["missing_from_kitchen"]:
+            st.markdown(f"- 🛒 **{m_ing}** *(not in inventory yet)*")
+    with rc_right:
+        st.markdown("#### 👨‍🍳 Dead-Simple Steps (Zero Fluff)")
+        for step_num, step_text in enumerate(active_recipe["steps"], start=1):
+            st.markdown(f"**Step {step_num}.** {step_text}")
 
 # ==============================================================================
-# TAB 5: WORKOUT PLAN
+# TAB 5: WORKOUT PLAN REFERENCE
 # ==============================================================================
 with tab_workout:
-    st.subheader("🏋️ 4-Day Rolling Split (Heavy 3 × 6 • 8-Week Cycle)")
-    w_col1, w_col2 = st.columns(2)
-    with w_col1:
-        with st.container(border=True):
-            st.markdown("### 🔥 Day 1: Push (~75 mins)")
-            st.markdown(
-                """
-                - **Warm-Up (1–3 blocks):** Abs, Stairmaster 10m @ Lvl 4, or Incline Treadmill.
-                - **Chest:** DB Press (`55s`) → DB Incline Press (`45s`) → DB Flys (`30s–35s`) → Burnout Push-Up Drop (`Decline → Flat → Incline`)
-                - **Triceps:** Dips (`25–30 lbs`) → DB Behind-Head Extensions (`25 lbs`) or Skullcrushers (`60 lbs`) → Machine Pushdowns (`175 lbs`)
-                - **Shoulders:** DB Shoulder Press (`35s`) → DB Lateral Raises (`25s`) → Machine Lateral Burnout (`50–65 lbs`)
-                """
-            )
-        with st.container(border=True):
-            st.markdown("### 🦵 Day 3: Legs (~40–45 mins)")
-            st.markdown(
-                """
-                - **Main Sequence:** Leg Curls (`120–125 lbs`) → Hack Squat (`35s/side`) → Hip Abduction (`130 lbs`) → Walking Lunges (`10s–15s`) → Leg Extensions (`130–160 lbs`) → Calf Machine (`160 lbs`)
-                - **Optional Finishers:** Hip Adduction (`130 lbs`), Calf Raises (`80 lbs`), Glute Push (`100 lbs`)
-                - **Cool-Down:** Sciatic nerve glides and stretching.
-                """
-            )
-    with w_col2:
-        with st.container(border=True):
-            st.markdown("### 🧲 Day 2: Pull (~75 mins)")
-            st.markdown(
-                """
-                - **Warm-Up (1–3 blocks):** Abs + Stairmaster 10m @ Lvl 4 or Incline Treadmill.
-                - **Back:** Assisted Pull-Ups (`65 lbs`) → Seated Close-Grip V-Bar Row (`120 lbs`) → Rear Delt Machine (`100 lbs`)
-                - **Biceps:** DB Curls (`30s`) → Hammer Curls (`30s`) → Cable / T-Grip Curls (`60 lbs`)
-                """
-            )
-        with st.container(border=True):
-            st.markdown("### 🧘 Day 4: Rest / Active Recovery")
-            st.markdown(
-                """
-                - **Recovery:** Full day off lifting; optional 15–30 min Zone 2 cardio or mobility work.
-                """
-            )
+    st.subheader("🏋️ Workout Plan Reference (`WorkoutPlan.md`)")
+    if os.path.exists("WorkoutPlan.md"):
+        with open("WorkoutPlan.md", "r", encoding="utf-8") as f:
+            st.markdown(f.read())
