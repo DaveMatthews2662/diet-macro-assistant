@@ -9,6 +9,7 @@
 - Fiber: 30g–35g Total
   - Whole Food Fiber: 20g–25g minimum (from oats, beans, chickpea pasta, berries, veggies, high-fiber bread/cereals)
   - Gummy Supplement Cap: Maximum 10g per day
+- Water: 128 fl oz (1 gallon) daily total (from food + drinks + plain water)
 
 # Meal Slots
 - Pre-workout

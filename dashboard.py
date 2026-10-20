@@ -195,8 +195,8 @@ def render_cronometer_targets_card(
         ),
         (
             "Water (Food + Drinks)",
-            f"{t_water_oz:g} / 126.0 fl oz  ({food_water_oz:g} oz from food/drinks • {drank_water_oz:g} oz plain water)",
-            int(round(t_water_oz / 126.0 * 100)),
+            f"{t_water_oz:g} / 128.0 fl oz  ({food_water_oz:g} oz from food/drinks • {drank_water_oz:g} oz plain water)",
+            int(round(t_water_oz / 128.0 * 100)),
             "#06b6d4",
         ),
     ]
@@ -273,7 +273,7 @@ def render_detailed_nutrients_dropdown(t_cal: int, t_p: float, t_c: float, t_f: 
                 "General",
                 [
                     ("Energy", f"{t_cal} kcal", int(round(t_cal / 1900 * 100))),
-                    ("Water (Food + Drinks)", f"{water_g} g ({t_water_oz:g} oz)", int(round(t_water_oz / 126 * 100))),
+                    ("Water (Food + Drinks)", f"{water_g} g ({t_water_oz:g} oz)", int(round(t_water_oz / 128 * 100))),
                     ("Caffeine", "0.0 mg", None),
                 ],
             ),

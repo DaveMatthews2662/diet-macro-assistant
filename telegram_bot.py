@@ -67,12 +67,12 @@ def handle_message(text: str) -> str:
             today_log.setdefault("totals", {})["water_total_oz"] = total_w
             with open("DailyLogs.json", "w", encoding="utf-8") as f:
                 json.dump(logs, f, indent=2)
-            pct_w = int(round(total_w / 126.0 * 100))
+            pct_w = int(round(total_w / 128.0 * 100))
             return (
                 f"💧 *Logged +{added_oz:g} fl oz of water!*\n"
                 f"• Plain Water Drank: *{today_log['water_drank_oz']:g} fl oz*\n"
                 f"• Water from Food/Drinks: *{food_w:g} fl oz*\n"
-                f"• *Total Water Today:* *{total_w:g} / 126 fl oz ({pct_w}%)*"
+                f"• *Total Water Today:* *{total_w:g} / 128 fl oz ({pct_w}%)*"
             )
 
     items = parse_natural_language_day(text)
@@ -122,7 +122,7 @@ def handle_message(text: str) -> str:
         f"• 🍚 Carbs: *{t_c:g} / 180g* ({int(round(t_c/180*100))}%)\n"
         f"• 🥑 Fat: *{t_f:g} / 55g* ({int(round(t_f/55*100))}%)\n"
         f"• 🌾 Fiber: *{t_fib:g} / 32g* ({int(round(t_fib/32*100))}%) — _{t_food_fib:g}g food / {t_gummy:g}g gummy_\n"
-        f"• 💧 Water: *{total_w:g} / 126 fl oz* ({int(round(total_w/126*100))}%)"
+        f"• 💧 Water: *{total_w:g} / 128 fl oz* ({int(round(total_w/128*100))}%)"
     )
 
 
