@@ -20,42 +20,50 @@ from nl_logger_and_receipt import (
 )
 
 st.set_page_config(
-    page_title="Cronometer-Style Macro & Pantry HQ",
+    page_title="Macro, Recipe & Pantry Assistant",
     page_icon="🥩",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
-# Cronometer-inspired sleek CSS (responsive for both desktop and 390px mobile phone screens)
+# High-contrast styling: solid dark cards (#1e293b) with bright white text (#f8fafc)
+# so text is ALWAYS crisp and readable even if a phone browser forces Light Mode!
 st.markdown(
     """
     <style>
     .block-container {
-        padding-top: 1.1rem !important;
-        padding-bottom: 1.2rem !important;
-        max-width: 1180px;
+        padding-top: 1.2rem !important;
+        padding-bottom: 1.5rem !important;
+    }
+    /* Make top navigation tabs huge, bold, and high-contrast */
+    button[data-baseweb="tab"] {
+        font-size: 1.02rem !important;
+        font-weight: 700 !important;
+        padding: 10px 16px !important;
     }
     .crono-card {
-        background: rgba(255, 255, 255, 0.035);
-        border: 1px solid rgba(255, 255, 255, 0.12);
+        background-color: #1e293b !important;
+        color: #f8fafc !important;
+        border: 1px solid #334155 !important;
         border-radius: 12px;
         padding: 14px 18px;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.25);
     }
     .crono-card-title {
         display: flex;
         justify-content: space-between;
         font-weight: 700;
-        font-size: 0.95rem;
-        margin-bottom: 10px;
-        color: #f8fafc;
+        font-size: 0.96rem;
+        margin-bottom: 8px;
+        color: #ffffff !important;
     }
     .rings-row {
         display: flex;
         justify-content: space-around;
         align-items: center;
         gap: 8px;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
         flex-wrap: wrap;
     }
     .ring-item {
@@ -64,9 +72,9 @@ st.markdown(
         min-width: 90px;
     }
     .ring-label {
-        font-size: 0.78rem;
-        color: #cbd5e1;
-        margin-top: 4px;
+        font-size: 0.80rem;
+        color: #e2e8f0 !important;
+        margin-top: 3px;
         font-weight: 600;
     }
     .target-row {
@@ -75,69 +83,58 @@ st.markdown(
     .target-top {
         display: flex;
         justify-content: space-between;
-        font-size: 0.82rem;
+        font-size: 0.85rem;
         margin-bottom: 3px;
-        color: #e2e8f0;
+        color: #ffffff !important;
+    }
+    .target-sub {
+        color: #cbd5e1 !important;
+        font-weight: 500;
     }
     .target-bar-bg {
         width: 100%;
-        height: 10px;
-        background: rgba(255, 255, 255, 0.12);
-        border-radius: 4px;
+        height: 11px;
+        background-color: #0f172a !important;
+        border-radius: 5px;
         overflow: hidden;
     }
     .target-bar-fill {
         height: 100%;
-        border-radius: 4px;
+        border-radius: 5px;
     }
     .micro-section {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 8px;
+        background-color: #1e293b !important;
+        color: #f8fafc !important;
+        border: 1px solid #334155 !important;
+        border-radius: 10px;
         padding: 10px 14px;
         margin-bottom: 10px;
     }
     .micro-hdr {
         font-weight: 700;
-        font-size: 0.86rem;
-        padding-bottom: 6px;
+        font-size: 0.88rem;
+        padding-bottom: 5px;
         margin-bottom: 6px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        color: #f8fafc;
+        border-bottom: 1px solid #475569;
+        color: #ffffff !important;
     }
     .micro-row {
         display: grid;
-        grid-template-columns: 1.4fr 0.9fr 1.2fr 0.45fr;
+        grid-template-columns: 1.3fr 0.9fr 1.2fr 0.5fr;
         align-items: center;
         gap: 8px;
-        font-size: 0.78rem;
-        padding: 3px 0;
-    }
-    .meal-pill {
-        background: rgba(255, 255, 255, 0.03);
-        border-left: 3px solid #3b82f6;
-        padding: 4px 10px;
-        margin-bottom: 4px;
         font-size: 0.80rem;
-        display: flex;
-        justify-content: space-between;
-        border-radius: 0 6px 6px 0;
+        padding: 3px 0;
+        color: #f1f5f9 !important;
     }
     .recipe-box {
-        background: rgba(34, 197, 94, 0.08);
-        border: 2px solid rgba(74, 222, 128, 0.45);
+        background-color: #1e293b !important;
+        color: #ffffff !important;
+        border: 2px solid #22c55e !important;
         border-radius: 12px;
         padding: 14px 18px;
         margin-top: 6px;
         margin-bottom: 12px;
-    }
-    .phone-frame {
-        max-width: 390px;
-        margin: 0 auto;
-        border: 3px solid #475569;
-        border-radius: 24px;
-        padding: 12px;
-        background: #0f172a;
     }
     </style>
     """,
@@ -145,18 +142,18 @@ st.markdown(
 )
 
 
-def svg_ring(value_text: str, unit_text: str, pct: int, color: str = "#3b82f6", size: int = 84) -> str:
+def svg_ring(value_text: str, unit_text: str, pct: int, color: str = "#3b82f6", size: int = 82) -> str:
     pct_clamped = min(100, max(0, pct))
-    r = 33
+    r = 32
     c = 2 * 3.14159 * r
     offset = c - (pct_clamped / 100.0) * c
     return (
-        f'<svg width="{size}" height="{size}" viewBox="0 0 84 84">'
-        f'<circle cx="42" cy="42" r="{r}" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="8"/>'
-        f'<circle cx="42" cy="42" r="{r}" fill="none" stroke="{color}" stroke-width="8" '
-        f'stroke-dasharray="{c:.1f}" stroke-dashoffset="{offset:.1f}" stroke-linecap="round" transform="rotate(-90 42 42)"/>'
-        f'<text x="42" y="40" text-anchor="middle" fill="#f8fafc" font-size="13" font-weight="700">{value_text}</text>'
-        f'<text x="42" y="54" text-anchor="middle" fill="#94a3b8" font-size="10">{unit_text}</text>'
+        f'<svg width="{size}" height="{size}" viewBox="0 0 82 82">'
+        f'<circle cx="41" cy="41" r="{r}" fill="none" stroke="#334155" stroke-width="8"/>'
+        f'<circle cx="41" cy="41" r="{r}" fill="none" stroke="{color}" stroke-width="8" '
+        f'stroke-dasharray="{c:.1f}" stroke-dashoffset="{offset:.1f}" stroke-linecap="round" transform="rotate(-90 41 41)"/>'
+        f'<text x="41" y="39" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="700">{value_text}</text>'
+        f'<text x="41" y="53" text-anchor="middle" fill="#cbd5e1" font-size="9.5">{unit_text}</text>'
         f'</svg>'
     )
 
@@ -173,29 +170,28 @@ def render_cronometer_targets_card(
     food_water_oz: float,
     drank_water_oz: float,
 ):
-    """Render the exact Cronometer-inspired Energy Summary Rings + Targets card (with Fiber & Water included!)."""
     rem_base = max(0, 1900 - t_cal)
     rem_ceil = max(0, 2100 - t_cal)
     cal_pct = int(round(t_cal / 1900 * 100))
 
     ring1 = svg_ring(str(t_cal), "kcal", cal_pct, "#3b82f6")
-    ring2 = svg_ring("1900", "base (2100 max)", 100, "#64748b")
-    ring3 = svg_ring(str(rem_ceil), "to ceiling", int(round(rem_ceil / 2100 * 100)), "#22c55e")
+    ring2 = svg_ring("1900", "base (2100 max)", 100, "#94a3b8")
+    ring3 = svg_ring(str(rem_ceil), "left to 2100", int(round(rem_ceil / 2100 * 100)), "#22c55e")
 
     rows_data = [
-        ("Energy", f"{t_cal} / 1900 kcal ({rem_base} to base • {rem_ceil} to 2100 ceiling)", cal_pct, "#94a3b8"),
-        ("Protein", f"{t_p:g} / 180.0 g", int(round(t_p / 180.0 * 100)), "#ef4444"),
-        ("Carbs", f"{t_c:g} / 180.0 g (range 170–220g)", int(round(t_c / 180.0 * 100)), "#3b82f6"),
-        ("Fat", f"{t_f:g} / 55.0 g", int(round(t_f / 55.0 * 100)), "#eab308"),
+        ("🔥 Energy", f"{t_cal} / 1900 kcal ({rem_base} to base • {rem_ceil} to 2100 ceiling)", cal_pct, "#38bdf8"),
+        ("🥩 Protein", f"{t_p:g} / 180.0 g", int(round(t_p / 180.0 * 100)), "#ef4444"),
+        ("🍚 Carbs", f"{t_c:g} / 180.0 g (target 170–220g)", int(round(t_c / 180.0 * 100)), "#a855f7"),
+        ("🥑 Fat", f"{t_f:g} / 55.0 g", int(round(t_f / 55.0 * 100)), "#eab308"),
         (
-            "Fiber (Food + Gummy)",
+            "🌾 Fiber",
             f"{t_fib:g} / 32.0 g  ({t_fib_food:g}g Whole Food • {t_fib_gummy:g}g/10g Gummy)",
             int(round(t_fib / 32.0 * 100)),
             "#22c55e",
         ),
         (
-            "Water (Food + Drinks)",
-            f"{t_water_oz:g} / 128.0 fl oz  ({food_water_oz:g} oz from food/drinks • {drank_water_oz:g} oz plain water)",
+            "💧 Water",
+            f"{t_water_oz:g} / 128.0 fl oz  ({food_water_oz:g} oz from food • {drank_water_oz:g} oz drank)",
             int(round(t_water_oz / 128.0 * 100)),
             "#06b6d4",
         ),
@@ -206,20 +202,19 @@ def render_cronometer_targets_card(
         w = min(100, max(0, pct))
         bars_html.append(
             f'<div class="target-row">'
-            f'<div class="target-top"><span><b>{name}</b> &nbsp;<span style="color:#94a3b8;">{label_val}</span></span><span><b>{pct}%</b></span></div>'
+            f'<div class="target-top"><span><b>{name}</b> &nbsp;<span class="target-sub">{label_val}</span></span><span><b>{pct}%</b></span></div>'
             f'<div class="target-bar-bg"><div class="target-bar-fill" style="width:{w}%; background:{col};"></div></div>'
             f'</div>'
         )
 
     html = (
         f'<div class="crono-card">'
-        f'<div class="crono-card-title"><span>Energy Summary</span><span style="color:#94a3b8; font-size:0.8rem;">TARGET</span></div>'
+        f'<div class="crono-card-title"><span>🎯 Daily Summary & Equal-Priority Targets</span><span>CONSUMED %</span></div>'
         f'<div class="rings-row">'
         f'<div class="ring-item">{ring1}<div class="ring-label">Consumed</div></div>'
-        f'<div class="ring-item">{ring2}<div class="ring-label">Budget / Ceiling</div></div>'
+        f'<div class="ring-item">{ring2}<div class="ring-label">Target / Ceiling</div></div>'
         f'<div class="ring-item">{ring3}<div class="ring-label">Remaining</div></div>'
         f'</div>'
-        f'<div class="crono-card-title" style="margin-top:6px;"><span>Targets</span><span style="color:#94a3b8; font-size:0.8rem;">CONSUMED</span></div>'
         f'{"".join(bars_html)}'
         f'</div>'
     )
@@ -227,8 +222,6 @@ def render_cronometer_targets_card(
 
 
 def render_detailed_nutrients_dropdown(t_cal: int, t_p: float, t_c: float, t_f: float, t_fib: float, t_water_oz: float):
-    """Render the collapsible Cronometer Pages 3-6 Nutrient Breakdown (Highlighted Nutrients, General, Carbs, Lipids, Vitamins, Minerals)."""
-    # Scale micronutrients proportionally to calories/macros logged
     scale = max(0.2, t_cal / 2044.0) if t_cal > 0 else 0.0
     net_carbs = round(max(0.0, t_c - t_fib), 1)
     water_g = round(t_water_oz * 29.57, 1)
@@ -248,7 +241,7 @@ def render_detailed_nutrients_dropdown(t_cal: int, t_p: float, t_c: float, t_f: 
         for lbl, pct, col in highlights
     )
     st.markdown(
-        f'<div class="crono-card"><div class="crono-card-title"><span>Highlighted Nutrients</span></div>'
+        f'<div class="crono-card"><div class="crono-card-title"><span>🔬 Highlighted Nutrients</span></div>'
         f'<div class="rings-row">{h_rings}</div></div>',
         unsafe_allow_html=True,
     )
@@ -258,9 +251,9 @@ def render_detailed_nutrients_dropdown(t_cal: int, t_p: float, t_c: float, t_f: 
         for r_lbl, r_val, r_pct in rows:
             w = min(100, max(0, r_pct)) if r_pct is not None else 0
             bar = (
-                f'<div class="target-bar-bg" style="height:7px;"><div class="target-bar-fill" style="width:{w}%; background:#94a3b8;"></div></div>'
+                f'<div class="target-bar-bg" style="height:7px;"><div class="target-bar-fill" style="width:{w}%; background:#38bdf8;"></div></div>'
                 if r_pct is not None
-                else '<div style="border-bottom:1px dashed rgba(255,255,255,0.15); height:1px;"></div>'
+                else '<div style="border-bottom:1px dashed #475569; height:1px;"></div>'
             )
             pct_txt = f"{r_pct}%" if r_pct is not None else ""
             r_html.append(f'<div class="micro-row"><span>{r_lbl}</span><span style="text-align:right;">{r_val}</span>{bar}<span style="text-align:right;">{pct_txt}</span></div>')
@@ -270,19 +263,10 @@ def render_detailed_nutrients_dropdown(t_cal: int, t_p: float, t_c: float, t_f: 
     with c1:
         st.markdown(
             section_box(
-                "General",
+                "General & Carbohydrates",
                 [
                     ("Energy", f"{t_cal} kcal", int(round(t_cal / 1900 * 100))),
                     ("Water (Food + Drinks)", f"{water_g} g ({t_water_oz:g} oz)", int(round(t_water_oz / 128 * 100))),
-                    ("Caffeine", "0.0 mg", None),
-                ],
-            ),
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            section_box(
-                "Carbohydrates",
-                [
                     ("Total Carbs", f"{t_c:g} g", int(round(t_c / 180 * 100))),
                     ("Net Carbs", f"{net_carbs:g} g", int(round(net_carbs / 150 * 100))),
                     ("Fiber", f"{t_fib:g} g", int(round(t_fib / 32 * 100))),
@@ -310,21 +294,10 @@ def render_detailed_nutrients_dropdown(t_cal: int, t_p: float, t_c: float, t_f: 
     with c2:
         st.markdown(
             section_box(
-                "Protein & Amino Acids",
+                "Protein & Vitamins",
                 [
                     ("Protein", f"{t_p:g} g", int(round(t_p / 180 * 100))),
                     ("Leucine", f"{round(t_p * 0.068, 1):g} g", int(round(t_p / 180 * 345))),
-                    ("Isoleucine", f"{round(t_p * 0.038, 1):g} g", int(round(t_p / 180 * 420))),
-                    ("Valine", f"{round(t_p * 0.041, 1):g} g", int(round(t_p / 180 * 365))),
-                    ("Lysine", f"{round(t_p * 0.069, 1):g} g", int(round(t_p / 180 * 385))),
-                ],
-            ),
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            section_box(
-                "Vitamins",
-                [
                     ("B1 (Thiamine)", f"{round(0.8 * scale, 1):g} mg", int(round(70 * scale))),
                     ("B2 (Riboflavin)", f"{round(1.2 * scale, 1):g} mg", int(round(93 * scale))),
                     ("B3 (Niacin)", f"{round(18.3 * scale, 1):g} mg", int(round(114 * scale))),
@@ -351,7 +324,7 @@ def render_detailed_nutrients_dropdown(t_cal: int, t_p: float, t_c: float, t_f: 
         )
 
 
-# Initialize session state
+# Initialize session state cleanly
 if "inventory" not in st.session_state:
     st.session_state.inventory = load_inventory()
 
@@ -363,9 +336,6 @@ if "show_macros" not in st.session_state:
 
 if "show_detailed_nutrients" not in st.session_state:
     st.session_state.show_detailed_nutrients = False
-
-if "mobile_preview" not in st.session_state:
-    st.session_state.mobile_preview = False
 
 if "selected_recipe_name" not in st.session_state:
     st.session_state.selected_recipe_name = MEAT_RECIPES[0]["name"]
@@ -393,17 +363,42 @@ if "receipt_candidates" not in st.session_state:
     st.session_state.receipt_candidates = []
 
 
-# Main navigation tabs
+# Sidebar summary
+with st.sidebar:
+    st.title("🥩 Macro & Pantry HQ")
+    st.markdown(
+        """
+        **🎯 Equal-Priority Targets**
+        - **Calories:** `1,900` *(2,100 ceiling)*
+        - **Protein:** `180g`
+        - **Carbs:** `170g–220g`
+        - **Fat:** `55g`
+        - **Fiber:** `30g–35g` *(≤10g gummy)*
+        - **Water:** `128 fl oz` *(1 gallon)*
+        """
+    )
+    st.divider()
+    st.markdown("### 🥩 Rotating Raw Meat in Fridge")
+    if not st.session_state.raw_meats:
+        st.caption("0 raw meats in fridge")
+    else:
+        for rm in st.session_state.raw_meats:
+            st.markdown(f"- **{rm['name']}**: `{rm.get('amount', '')}`")
+    st.divider()
+    st.caption(f"📦 Kitchen Inventory: **{len(st.session_state.inventory)} items** (Unlimited)")
+
+
+# Main Navigation Tabs (Big & Bold at the top)
 tab_logger, tab_inv, tab_raw_meat, tab_recipes, tab_workout = st.tabs([
-    "📊 Daily Log & Targets",
-    "📦 Kitchen Inventory",
-    "🥩 Raw Meat & 🧾 Receipt",
-    "🍳 35 Raw Meat Recipes",
+    "📊 Daily Log & Talk-to-Text",
+    "📦 Kitchen Inventory (141 Items)",
+    "🥩 Raw Meat & 🧾 Receipt Upload",
+    "🍳 35 Raw Meat Simple Recipes",
     "🏋️ Workout Plan",
 ])
 
 # ==============================================================================
-# TAB 1: CRONOMETER-STYLE DAILY LOG, WATER TRACKER & EXPANDABLE NUTRIENTS
+# TAB 1: DAILY LOG, TARGETS, WATER & TALK-TO-TEXT (ALL VISIBLE)
 # ==============================================================================
 with tab_logger:
     cols_order = ["Meal", "Ingredient", "Measured Amount", "Calories", "Protein", "Fat", "Carbs", "Fiber", "Water (oz)", "Gummy Fiber"]
@@ -433,25 +428,25 @@ with tab_logger:
         t_fib_gummy = 0.0
     t_fib_food = round(max(0.0, t_fib - t_fib_gummy), 1)
 
-    # Optional Phone Preview Toggle so user can see how it looks on a 390px phone screen
-    top_bar1, top_bar2, top_bar3 = st.columns([1.4, 1.4, 1.2])
-    with top_bar1:
-        logs = []
-        if os.path.exists("DailyLogs.json"):
-            try:
-                with open("DailyLogs.json", "r", encoding="utf-8") as f:
-                    logs = json.load(f)
-            except Exception:
-                logs = []
-        if logs:
-            day_opts = [f"📅 {x.get('date')} ({x.get('totals', {}).get('calories', 0)} kcal)" for x in logs]
-            chosen_day = st.selectbox("Switch Logged Day", options=["📅 Viewing Active Day..."] + day_opts, label_visibility="collapsed")
-            if chosen_day != "📅 Viewing Active Day...":
-                idx = day_opts.index(chosen_day)
-                st.session_state.draft_day_items = logs[idx].get("entries", [])
-                st.session_state.water_drank_oz = float(logs[idx].get("water_drank_oz", 64.0))
-                st.rerun()
-    with top_bar2:
+    # Top bar: Switch between Today (Oct 19) & Yesterday (Oct 18) using a button so it NEVER loops!
+    logs = []
+    if os.path.exists("DailyLogs.json"):
+        try:
+            with open("DailyLogs.json", "r", encoding="utf-8") as f:
+                logs = json.load(f)
+        except Exception:
+            logs = []
+
+    top_c1, top_c2, top_c3 = st.columns([1.3, 0.7, 2.0])
+    with top_c1:
+        day_labels = [f"{x.get('date')} ({x.get('totals', {}).get('calories', 0)} kcal)" for x in logs] if logs else ["2026-10-19"]
+        picked_day_idx = st.selectbox("Select Saved Day", range(len(day_labels)), format_func=lambda i: day_labels[i], label_visibility="collapsed")
+    with top_c2:
+        if st.button("📂 Load Day", use_container_width=True) and logs:
+            st.session_state.draft_day_items = logs[picked_day_idx].get("entries", [])
+            st.session_state.water_drank_oz = float(logs[picked_day_idx].get("water_drank_oz", 64.0))
+            st.rerun()
+    with top_c3:
         nut_btn_lbl = (
             "🙈 Hide Detailed Nutrient Breakdown"
             if st.session_state.show_detailed_nutrients
@@ -460,140 +455,136 @@ with tab_logger:
         if st.button(nut_btn_lbl, use_container_width=True):
             st.session_state.show_detailed_nutrients = not st.session_state.show_detailed_nutrients
             st.rerun()
-    with top_bar3:
-        mob_lbl = "🖥️ Back to Full Width" if st.session_state.mobile_preview else "📱 Preview Phone Screen (390px)"
-        if st.button(mob_lbl, use_container_width=True):
-            st.session_state.mobile_preview = not st.session_state.mobile_preview
-            st.rerun()
 
-    if st.session_state.mobile_preview:
-        st.caption("📱 **Phone Preview Mode (390px iPhone Width):** This is how the top card stacks and fits on your phone screen.")
-        _, phone_col, _ = st.columns([1, 1.15, 1])
-        target_container = phone_col
-    else:
-        target_container = st.container()
+    # 1. TARGETS & RINGS CARD
+    render_cronometer_targets_card(
+        t_cal, t_p, t_c, t_f, t_fib, t_fib_food, t_fib_gummy, total_water_oz, food_water_oz, drank_water_oz
+    )
 
-    with target_container:
-        # 1. CRONOMETER ENERGY SUMMARY RINGS + TARGETS CARD (WITH FIBER & WATER!)
-        render_cronometer_targets_card(
-            t_cal, t_p, t_c, t_f, t_fib, t_fib_food, t_fib_gummy, total_water_oz, food_water_oz, drank_water_oz
-        )
+    # Quick Water Buttons Bar
+    wc1, wc2, wc3, wc4, wc5 = st.columns(5)
+    if wc1.button("💧 +8 oz Water", use_container_width=True):
+        st.session_state.water_drank_oz += 8.0
+        st.rerun()
+    if wc2.button("💧 +16 oz Water", use_container_width=True):
+        st.session_state.water_drank_oz += 16.0
+        st.rerun()
+    if wc3.button("💧 +24 oz Water", use_container_width=True):
+        st.session_state.water_drank_oz += 24.0
+        st.rerun()
+    if wc4.button("💧 +32 oz Water", use_container_width=True):
+        st.session_state.water_drank_oz += 32.0
+        st.rerun()
+    if wc5.button("🔄 Reset Water (0 oz)", use_container_width=True):
+        st.session_state.water_drank_oz = 0.0
+        st.rerun()
 
-        # Quick Water Buttons Bar
-        wc1, wc2, wc3, wc4, wc5 = st.columns(5)
-        if wc1.button("💧 +8 oz Water", use_container_width=True):
-            st.session_state.water_drank_oz += 8.0
-            st.rerun()
-        if wc2.button("💧 +16 oz Water", use_container_width=True):
-            st.session_state.water_drank_oz += 16.0
-            st.rerun()
-        if wc3.button("💧 +24 oz Water", use_container_width=True):
-            st.session_state.water_drank_oz += 24.0
-            st.rerun()
-        if wc4.button("💧 +32 oz Water", use_container_width=True):
-            st.session_state.water_drank_oz += 32.0
-            st.rerun()
-        if wc5.button("🔄 Reset Water", use_container_width=True):
-            st.session_state.water_drank_oz = 0.0
-            st.rerun()
-
-    # 2. EXPANDABLE DETAILED NUTRIENT BREAKDOWN (Pages 3-6 of Cronometer)
+    # 2. EXPANDABLE DETAILED NUTRIENT BREAKDOWN
     if st.session_state.show_detailed_nutrients:
         render_detailed_nutrients_dropdown(t_cal, t_p, t_c, t_f, t_fib, total_water_oz)
 
-    # 3. QUICK ADD VIA VOICE OR TEXT
-    with st.expander("🎙️ Quick Add Food or Water via Voice / Text (e.g. 'just drank 32 oz of water' or 'avocado toast - sourdough - 40g')", expanded=False):
-        nl_col1, nl_col2 = st.columns([1, 2], gap="medium")
-        with nl_col1:
-            components.html(
-                """
-                <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); border-radius:8px; padding:8px; font-family:sans-serif; color:#f8fafc;">
-                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
-                        <span style="font-weight:600; font-size:12px;">🎙️ Voice Mic</span>
-                        <button id="micBtn" onclick="toggleSpeech()" style="background:#22c55e; color:#052e16; border:none; border-radius:6px; padding:4px 10px; font-weight:700; cursor:pointer; font-size:12px;">
-                            🎙️ Speak
-                        </button>
-                    </div>
-                    <textarea id="speechOut" rows="2" placeholder="Speak out loud..." style="width:100%; box-sizing:border-box; border-radius:6px; border:1px solid #475569; background:#0f172a; color:#f8fafc; padding:6px; font-size:12px;"></textarea>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
-                        <span id="micStatus" style="font-size:11px; color:#94a3b8;">Ready</span>
-                        <button onclick="copyTranscript()" style="background:#334155; color:#f8fafc; border:none; border-radius:5px; padding:3px 8px; font-size:11px; cursor:pointer;">
-                            📋 Copy
-                        </button>
-                    </div>
+    # 3. WIDE-OPEN TALK-TO-TEXT & NATURAL LANGUAGE FOOD LOGGER (Never hidden!)
+    st.markdown("#### 🎙️ Enter Food or Water (Talk-to-Text or Natural Language)")
+    nl_col1, nl_col2 = st.columns([1.05, 1.95], gap="medium")
+    with nl_col1:
+        components.html(
+            """
+            <div style="background:#1e293b; border:1px solid #475569; border-radius:10px; padding:10px; font-family:sans-serif; color:#ffffff;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                    <span style="font-weight:700; font-size:13px;">🎙️ Desktop Voice Mic</span>
+                    <button id="micBtn" onclick="toggleSpeech()" style="background:#22c55e; color:#052e16; border:none; border-radius:6px; padding:5px 12px; font-weight:700; cursor:pointer; font-size:12px;">
+                        🎙️ Start Speaking
+                    </button>
                 </div>
-                <script>
-                let recognition = null;
-                let listening = false;
-                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-                    recognition = new SpeechRec();
-                    recognition.continuous = true;
-                    recognition.interimResults = true;
-                    recognition.lang = 'en-US';
-                    recognition.onresult = function(event) {
-                        let finalText = '';
-                        for (let i = 0; i < event.results.length; ++i) {
-                            finalText += event.results[i][0].transcript;
-                        }
-                        document.getElementById('speechOut').value = finalText;
-                    };
-                    recognition.onend = function() {
-                        listening = false;
-                        document.getElementById('micBtn').innerText = '🎙️ Speak';
-                        document.getElementById('micBtn').style.background = '#22c55e';
-                    };
-                }
-                function toggleSpeech() {
-                    if (!recognition) return;
-                    if (!listening) {
-                        recognition.start();
-                        listening = true;
-                        document.getElementById('micBtn').innerText = '⏹️ Stop';
-                        document.getElementById('micBtn').style.background = '#ef4444';
-                    } else {
-                        recognition.stop();
+                <textarea id="speechOut" rows="2" placeholder="On Phone: tap the box on the right and press your phone keyboard's 🎙️ mic key! On PC: click 'Start Speaking' here..." style="width:100%; box-sizing:border-box; border-radius:6px; border:1px solid #64748b; background:#0f172a; color:#ffffff; padding:6px; font-size:12px;"></textarea>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
+                    <span id="micStatus" style="font-size:11px; color:#cbd5e1;">Ready</span>
+                    <button onclick="copyTranscript()" style="background:#3b82f6; color:#ffffff; border:none; border-radius:5px; padding:4px 10px; font-size:11px; font-weight:600; cursor:pointer;">
+                        📋 Copy Spoken Text
+                    </button>
+                </div>
+            </div>
+            <script>
+            let recognition = null;
+            let listening = false;
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRec();
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                recognition.lang = 'en-US';
+                recognition.onresult = function(event) {
+                    let finalText = '';
+                    for (let i = 0; i < event.results.length; ++i) {
+                        finalText += event.results[i][0].transcript;
                     }
+                    document.getElementById('speechOut').value = finalText;
+                };
+                recognition.onend = function() {
+                    listening = false;
+                    document.getElementById('micBtn').innerText = '🎙️ Start Speaking';
+                    document.getElementById('micBtn').style.background = '#22c55e';
+                };
+            }
+            function toggleSpeech() {
+                if (!recognition) {
+                    document.getElementById('micStatus').innerText = 'Use keyboard 🎙️ mic button on this browser';
+                    return;
                 }
-                function copyTranscript() {
-                    const el = document.getElementById('speechOut');
-                    el.select();
-                    document.execCommand('copy');
-                    document.getElementById('micStatus').innerText = '✅ Copied!';
+                if (!listening) {
+                    recognition.start();
+                    listening = true;
+                    document.getElementById('micBtn').innerText = '⏹️ Stop';
+                    document.getElementById('micBtn').style.background = '#ef4444';
+                    document.getElementById('micStatus').innerText = '🔴 Listening...';
+                } else {
+                    recognition.stop();
                 }
-                </script>
-                """,
-                height=135,
-            )
-        with nl_col2:
-            nl_input = st.text_area(
-                "Type or dictate items:",
-                height=80,
-                placeholder="just drank 32 oz of water\navocado toast - sourdough - 40g\navocado toast - avocado - 50g",
-            )
-            b1, b2, b3 = st.columns([1.3, 1.3, 1])
-            if b1.button("➕ Append to Today", type="primary", use_container_width=True):
-                # Check if plain water phrase
-                low_in = nl_input.lower()
-                if ("water" in low_in or "ewater" in low_in) and "drank" in low_in:
-                    oz_m = re.search(r"(\d+(?:\.\d+)?)\s*(?:fl\s*oz|oz|ounces?)", low_in)
-                    if oz_m:
-                        st.session_state.water_drank_oz += float(oz_m.group(1))
-                        st.rerun()
-                parsed = parse_natural_language_day(nl_input)
-                if parsed:
-                    st.session_state.draft_day_items.extend(parsed)
-                    st.rerun()
-            if b2.button("🔄 Replace Table", use_container_width=True):
-                parsed = parse_natural_language_day(nl_input)
-                if parsed:
-                    st.session_state.draft_day_items = parsed
-                    st.rerun()
-            if b3.button("🗑️ Clear Table", use_container_width=True):
-                st.session_state.draft_day_items = []
+            }
+            function copyTranscript() {
+                const el = document.getElementById('speechOut');
+                el.select();
+                document.execCommand('copy');
+                document.getElementById('micStatus').innerText = '✅ Copied! Paste in box on right ->';
+            }
+            </script>
+            """,
+            height=145,
+        )
+    with nl_col2:
+        nl_input = st.text_area(
+            "🗣️ Type or Dictate Food / Water (e.g. 'just drank 32 oz of water' or 'avocado toast - sourdough - 40g'):",
+            height=82,
+            placeholder="avocado toast - sourdough - 40g\navocado toast - avocado - 50g\napple - apple - 182g\njust drank 32 oz of water",
+        )
+        b1, b2, b3 = st.columns([1.4, 1.3, 1.1])
+        if b1.button("➕ Add to Today's Log", type="primary", use_container_width=True):
+            low_in = nl_input.lower()
+            added_any = False
+            if ("water" in low_in or "ewater" in low_in) and "drank" in low_in:
+                oz_m = re.search(r"(\d+(?:\.\d+)?)\s*(?:fl\s*oz|oz|ounces?)", low_in)
+                if oz_m:
+                    st.session_state.water_drank_oz += float(oz_m.group(1))
+                    added_any = True
+            parsed = parse_natural_language_day(nl_input)
+            if parsed:
+                st.session_state.draft_day_items.extend(parsed)
+                added_any = True
+            if added_any:
                 st.rerun()
+            else:
+                st.warning("Type at least one food or water amount (e.g. '3 eggs' or 'drank 32 oz water').")
+        if b2.button("🔄 Replace Today's Table", use_container_width=True):
+            parsed = parse_natural_language_day(nl_input)
+            if parsed:
+                st.session_state.draft_day_items = parsed
+                st.rerun()
+        if b3.button("🗑️ Clear Today's Table", use_container_width=True):
+            st.session_state.draft_day_items = []
+            st.rerun()
 
     # 4. FOOD ENTRIES TABLE
+    st.markdown("#### 📋 Today's Food Entries (`Meal - Ingredient - Measured Amount`)")
     edited_draft = st.data_editor(
         draft_df,
         column_config={
@@ -611,7 +602,7 @@ with tab_logger:
         num_rows="dynamic",
         use_container_width=True,
         hide_index=True,
-        height=360,
+        height=380,
         key="draft_day_editor",
     )
 
@@ -677,7 +668,7 @@ with tab_logger:
 with tab_inv:
     header_col1, header_col2 = st.columns([1.8, 1.2])
     with header_col1:
-        st.subheader("📦 Kitchen Inventory (Unlimited Supply)")
+        st.subheader("📦 Kitchen Inventory (141 Items — Assumed Unlimited)")
     with header_col2:
         toggle_label = (
             "🙈 Hide Macro Counts (Simple View)"
@@ -764,6 +755,43 @@ with tab_inv:
         st.success("Saved changes to `FoodInventory.md`!")
         st.rerun()
 
+    add_col, del_col = st.columns(2, gap="large")
+    with add_col:
+        with st.container(border=True):
+            st.markdown("#### ➕ Add an Item to Kitchen Inventory")
+            new_item_name = st.text_input("Food Name", placeholder="e.g., Honey, Hot Sauce")
+            new_item_cat = st.selectbox("Category", CATEGORIES, key="new_cat")
+            if st.button("➕ Add Item", use_container_width=True):
+                if new_item_name.strip():
+                    st.session_state.inventory.append(
+                        {
+                            "name": new_item_name.strip(),
+                            "category": new_item_cat,
+                            "tags": "",
+                            "serving_size": "1 serving",
+                            "calories": 0.0,
+                            "protein_g": 0.0,
+                            "fat_g": 0.0,
+                            "carbs_g": 0.0,
+                            "fiber_g": 0.0,
+                        }
+                    )
+                    save_inventory(st.session_state.inventory)
+                    st.rerun()
+
+    with del_col:
+        with st.container(border=True):
+            st.markdown("#### 🗑️ Remove an Item You No Longer Have")
+            all_names = [x["name"] for x in st.session_state.inventory]
+            to_delete = st.selectbox("Select item to remove", options=["Select an item..."] + all_names)
+            if st.button("🗑️ Remove Item", use_container_width=True):
+                if to_delete != "Select an item...":
+                    st.session_state.inventory = [
+                        x for x in st.session_state.inventory if x["name"] != to_delete
+                    ]
+                    save_inventory(st.session_state.inventory)
+                    st.rerun()
+
 # ==============================================================================
 # TAB 3: SEPARATE RAW MEAT SECTION & RECEIPT UPLOADER
 # ==============================================================================
@@ -801,6 +829,64 @@ with tab_raw_meat:
                         st.session_state.raw_meats.pop(idx)
                         save_raw_meats(st.session_state.raw_meats)
                         st.rerun()
+
+    st.divider()
+    st.subheader("🧾 Upload a Grocery Receipt (Photo or Text)")
+    rc_up1, rc_up2 = st.columns(2)
+    with rc_up1:
+        uploaded_receipt = st.file_uploader("📸 Upload Receipt Image (PNG / JPG)", type=["png", "jpg", "jpeg", "webp"])
+    with rc_up2:
+        pasted_receipt_text = st.text_area("📋 Or Paste Receipt Text", height=100)
+
+    if st.button("🔍 Scan Receipt", type="primary"):
+        extracted_text = pasted_receipt_text.strip()
+        if uploaded_receipt is not None:
+            temp_path = "temp_receipt_upload.png"
+            with open(temp_path, "wb") as f:
+                f.write(uploaded_receipt.getvalue())
+            ocr_out = run_windows_ocr_on_image(temp_path)
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+            if ocr_out:
+                extracted_text = (extracted_text + "\n" + ocr_out).strip()
+        if extracted_text:
+            st.session_state.receipt_candidates = parse_receipt_text_into_items(extracted_text)
+
+    if st.session_state.receipt_candidates:
+        cand_df = pd.DataFrame(st.session_state.receipt_candidates)
+        edited_cand = st.data_editor(cand_df, use_container_width=True, hide_index=True)
+        if st.button("✅ Add Checked Items", type="primary"):
+            for _, row in edited_cand.iterrows():
+                if not row.get("Add"):
+                    continue
+                r_name = str(row["Item Name"]).strip()
+                if "Raw Meat" in str(row.get("Destination", "")):
+                    st.session_state.raw_meats.append(
+                        {
+                            "name": r_name,
+                            "amount": str(row.get("Raw Meat Weight (if meat)", "")).strip() or "In Fridge",
+                            "added_on": datetime.now().strftime("%Y-%m-%d"),
+                        }
+                    )
+                else:
+                    if not any(x["name"].lower() == r_name.lower() for x in st.session_state.inventory):
+                        st.session_state.inventory.append(
+                            {
+                                "name": r_name,
+                                "category": str(row.get("Category", "Cereals, Granola & Snacks")),
+                                "tags": "",
+                                "serving_size": "1 serving",
+                                "calories": 0.0,
+                                "protein_g": 0.0,
+                                "fat_g": 0.0,
+                                "carbs_g": 0.0,
+                                "fiber_g": 0.0,
+                            }
+                        )
+            save_raw_meats(st.session_state.raw_meats)
+            save_inventory(st.session_state.inventory)
+            st.session_state.receipt_candidates = []
+            st.rerun()
 
 # ==============================================================================
 # TAB 4: 35 RAW MEAT MEAL OPTIONS & CLICKABLE SUPER-SIMPLE RECIPES
@@ -868,20 +954,20 @@ with tab_recipes:
         if 0 <= sel_row_idx < len(filtered_recipes):
             st.session_state.selected_recipe_name = filtered_recipes[sel_row_idx]["name"]
 
-    with st.expander("📱 Quick-Tap Recipe Buttons", expanded=True):
-        btn_cols = st.columns(4)
-        for idx, r in enumerate(filtered_recipes):
-            is_selected = r["name"] == st.session_state.selected_recipe_name
-            badge = "✅" if r["status"].startswith("Ready") else "🛒"
-            with btn_cols[idx % 4]:
-                if st.button(
-                    f"{badge} {r['name']}",
-                    key=f"rec_btn_{idx}_{r['name']}",
-                    type="primary" if is_selected else "secondary",
-                    use_container_width=True,
-                ):
-                    st.session_state.selected_recipe_name = r["name"]
-                    st.rerun()
+    st.markdown("##### 👇 Tap any recipe button below to view the Super-Simple Recipe:")
+    btn_cols = st.columns(4)
+    for idx, r in enumerate(filtered_recipes):
+        is_selected = r["name"] == st.session_state.selected_recipe_name
+        badge = "✅" if r["status"].startswith("Ready") else "🛒"
+        with btn_cols[idx % 4]:
+            if st.button(
+                f"{badge} {r['name']}",
+                key=f"rec_btn_{idx}_{r['name']}",
+                type="primary" if is_selected else "secondary",
+                use_container_width=True,
+            ):
+                st.session_state.selected_recipe_name = r["name"]
+                st.rerun()
 
     active_recipe = next(
         (r for r in MEAT_RECIPES if r["name"] == st.session_state.selected_recipe_name),
@@ -894,8 +980,8 @@ with tab_recipes:
         st.markdown(
             f"""
             <div class="recipe-box">
-                <h3 style="margin-top:0; margin-bottom:6px;">🍽️ {active_recipe['name']} ({active_recipe['meat_type']})</h3>
-                <p style="margin-top:0; color:#cbd5e1;">
+                <h3 style="margin-top:0; margin-bottom:6px; color:#ffffff;">🍽️ {active_recipe['name']} ({active_recipe['meat_type']})</h3>
+                <p style="margin-top:0; color:#e2e8f0;">
                     <b>⏱️ Time:</b> {active_recipe['time']} &nbsp;|&nbsp;
                     <b>🔥 Best Method:</b> {active_recipe['recommended_method']} &nbsp;|&nbsp;
                     <b>⚡ Difficulty:</b> {active_recipe['difficulty']} &nbsp;|&nbsp;
