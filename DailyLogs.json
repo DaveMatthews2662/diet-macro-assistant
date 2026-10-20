@@ -2,6 +2,7 @@
   {
     "date": "2026-10-19",
     "timestamp": "2026-10-19T20:58:00-05:00",
+    "water_drank_oz": 64.0,
     "totals": {
       "calories": 1917,
       "midnight_buffer_remaining": 183,
@@ -11,18 +12,21 @@
       "carbs_g": 155.0,
       "fiber_total_g": 36.2,
       "fiber_whole_food_g": 36.2,
-      "fiber_gummy_g": 0.0
+      "fiber_gummy_g": 0.0,
+      "water_food_oz": 69.5,
+      "water_total_oz": 133.5
     },
     "entries": [
       {
         "Meal": "Gatorade Zero",
         "Ingredient": "G Zero Gatorade, All Flavors",
-        "Measured Amount": "2.5 cups (593g)",
+        "Measured Amount": "2.5 cups (20 fl oz)",
         "Calories": 3,
         "Protein": 0.0,
         "Fat": 0.0,
         "Carbs": 1.0,
         "Fiber": 0.0,
+        "Water (oz)": 20.0,
         "Gummy Fiber": false
       },
       {
@@ -34,6 +38,7 @@
         "Fat": 0.0,
         "Carbs": 7.0,
         "Fiber": 0.0,
+        "Water (oz)": 4.2,
         "Gummy Fiber": false
       },
       {
@@ -45,6 +50,7 @@
         "Fat": 6.0,
         "Carbs": 17.0,
         "Fiber": 2.0,
+        "Water (oz)": 0.1,
         "Gummy Fiber": false
       },
       {
@@ -56,6 +62,7 @@
         "Fat": 1.0,
         "Carbs": 12.0,
         "Fiber": 8.0,
+        "Water (oz)": 0.4,
         "Gummy Fiber": false
       },
       {
@@ -67,6 +74,7 @@
         "Fat": 4.5,
         "Carbs": 1.0,
         "Fiber": 0.0,
+        "Water (oz)": 4.1,
         "Gummy Fiber": false
       },
       {
@@ -78,6 +86,7 @@
         "Fat": 7.5,
         "Carbs": 4.0,
         "Fiber": 3.4,
+        "Water (oz)": 1.2,
         "Gummy Fiber": false
       },
       {
@@ -89,6 +98,7 @@
         "Fat": 0.7,
         "Carbs": 25.5,
         "Fiber": 11.0,
+        "Water (oz)": 3.3,
         "Gummy Fiber": false
       },
       {
@@ -100,6 +110,7 @@
         "Fat": 0.3,
         "Carbs": 0.0,
         "Fiber": 0.0,
+        "Water (oz)": 2.8,
         "Gummy Fiber": false
       },
       {
@@ -111,6 +122,7 @@
         "Fat": 0.0,
         "Carbs": 18.5,
         "Fiber": 1.0,
+        "Water (oz)": 0.5,
         "Gummy Fiber": false
       },
       {
@@ -122,6 +134,7 @@
         "Fat": 16.0,
         "Carbs": 0.0,
         "Fiber": 0.0,
+        "Water (oz)": 0.1,
         "Gummy Fiber": false
       },
       {
@@ -133,6 +146,7 @@
         "Fat": 12.3,
         "Carbs": 8.5,
         "Fiber": 0.9,
+        "Water (oz)": 0.1,
         "Gummy Fiber": false
       },
       {
@@ -144,6 +158,7 @@
         "Fat": 0.4,
         "Carbs": 33.0,
         "Fiber": 5.8,
+        "Water (oz)": 7.0,
         "Gummy Fiber": false
       },
       {
@@ -155,6 +170,7 @@
         "Fat": 0.1,
         "Carbs": 4.7,
         "Fiber": 1.0,
+        "Water (oz)": 1.2,
         "Gummy Fiber": false
       },
       {
@@ -166,6 +182,7 @@
         "Fat": 0.0,
         "Carbs": 6.0,
         "Fiber": 0.0,
+        "Water (oz)": 7.5,
         "Gummy Fiber": false
       },
       {
@@ -177,6 +194,7 @@
         "Fat": 1.2,
         "Carbs": 16.8,
         "Fiber": 1.1,
+        "Water (oz)": 0.0,
         "Gummy Fiber": false
       },
       {
@@ -188,6 +206,7 @@
         "Fat": 2.5,
         "Carbs": 0.0,
         "Fiber": 1.0,
+        "Water (oz)": 8.5,
         "Gummy Fiber": false
       },
       {
@@ -199,6 +218,7 @@
         "Fat": 2.5,
         "Carbs": 0.0,
         "Fiber": 1.0,
+        "Water (oz)": 8.5,
         "Gummy Fiber": false
       }
     ]
@@ -206,27 +226,31 @@
   {
     "date": "2026-10-18",
     "timestamp": "2026-10-18T21:30:00-05:00",
+    "water_drank_oz": 74.0,
     "totals": {
       "calories": 2044,
       "midnight_buffer_remaining": 56,
       "daily_ceiling": 2100,
-      "protein_g": 182.0,
-      "fat_g": 55.0,
-      "carbs_g": 181.0,
-      "fiber_total_g": 35.8,
-      "fiber_whole_food_g": 31.8,
-      "fiber_gummy_g": 4.0
+      "protein_g": 181.3,
+      "fat_g": 54.2,
+      "carbs_g": 180.7,
+      "fiber_total_g": 36.2,
+      "fiber_whole_food_g": 32.2,
+      "fiber_gummy_g": 4.0,
+      "water_food_oz": 65.2,
+      "water_total_oz": 139.2
     },
     "entries": [
       {
         "Meal": "Zero Cal Drinks",
-        "Ingredient": "A&W Root Beer Zero Sugar + G Zero Gatorade",
+        "Ingredient": "A&W Root Beer Zero Sugar (500ml) + G Zero Gatorade (1.5 bottles)",
         "Measured Amount": "5.8 cups",
         "Calories": 4,
         "Protein": 0.0,
         "Fat": 0.0,
         "Carbs": 2.0,
         "Fiber": 0.0,
+        "Water (oz)": 46.9,
         "Gummy Fiber": false
       },
       {
@@ -238,6 +262,7 @@
         "Fat": 3.0,
         "Carbs": 7.0,
         "Fiber": 0.0,
+        "Water (oz)": 4.0,
         "Gummy Fiber": false
       },
       {
@@ -249,6 +274,7 @@
         "Fat": 4.0,
         "Carbs": 12.0,
         "Fiber": 5.7,
+        "Water (oz)": 0.0,
         "Gummy Fiber": false
       },
       {
@@ -260,6 +286,7 @@
         "Fat": 0.0,
         "Carbs": 18.5,
         "Fiber": 1.0,
+        "Water (oz)": 0.5,
         "Gummy Fiber": false
       },
       {
@@ -271,17 +298,19 @@
         "Fat": 9.0,
         "Carbs": 3.5,
         "Fiber": 4.0,
+        "Water (oz)": 1.5,
         "Gummy Fiber": false
       },
       {
         "Meal": "Avocado Toast & Shrimp",
         "Ingredient": "Shrimp, Cooked from Fresh",
         "Measured Amount": "177g",
-        "Calories": 176,
+        "Calories": 175,
         "Protein": 40.8,
         "Fat": 1.0,
         "Carbs": 0.0,
         "Fiber": 0.0,
+        "Water (oz)": 4.5,
         "Gummy Fiber": false
       },
       {
@@ -293,6 +322,7 @@
         "Fat": 0.3,
         "Carbs": 30.0,
         "Fiber": 0.5,
+        "Water (oz)": 2.3,
         "Gummy Fiber": false
       },
       {
@@ -304,6 +334,7 @@
         "Fat": 13.5,
         "Carbs": 0.0,
         "Fiber": 0.0,
+        "Water (oz)": 0.0,
         "Gummy Fiber": false
       },
       {
@@ -315,17 +346,19 @@
         "Fat": 8.8,
         "Carbs": 0.0,
         "Fiber": 0.0,
+        "Water (oz)": 4.4,
         "Gummy Fiber": false
       },
       {
         "Meal": "Steak, Rice & Black Beans",
         "Ingredient": "Black Beans, Dried, Cooked",
         "Measured Amount": "95g",
-        "Calories": 109,
+        "Calories": 108,
         "Protein": 7.5,
         "Fat": 0.4,
         "Carbs": 17.0,
         "Fiber": 7.0,
+        "Water (oz)": 2.1,
         "Gummy Fiber": false
       },
       {
@@ -337,6 +370,7 @@
         "Fat": 10.0,
         "Carbs": 56.0,
         "Fiber": 9.0,
+        "Water (oz)": 3.2,
         "Gummy Fiber": false
       },
       {
@@ -348,6 +382,7 @@
         "Fat": 0.3,
         "Carbs": 16.5,
         "Fiber": 3.6,
+        "Water (oz)": 4.3,
         "Gummy Fiber": false
       },
       {
@@ -359,17 +394,19 @@
         "Fat": 1.5,
         "Carbs": 1.0,
         "Fiber": 0.0,
+        "Water (oz)": 0.4,
         "Gummy Fiber": false
       },
       {
         "Meal": "Crackers & Laughing Cow",
         "Ingredient": "Good Thins Rice Crackers, Garden Veggie",
         "Measured Amount": "30g",
-        "Calories": 125,
+        "Calories": 126,
         "Protein": 3.6,
         "Fat": 3.2,
         "Carbs": 17.5,
         "Fiber": 1.0,
+        "Water (oz)": 0.0,
         "Gummy Fiber": false
       },
       {
@@ -381,6 +418,7 @@
         "Fat": 0.0,
         "Carbs": 0.0,
         "Fiber": 4.0,
+        "Water (oz)": 0.0,
         "Gummy Fiber": true
       }
     ]

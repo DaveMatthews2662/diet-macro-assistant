@@ -1,11 +1,12 @@
 import json
 import os
+import re
 import time
 import urllib.request
 import urllib.parse
 from datetime import datetime
 from nl_logger_and_receipt import parse_natural_language_day
-from inventory_manager import load_raw_meats, save_raw_meats, load_inventory, save_inventory
+from inventory_manager import load_raw_meats, save_raw_meats
 
 TOKEN_FILE = ".telegram_token"
 
@@ -33,17 +34,7 @@ def handle_message(text: str) -> str:
         raw_meats = load_raw_meats()
         raw_meats.append({"name": meat_str, "amount": "In Fridge", "added_on": datetime.now().strftime("%Y-%m-%d")})
         save_raw_meats(raw_meats)
-        return f"🥩 Added **{meat_str}** to your Raw Meat list! You now have {len(raw_meats)} raw meat item(s)."
-
-    # Otherwise parse as daily food log
-    day_type = "Rest Day" if "rest day" in low else ("Workout Day" if "workout" in low else "Logged via Telegram")
-    items = parse_natural_language_day(text)
-    if not items:
-        return (
-            "🤖 I received your message! To log food, just text what you ate (e.g., *'3 eggs, 2 slices Sara Lee bread, "
-            "6 oz cooked chicken breast, Bibigo rice'*).\n\n"
-            "Or text *'Raw meat: 2 lbs Steak'* to add raw meat."
-        )
+        return f"🥩 Added *{meat_str}* to your Raw Meat list!"
 
     today_str = datetime.now().strftime("%Y-%m-%d")
     logs = []
@@ -54,47 +45,58 @@ def handle_message(text: str) -> str:
         except Exception:
             logs = []
 
-    # Find or create today's log
     today_log = next((x for x in logs if x.get("date") == today_str), None)
     if not today_log:
         today_log = {
             "date": today_str,
             "timestamp": datetime.now().isoformat(),
-            "training_split": day_type,
+            "water_drank_oz": 0.0,
             "totals": {},
-            "slots": {"Pre-workout": [], "Breakfast": [], "Lunch": [], "Dinner": [], "Snacks": []},
+            "entries": [],
         }
         logs.insert(0, today_log)
 
-    if day_type != "Logged via Telegram":
-        today_log["training_split"] = day_type
+    # Check if user texted about drinking water e.g. "just drank 32 oz of water" / "ewater"
+    if any(w in low for w in ["water", "ewater", "drank"]):
+        oz_m = re.search(r"(\d+(?:\.\d+)?)\s*(?:fl\s*oz|oz|ounces?)", low)
+        if oz_m and not any(f in low for f in ["chicken", "steak", "beef", "shrimp", "turkey"]):
+            added_oz = float(oz_m.group(1))
+            today_log["water_drank_oz"] = round(float(today_log.get("water_drank_oz", 0.0)) + added_oz, 1)
+            food_w = round(sum(float(x.get("Water (oz)", 0.0)) for x in today_log.get("entries", [])), 1)
+            total_w = round(today_log["water_drank_oz"] + food_w, 1)
+            today_log.setdefault("totals", {})["water_total_oz"] = total_w
+            with open("DailyLogs.json", "w", encoding="utf-8") as f:
+                json.dump(logs, f, indent=2)
+            pct_w = int(round(total_w / 126.0 * 100))
+            return (
+                f"💧 *Logged +{added_oz:g} fl oz of water!*\n"
+                f"• Plain Water Drank: *{today_log['water_drank_oz']:g} fl oz*\n"
+                f"• Water from Food/Drinks: *{food_w:g} fl oz*\n"
+                f"• *Total Water Today:* *{total_w:g} / 126 fl oz ({pct_w}%)*"
+            )
 
-    for it in items:
-        slot = it.get("Meal Slot", "Breakfast")
-        if slot not in today_log["slots"]:
-            today_log["slots"][slot] = []
-        today_log["slots"][slot].append(
-            {
-                "item": it["Food / Item"],
-                "measured_state": it.get("Raw / Cooked", "As Packaged"),
-                "calories": it["Calories"],
-                "protein_g": it["Protein (g)"],
-                "fat_g": it["Fat (g)"],
-                "carbs_g": it["Carbs (g)"],
-                "fiber_g": it["Fiber (g)"],
-                "is_gummy": it["Is Gummy Fiber"],
-            }
+    items = parse_natural_language_day(text)
+    if not items:
+        return (
+            "🤖 Text me what you ate or drank!\n"
+            "• Example: *'just drank 32 oz of water'*\n"
+            "• Example: *'avocado toast - sourdough - 40g'*\n"
+            "• Example: *'Raw meat: 2 lbs 93/7 ground beef'*"
         )
 
-    # Recompute totals
-    all_logged = [item for slot_list in today_log["slots"].values() for item in slot_list]
-    t_cal = sum(int(x.get("calories", 0)) for x in all_logged)
-    t_p = round(sum(float(x.get("protein_g", 0)) for x in all_logged), 1)
-    t_f = round(sum(float(x.get("fat_g", 0)) for x in all_logged), 1)
-    t_c = round(sum(float(x.get("carbs_g", 0)) for x in all_logged), 1)
-    t_fib = round(sum(float(x.get("fiber_g", 0)) for x in all_logged), 1)
-    t_gummy = round(sum(float(x.get("fiber_g", 0)) for x in all_logged if x.get("is_gummy")), 1)
+    today_log.setdefault("entries", []).extend(items)
+    all_entries = today_log["entries"]
+
+    t_cal = sum(int(x.get("Calories", 0)) for x in all_entries)
+    t_p = round(sum(float(x.get("Protein", 0)) for x in all_entries), 1)
+    t_f = round(sum(float(x.get("Fat", 0)) for x in all_entries), 1)
+    t_c = round(sum(float(x.get("Carbs", 0)) for x in all_entries), 1)
+    t_fib = round(sum(float(x.get("Fiber", 0)) for x in all_entries), 1)
+    t_gummy = round(sum(float(x.get("Fiber", 0)) for x in all_entries if x.get("Gummy Fiber")), 1)
     t_food_fib = round(max(0.0, t_fib - t_gummy), 1)
+    food_w = round(sum(float(x.get("Water (oz)", 0.0)) for x in all_entries), 1)
+    drank_w = float(today_log.get("water_drank_oz", 0.0))
+    total_w = round(food_w + drank_w, 1)
 
     today_log["totals"] = {
         "calories": t_cal,
@@ -106,30 +108,30 @@ def handle_message(text: str) -> str:
         "fiber_total_g": t_fib,
         "fiber_whole_food_g": t_food_fib,
         "fiber_gummy_g": t_gummy,
+        "water_food_oz": food_w,
+        "water_total_oz": total_w,
     }
 
     with open("DailyLogs.json", "w", encoding="utf-8") as f:
         json.dump(logs, f, indent=2)
 
-    added_names = ", ".join(x["Food / Item"] for x in items)
     return (
-        f"✅ *Added to Today ({today_log['training_split']}):*\n{added_names}\n\n"
-        f"📊 *Today's Running Totals & %:*\n"
-        f"• 🔥 Calories: *{t_cal} / 1,900 kcal* ({int(round(t_cal/1900*100))}%)\n"
-        f"• 🥩 Protein: *{t_p:g}g / 180g* ({int(round(t_p/180*100))}%)\n"
-        f"• 🥑 Fat: *{t_f:g}g / 55g* ({int(round(t_f/55*100))}%)\n"
-        f"• 🍚 Carbs: *{t_c:g}g / 170g* ({int(round(t_c/170*100))}%)\n"
-        f"• 🌾 Fiber: *{t_fib:g}g / 32g* ({int(round(t_fib/32*100))}%) — _{t_food_fib:g}g food / {t_gummy:g}g gummy_"
+        f"✅ *Logged {len(items)} item(s)!*\n\n"
+        f"• 🔥 Energy: *{t_cal} / 1,900 kcal* ({int(round(t_cal/1900*100))}%)\n"
+        f"• 🥩 Protein: *{t_p:g} / 180g* ({int(round(t_p/180*100))}%)\n"
+        f"• 🍚 Carbs: *{t_c:g} / 180g* ({int(round(t_c/180*100))}%)\n"
+        f"• 🥑 Fat: *{t_f:g} / 55g* ({int(round(t_f/55*100))}%)\n"
+        f"• 🌾 Fiber: *{t_fib:g} / 32g* ({int(round(t_fib/32*100))}%) — _{t_food_fib:g}g food / {t_gummy:g}g gummy_\n"
+        f"• 💧 Water: *{total_w:g} / 126 fl oz* ({int(round(total_w/126*100))}%)"
     )
 
 
 def run_polling():
     token = get_token()
     if not token:
-        print("No Telegram bot token found in .telegram_token or TELEGRAM_BOT_TOKEN.")
+        print("No Telegram bot token found.")
         return
 
-    print("Telegram bot polling started...")
     offset = 0
     while True:
         try:
@@ -144,7 +146,7 @@ def run_polling():
                     if chat_id and text:
                         reply = handle_message(text)
                         send_telegram_message(token, chat_id, reply)
-        except Exception as e:
+        except Exception:
             time.sleep(3)
 
 
