@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+.telegram_token
+.env
+temp_receipt_upload.png
