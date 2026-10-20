@@ -1,116 +1,162 @@
 # Deli & Canned Meats
-- Sliced turkey
-- Canned tuna
-- Canned chicken
-- Bacon
+- H-E-B Honey Turkey Breast Deli Meat (Sliced)
+- Starkist / H-E-B Chunk Light Canned Tuna in Water
+- Canned White Meat Chicken Breast in Water
+- H-E-B Thick Cut / Center Cut Bacon
 
 # Frozen Meat & Seafood
-- H-E-B Italian style meatballs (frozen raw)
-- Foster Farms crispy take-out wings
-- Tyson white meat chicken nuggets
-- Tyson crispy chicken strips
-- H-E-B maple flavor breakfast sausage
-- H-E-B wild caught Texas Gulf shrimp (large, raw, peeled, frozen)
-- Costco Ribeyes
-- Chicken breast
+- H-E-B Italian Style Meatballs (Frozen, Raw)
+- Foster Farms Take Out Crispy Chicken Wings (Frozen)
+- Tyson White Meat Chicken Nuggets (Frozen)
+- Tyson Crispy Chicken Breast Strips (Frozen)
+- H-E-B Maple Flavor Breakfast Sausage Links/Patties (Frozen)
+- H-E-B Wild Caught Texas Gulf Shrimp (Large, Raw, Peeled, Frozen)
+- Kirkland Signature (Costco) USDA Choice Ribeye Steaks (Frozen)
+- Boneless Skinless Chicken Breast Fillets (Frozen)
 
 # Dairy, Eggs & Protein Supplements
-- Eggs
-- H-E-B cage-free liquid egg whites
-- Fairlife fat-free milk
-- Fairlife 30g chocolate protein shakes
-- Premier Protein shakes (30g)
-- Oikos Pro 20g protein strawberry yogurt
-- Low-fat cottage cheese
-- Reduced-fat mozzarella cheese
-- Tillamook sharp cheddar individual packets
-- Babybel circular wax cheeses
-- The Laughing Cow Creamy Light spreadable cheese wedges
-- H-E-B cream cheese
-- Grated parmesan
-- Sour cream
-- Spray butter
-- Kerrygold butter
-- Whey protein powder
-- Fit PB Organic Roasted Peanut Powder (60 cal, 7g protein)
+- USDA Large Whole Eggs
+- H-E-B Cage-Free 100% Liquid Egg Whites
+- Fairlife Fat-Free Ultra-Filtered Lactose-Free Milk
+- Fairlife Nutrition Plan 30g Chocolate Protein Shakes
+- Premier Protein 30g Chocolate Protein Shakes
+- Oikos Pro 20g Protein Cultured Ultra-Filtered Yogurt (Strawberry)
+- Oikos Triple Zero Blended Greek Yogurt (100 Cal)
+- H-E-B Low-Fat Small Curd Cottage Cheese
+- H-E-B Reduced-Fat Shredded Mozzarella Cheese
+- Tillamook Sharp Cheddar Individual Cheese Portions (21g Packets)
+- Babybel Original Circular Wax Semisoft Cheeses
+- The Laughing Cow Creamy Light Swiss Cheese Wedges
+- H-E-B Regular Cream Cheese
+- Grated Parmesan Cheese
+- H-E-B Sour Cream
+- Kerrygold Pure Irish Salted Butter
+- Zero-Calorie Spray Butter
+- Whey Protein Isolate / Concentrate Powder
+- Fit PB Organic Roasted Peanut Powder (60 kcal, 7g Protein)
 
 # Produce (Fresh & Frozen)
-- Bananas
-- Apples
-- Oranges
-- Avocados
-- Carrots
-- Garlic cloves
-- Minced garlic
-- Fresh cilantro
-- Frozen blueberries (H-E-B)
-- Frozen strawberries (H-E-B)
-- Frozen bananas
-- H-E-B premier edamame
+- Fresh Bananas (Raw)
+- H-E-B Red Apples (Fresh / Sliced)
+- Fresh Navel Oranges (Raw)
+- Hass Avocados (Fresh)
+- Fresh Whole / Baby Carrots
+- Fresh Garlic Cloves
+- Fresh Cilantro Leaves
+- H-E-B Premier Shelled Edamame (Frozen)
+- H-E-B Whole Frozen Blueberries
+- H-E-B Whole Frozen Strawberries
+- Frozen Sliced Bananas
 
 # Bread, Tortillas & Bakery
-- Sara Lee Delightful bread (keto-friendly)
-- Sourdough bread
-- Thomas' brand bagels
-- Mission Carb Balance flour tortillas (70 cal)
-- Wasa Sourdough Swedish Style crispbread crackers
+- Thomas' Plain / Original Bagels
+- Sara Lee Delightful 45-Calorie Keto-Friendly Bread
+- H-E-B Higher Harvest Low-Carb Lifestyle Wheat Bread
+- Easy Tiger Sourdough Bread
+- Mission Carb Balance Soft Taco Flour Tortillas (70 kcal)
+- Wasa Sourdough Swedish Style Crispbread Crackers
 
 # Grains, Rice, Oats & Pasta
-- White rice
-- Brown rice
-- Jasmine rice
-- Bibigo sticky white rice (microwave individual packets)
-- Hill Country Fare quick heat long grain white rice
-- Ben's Original ready rice packets: Roasted Chicken, Whole Grain Brown, Spanish Style, Jasmine Rice, Garden Vegetable
-- Rolled oats
-- H-E-B Protein Instant Oatmeal (170 cal, 10g protein)
-- Pasta (assorted)
-- Barilla Protein+ Thin Spaghetti (10g protein)
-- Banza Chickpea Cheddar Mac & Cheese Shells (16g protein)
-- Higher Harvest by H-E-B Chickpea Elbows (12g protein)
-- Higher Harvest by H-E-B Chickpea Shells (12g protein)
-- Kraft Mac & Cheese
+- Old Fashioned Rolled Oats (Dry)
+- H-E-B Protein Instant Oatmeal Packets (170 kcal, 10g Protein)
+- Long-Grain White Rice (Dry / Cooked)
+- Whole-Grain Brown Rice (Dry / Cooked)
+- Bibigo Cooked Sticky White Rice (Microwave Individual Bowls)
+- Hill Country Fare Quick Heat Long-Grain White Rice
+- Ben's Original Ready Rice: Roasted Chicken
+- Ben's Original Ready Rice: Whole Grain Brown
+- Ben's Original Ready Rice: Spanish Style
+- Ben's Original Ready Rice: Jasmine Rice
+- Ben's Original Ready Rice: Garden Vegetable
+- Barilla Protein+ (10g Protein) Thin Spaghetti Pasta
+- Banza Chickpea Pasta Cheddar Mac & Cheese Shells (16g Protein)
+- Higher Harvest by H-E-B Gluten-Free Organic Chickpea Elbows (12g Protein)
+- Higher Harvest by H-E-B Gluten-Free Organic Chickpea Shells (12g Protein)
+- Kraft Original Macaroni & Cheese Dinner
+- Assorted Traditional Semolina Pasta
+- Italian Style Seasoned Bread Crumbs
 
 # Canned Beans, Broths & Sauces
-- H-E-B black beans
-- H-E-B pinto beans
-- Dark red kidney beans
-- Navy beans
-- Cento chickpeas
-- Bush's Baked Beans
-- H-E-B Baked Beans
-- Beef broth
-- Pasta sauce
-- Green chili enchilada sauce
+- H-E-B Canned Black Beans (Drained / Cooked)
+- H-E-B Canned Pinto Beans
+- Dark Red Kidney Beans (Canned)
+- Canned Navy Beans
+- Cento Canned Chickpeas (Garbanzo Beans)
+- Bush's Original / Homestyle Baked Beans
+- H-E-B Charro / Baked Beans
+- H-E-B Beef Broth
+- Marinara / Traditional Pasta Sauce
+- Green Chile Enchilada Sauce
 
 # Cereals, Granola & Snacks
-- Kashi GO cereal: Mixed Berry Crunch (10g protein, 10g fiber)
-- Kashi GO cereal: Chocolate Crunch (10g protein, 10g fiber)
-- Honey Nut Cheerios (Protein version)
-- Purely Elizabeth chocolate sea salt granola
-- Quaker lightly salted rice cakes
-- Good Thins Gluten Free corn snacks (130 cal)
-- Quest protein chips
-- Hill Country Fare popcorn: Light Butter & Kettle Corn
-- El Monterey bean and cheese burritos
-- Red Baron classic crust four-cheese pizza
+- Kashi GO Protein + Fiber Cereal: Mixed Berry Crunch (10g Protein, 10g Fiber)
+- Kashi GO Protein + Fiber Cereal: Chocolate Crunch (10g Protein, 10g Fiber)
+- General Mills Cheerios Protein: Honey Nut
+- Purely Elizabeth Ancient Grain Granola: Chocolate Sea Salt
+- Quaker Lightly Salted Rice Cakes
+- Good Thins Gluten-Free Corn & Rice Snacks (130 kcal)
+- Quest Tortilla Style Protein Chips
+- Hill Country Fare Microwave Popcorn: Light Butter
+- Hill Country Fare Microwave Popcorn: Kettle Corn
+- El Monterey Bean & Cheese Burritos (Frozen)
+- Red Baron Classic Crust Four Cheese Pizza (Frozen)
+- Raw / Roasted Cashews
+- Mixed Trail Mix
+- Seedless Raisins
 
 # Sweets & Treats
-- Halo Top vanilla bean ice cream
-- H-E-B Creamy Creations orange sherbet
-- Jell-O Sugar-Free Ready-to-Eat strawberry gelatin
-- Hershey's kisses
-- Hershey's chocolate syrup
-- Hershey's semi-sweet chocolate chips
-- Lindt Excellence 90% cocoa dark chocolate bar
-- Lindt Excellence caramel with touch of sea salt dark chocolate bar
-- Raisins
-- Trail mix
-- Cashews
+- Halo Top Light Ice Cream: Vanilla Bean
+- H-E-B Creamy Creations Orange Sherbet
+- Jell-O Sugar-Free Ready-to-Eat Strawberry Gelatin Cups
+- Hershey's Milk Chocolate Kisses
+- Hershey's Semi-Sweet Chocolate Chips
+- Hershey's Chocolate Syrup
+- Lindt Excellence 90% Cocoa Supreme Dark Chocolate Bar
+- Lindt Excellence Caramel with a Touch of Sea Salt Dark Chocolate Bar
+- Unsweetened / Cinnamon Applesauce
 
 # Condiments, Baking & Spices
-- Oils: Olive oil, Avocado oil
-- Sauces & Condiments: H-E-B mayonnaise, Soy sauce, Ketchup, Ranch, Italian dressing, Maple syrup, Applesauce, Peanut butter, Strawberry jelly, Grape jelly, Lime juice, Lemon juice, Minced ginger
-- Baking: Flour, Sugar, Pure vanilla extract
-- Seasonings: Kosher salt, Sea salt, Lowry's Seasoned Salt, Slap Ya Mama low sodium, Rajun Cajun seasoning, Lemon pepper, Garlic powder, Onion powder, Paprika, Ground cumin, Coarse black pepper, Ground cinnamon, Brown sugar cinnamon, Thyme, Oregano, Rosemary, Crushed red pepper, Nutmeg, H-E-B Everything bagel seasoning, H-E-B Everything + Ranch bagel seasoning
-- Drinks & Supplements: 0 Cal Soda, Gatorade Zero, Fiber gummies (max 10g fiber/day)
+- Extra Virgin Olive Oil
+- Pure Avocado Oil
+- Creamy Peanut Butter
+- H-E-B Real Mayonnaise
+- Soy Sauce
+- Tomato Ketchup
+- Ranch Dressing
+- Pure Maple Syrup
+- Strawberry Jelly / Jam
+- Concord Grape Jelly
+- 100% Lime Juice
+- 100% Lemon Juice
+- Minced Garlic (Jarred)
+- Minced Ginger (Jarred)
+- All-Purpose Enriched White Flour
+- Granulated White Sugar
+- Pure Vanilla Extract
+- Kosher Salt
+- Fine Sea Salt
+- Lawry's Seasoned Salt
+- H-E-B Bagel Not Included: Everything + Ranch Seasoning
+- H-E-B Bagel Not Included: Everything Bagel Seasoning
+- Slap Ya Mama Low-Sodium Cajun Seasoning
+- Rajun Cajun Seasoning
+- Lemon Pepper Seasoning
+- Italian Herb Seasoning Blend
+- Garlic Powder
+- Onion Powder
+- Smoked / Sweet Paprika
+- Ground Cumin
+- Coarse Ground Black Pepper
+- Ground Cinnamon
+- Brown Sugar Cinnamon Blend
+- Ground Ginger
+- Crushed Red Pepper Flakes
+- Dried Thyme Leaves
+- Dried Oregano Leaves
+- Dried Rosemary Leaves
+- Ground Nutmeg
+
+# Drinks & Supplements
+- Zero-Calorie Diet Soda (A&W Zero Sugar Root Beer, etc.)
+- Gatorade Zero (G Zero, All Flavors, 20 fl oz)
+- H-E-B Vitamin Fiber Gummies (Peach, Strawberry & Berry — Max 10g Fiber/Day)

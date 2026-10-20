@@ -105,7 +105,31 @@ if "selected_recipe_name" not in st.session_state:
     st.session_state.selected_recipe_name = MEAT_RECIPES[0]["name"]
 
 if "draft_day_items" not in st.session_state:
-    st.session_state.draft_day_items = []
+    initial_draft = []
+    if os.path.exists("DailyLogs.json"):
+        try:
+            with open("DailyLogs.json", "r", encoding="utf-8") as f:
+                saved_logs = json.load(f)
+            if saved_logs and isinstance(saved_logs, list):
+                latest = saved_logs[0]
+                for slot_name, slot_items in latest.get("slots", {}).items():
+                    for it in slot_items:
+                        initial_draft.append(
+                            {
+                                "Meal Slot": slot_name,
+                                "Raw / Cooked": it.get("measured_state", "As Packaged"),
+                                "Food / Item": it.get("item", ""),
+                                "Calories": int(it.get("calories", 0)),
+                                "Protein (g)": float(it.get("protein_g", 0.0)),
+                                "Fat (g)": float(it.get("fat_g", 0.0)),
+                                "Carbs (g)": float(it.get("carbs_g", 0.0)),
+                                "Fiber (g)": float(it.get("fiber_g", 0.0)),
+                                "Is Gummy Fiber": bool(it.get("is_gummy", False)),
+                            }
+                        )
+        except Exception:
+            initial_draft = []
+    st.session_state.draft_day_items = initial_draft
 
 if "receipt_candidates" not in st.session_state:
     st.session_state.receipt_candidates = []
@@ -474,6 +498,24 @@ with tab_logger:
             render_pct_bar("🍚 Carbs", totals.get("carbs_g", 0), 180, "g", "#a855f7")
             render_pct_bar("🌾 Total Fiber", totals.get("fiber_total_g", 0), 32, "g", "#10b981")
             render_pct_bar("🥦 Whole-Food Fiber", totals.get("fiber_whole_food_g", 0), 22, "g", "#14b8a6")
+
+        hist_rows = []
+        for s_name in ["Pre-workout", "Breakfast", "Lunch", "Dinner", "Snacks"]:
+            for s_it in active_log.get("slots", {}).get(s_name, []):
+                hist_rows.append(
+                    {
+                        "Meal Slot": s_name,
+                        "Measured State": s_it.get("measured_state", "As Packaged"),
+                        "Food / Item": s_it.get("item", ""),
+                        "Calories": s_it.get("calories", 0),
+                        "Protein (g)": s_it.get("protein_g", 0),
+                        "Fat (g)": s_it.get("fat_g", 0),
+                        "Carbs (g)": s_it.get("carbs_g", 0),
+                        "Fiber (g)": s_it.get("fiber_g", 0),
+                    }
+                )
+        if hist_rows:
+            st.dataframe(pd.DataFrame(hist_rows), use_container_width=True, hide_index=True)
 
 # ==============================================================================
 # TAB 2: KITCHEN INVENTORY (UNLIMITED — NO IN-STOCK OR WEIGHT FIELDS)

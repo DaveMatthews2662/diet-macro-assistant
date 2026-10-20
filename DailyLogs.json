@@ -1,1 +1,378 @@
-[]
+[
+  {
+    "date": "2026-10-19",
+    "timestamp": "2026-10-19T20:58:00-05:00",
+    "training_split": "Cronometer Log (Today)",
+    "totals": {
+      "calories": 1917,
+      "midnight_buffer_remaining": 183,
+      "daily_ceiling": 2100,
+      "protein_g": 182.0,
+      "fat_g": 55.0,
+      "carbs_g": 155.0,
+      "fiber_total_g": 36.2,
+      "fiber_whole_food_g": 36.2,
+      "fiber_gummy_g": 0.0
+    },
+    "slots": {
+      "Pre-workout": [
+        {
+          "item": "G Zero Gatorade, All Flavors (1 bottle - 20 fl oz / 593g)",
+          "measured_state": "As Packaged",
+          "calories": 3,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 1.0,
+          "fiber_g": 0.0,
+          "is_gummy": false
+        }
+      ],
+      "Breakfast": [
+        {
+          "item": "Oikos Triple Zero Blended Yogurt, Blueberry (1 Cup - 150g)",
+          "measured_state": "As Packaged",
+          "calories": 100,
+          "protein_g": 15.0,
+          "fat_g": 0.0,
+          "carbs_g": 7.0,
+          "fiber_g": 0.0,
+          "is_gummy": false
+        },
+        {
+          "item": "Purely Elizabeth Ancient Grain Granola, Chocolate Sea Salt (30g)",
+          "measured_state": "As Packaged",
+          "calories": 130,
+          "protein_g": 3.0,
+          "fat_g": 6.0,
+          "carbs_g": 17.0,
+          "fiber_g": 2.0,
+          "is_gummy": false
+        }
+      ],
+      "Lunch": [
+        {
+          "item": "H-E-B Higher Harvest Low-Carb Lifestyle Wheat Bread (2 slices - 28g)",
+          "measured_state": "As Packaged",
+          "calories": 60,
+          "protein_g": 6.0,
+          "fat_g": 1.0,
+          "carbs_g": 12.0,
+          "fiber_g": 8.0,
+          "is_gummy": false
+        },
+        {
+          "item": "H-E-B Honey Turkey Breast Deli Meat (163g)",
+          "measured_state": "As Packaged",
+          "calories": 204,
+          "protein_g": 28.0,
+          "fat_g": 4.5,
+          "carbs_g": 1.0,
+          "fiber_g": 0.0,
+          "is_gummy": false
+        },
+        {
+          "item": "Hass Avocado (50g)",
+          "measured_state": "Raw",
+          "calories": 83,
+          "protein_g": 1.0,
+          "fat_g": 7.5,
+          "carbs_g": 4.0,
+          "fiber_g": 3.4,
+          "is_gummy": false
+        }
+      ],
+      "Dinner": [
+        {
+          "item": "Black Beans, Dried, Cooked (150g)",
+          "measured_state": "Cooked",
+          "calories": 171,
+          "protein_g": 11.5,
+          "fat_g": 0.7,
+          "carbs_g": 25.5,
+          "fiber_g": 11.0,
+          "is_gummy": false
+        },
+        {
+          "item": "Shrimp, Cooked from Fresh (110g)",
+          "measured_state": "Cooked",
+          "calories": 109,
+          "protein_g": 26.5,
+          "fat_g": 0.3,
+          "carbs_g": 0.0,
+          "fiber_g": 0.0,
+          "is_gummy": false
+        },
+        {
+          "item": "Easy Tiger Sourdough Bread (40g)",
+          "measured_state": "As Packaged",
+          "calories": 98,
+          "protein_g": 4.0,
+          "fat_g": 0.0,
+          "carbs_g": 18.5,
+          "fiber_g": 1.0,
+          "is_gummy": false
+        },
+        {
+          "item": "Kerrygold Salted Butter (20g)",
+          "measured_state": "As Packaged",
+          "calories": 143,
+          "protein_g": 0.0,
+          "fat_g": 16.0,
+          "carbs_g": 0.0,
+          "fiber_g": 0.0,
+          "is_gummy": false
+        }
+      ],
+      "Snacks": [
+        {
+          "item": "Cashews, Raw (28g)",
+          "measured_state": "Raw",
+          "calories": 149,
+          "protein_g": 5.1,
+          "fat_g": 12.3,
+          "carbs_g": 8.5,
+          "fiber_g": 0.9,
+          "is_gummy": false
+        },
+        {
+          "item": "H-E-B Red Apples, Sliced (242g)",
+          "measured_state": "Raw",
+          "calories": 132,
+          "protein_g": 0.6,
+          "fat_g": 0.4,
+          "carbs_g": 33.0,
+          "fiber_g": 5.8,
+          "is_gummy": false
+        },
+        {
+          "item": "Oranges, Raw (40g)",
+          "measured_state": "Raw",
+          "calories": 19,
+          "protein_g": 0.4,
+          "fat_g": 0.1,
+          "carbs_g": 4.7,
+          "fiber_g": 1.0,
+          "is_gummy": false
+        },
+        {
+          "item": "Fairlife Fat-Free Ultra-Filtered Milk (1 cup - 240 ml)",
+          "measured_state": "As Packaged",
+          "calories": 80,
+          "protein_g": 13.0,
+          "fat_g": 0.0,
+          "carbs_g": 6.0,
+          "fiber_g": 0.0,
+          "is_gummy": false
+        },
+        {
+          "item": "General Mills Cheerios Protein, Honey Nut (30g)",
+          "measured_state": "As Packaged",
+          "calories": 114,
+          "protein_g": 5.0,
+          "fat_g": 1.2,
+          "carbs_g": 16.8,
+          "fiber_g": 1.1,
+          "is_gummy": false
+        },
+        {
+          "item": "Premier Protein Shake, Chocolate (1 carton - 341g)",
+          "measured_state": "As Packaged",
+          "calories": 161,
+          "protein_g": 31.4,
+          "fat_g": 2.5,
+          "carbs_g": 0.0,
+          "fiber_g": 1.0,
+          "is_gummy": false
+        },
+        {
+          "item": "Premier Protein Shake, Chocolate (1 carton - 341g)",
+          "measured_state": "As Packaged",
+          "calories": 161,
+          "protein_g": 31.5,
+          "fat_g": 2.5,
+          "carbs_g": 0.0,
+          "fiber_g": 1.0,
+          "is_gummy": false
+        }
+      ]
+    }
+  },
+  {
+    "date": "2026-10-18",
+    "timestamp": "2026-10-18T21:30:00-05:00",
+    "training_split": "Cronometer Log (Yesterday)",
+    "totals": {
+      "calories": 2044,
+      "midnight_buffer_remaining": 56,
+      "daily_ceiling": 2100,
+      "protein_g": 182.0,
+      "fat_g": 55.0,
+      "carbs_g": 181.0,
+      "fiber_total_g": 35.8,
+      "fiber_whole_food_g": 31.8,
+      "fiber_gummy_g": 4.0
+    },
+    "slots": {
+      "Pre-workout": [
+        {
+          "item": "A&W Root Beer, Zero Sugar (500 ml) + G Zero Gatorade (1.5 bottles)",
+          "measured_state": "As Packaged",
+          "calories": 4,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 2.0,
+          "fiber_g": 0.0,
+          "is_gummy": false
+        }
+      ],
+      "Breakfast": [
+        {
+          "item": "Oikos Pro Strawberry Yogurt (1 container - 150g)",
+          "measured_state": "As Packaged",
+          "calories": 130,
+          "protein_g": 20.0,
+          "fat_g": 3.0,
+          "carbs_g": 7.0,
+          "fiber_g": 0.0,
+          "is_gummy": false
+        },
+        {
+          "item": "Kashi GO Protein + Fiber Cereal, Chocolate Crunch (30g)",
+          "measured_state": "As Packaged",
+          "calories": 117,
+          "protein_g": 6.0,
+          "fat_g": 4.0,
+          "carbs_g": 12.0,
+          "fiber_g": 5.7,
+          "is_gummy": false
+        }
+      ],
+      "Lunch": [
+        {
+          "item": "Easy Tiger Sourdough Bread (40g)",
+          "measured_state": "As Packaged",
+          "calories": 98,
+          "protein_g": 4.0,
+          "fat_g": 0.0,
+          "carbs_g": 18.5,
+          "fiber_g": 1.0,
+          "is_gummy": false
+        },
+        {
+          "item": "Hass Avocado (60g)",
+          "measured_state": "Raw",
+          "calories": 100,
+          "protein_g": 1.2,
+          "fat_g": 9.0,
+          "carbs_g": 3.5,
+          "fiber_g": 4.0,
+          "is_gummy": false
+        },
+        {
+          "item": "Shrimp, Cooked from Fresh (177g)",
+          "measured_state": "Cooked",
+          "calories": 176,
+          "protein_g": 40.8,
+          "fat_g": 1.0,
+          "carbs_g": 0.0,
+          "fiber_g": 0.0,
+          "is_gummy": false
+        }
+      ],
+      "Dinner": [
+        {
+          "item": "Rice, White, Cooked (100g)",
+          "measured_state": "Cooked",
+          "calories": 147,
+          "protein_g": 3.0,
+          "fat_g": 0.3,
+          "carbs_g": 30.0,
+          "fiber_g": 0.5,
+          "is_gummy": false
+        },
+        {
+          "item": "Olive Oil (1 tbsp - 13g)",
+          "measured_state": "As Packaged",
+          "calories": 119,
+          "protein_g": 0.0,
+          "fat_g": 13.5,
+          "carbs_g": 0.0,
+          "fiber_g": 0.0,
+          "is_gummy": false
+        },
+        {
+          "item": "Beef, Top Round Steak, Lean, Cooked, Braised (217g)",
+          "measured_state": "Cooked",
+          "calories": 412,
+          "protein_g": 79.5,
+          "fat_g": 8.8,
+          "carbs_g": 0.0,
+          "fiber_g": 0.0,
+          "is_gummy": false
+        },
+        {
+          "item": "Black Beans, Dried, Cooked (95g)",
+          "measured_state": "Cooked",
+          "calories": 109,
+          "protein_g": 7.5,
+          "fat_g": 0.4,
+          "carbs_g": 17.0,
+          "fiber_g": 7.0,
+          "is_gummy": false
+        }
+      ],
+      "Snacks": [
+        {
+          "item": "Taco Bell Bean Burrito (1 burrito - 185g)",
+          "measured_state": "As Packaged",
+          "calories": 387,
+          "protein_g": 14.0,
+          "fat_g": 10.0,
+          "carbs_g": 56.0,
+          "fiber_g": 9.0,
+          "is_gummy": false
+        },
+        {
+          "item": "H-E-B Red Apples, Sliced (150g)",
+          "measured_state": "Raw",
+          "calories": 82,
+          "protein_g": 0.4,
+          "fat_g": 0.3,
+          "carbs_g": 16.5,
+          "fiber_g": 3.6,
+          "is_gummy": false
+        },
+        {
+          "item": "The Laughing Cow Light Wedge (1 wedge - 21g)",
+          "measured_state": "As Packaged",
+          "calories": 28,
+          "protein_g": 2.0,
+          "fat_g": 1.5,
+          "carbs_g": 1.0,
+          "fiber_g": 0.0,
+          "is_gummy": false
+        },
+        {
+          "item": "Good Thins Rice Crackers, Garden Veggie (30g)",
+          "measured_state": "As Packaged",
+          "calories": 125,
+          "protein_g": 3.6,
+          "fat_g": 3.2,
+          "carbs_g": 17.5,
+          "fiber_g": 1.0,
+          "is_gummy": false
+        },
+        {
+          "item": "H-E-B Vitamin Fiber Gummies, Peach, Strawberry & Berry (2 gummies)",
+          "measured_state": "As Packaged",
+          "calories": 10,
+          "protein_g": 0.0,
+          "fat_g": 0.0,
+          "carbs_g": 0.0,
+          "fiber_g": 4.0,
+          "is_gummy": true
+        }
+      ]
+    }
+  }
+]

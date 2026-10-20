@@ -52,3 +52,4 @@ def sync_file_to_github(filepath: str, commit_message: str = "Update from phone 
         return put_resp.status_code in (200, 201)
     except Exception:
         return False
+

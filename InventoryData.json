@@ -1,17 +1,17 @@
 [
   {
-    "name": "Sliced turkey",
+    "name": "H-E-B Honey Turkey Breast Deli Meat (Sliced)",
     "category": "Deli & Canned Meats",
     "tags": "\ud83e\udd69 Lean Protein, \ud83c\udf19 Midnight Snacks",
     "serving_size": "4 oz (112g)",
-    "calories": 100.0,
+    "calories": 140.0,
     "protein_g": 20.0,
-    "fat_g": 1.5,
-    "carbs_g": 2.0,
+    "fat_g": 3.0,
+    "carbs_g": 1.0,
     "fiber_g": 0.0
   },
   {
-    "name": "Canned tuna",
+    "name": "Starkist / H-E-B Chunk Light Canned Tuna in Water",
     "category": "Deli & Canned Meats",
     "tags": "\ud83e\udd69 Lean Protein",
     "serving_size": "1 can drained",
@@ -22,7 +22,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Canned chicken",
+    "name": "Canned White Meat Chicken Breast in Water",
     "category": "Deli & Canned Meats",
     "tags": "\ud83e\udd69 Lean Protein",
     "serving_size": "4 oz drained",
@@ -33,7 +33,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Bacon",
+    "name": "H-E-B Thick Cut / Center Cut Bacon",
     "category": "Deli & Canned Meats",
     "tags": "",
     "serving_size": "2 slices pan-fried",
@@ -44,7 +44,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "H-E-B Italian style meatballs (frozen raw)",
+    "name": "H-E-B Italian Style Meatballs (Frozen, Raw)",
     "category": "Frozen Meat & Seafood",
     "tags": "",
     "serving_size": "3 oz (85g)",
@@ -55,7 +55,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Foster Farms crispy take-out wings",
+    "name": "Foster Farms Take Out Crispy Chicken Wings (Frozen)",
     "category": "Frozen Meat & Seafood",
     "tags": "",
     "serving_size": "3 oz (84g)",
@@ -66,7 +66,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Tyson white meat chicken nuggets",
+    "name": "Tyson White Meat Chicken Nuggets (Frozen)",
     "category": "Frozen Meat & Seafood",
     "tags": "",
     "serving_size": "5 nuggets (90g)",
@@ -77,7 +77,7 @@
     "fiber_g": 1.0
   },
   {
-    "name": "Tyson crispy chicken strips",
+    "name": "Tyson Crispy Chicken Breast Strips (Frozen)",
     "category": "Frozen Meat & Seafood",
     "tags": "",
     "serving_size": "3 oz (84g)",
@@ -88,7 +88,7 @@
     "fiber_g": 1.0
   },
   {
-    "name": "H-E-B maple flavor breakfast sausage",
+    "name": "H-E-B Maple Flavor Breakfast Sausage Links/Patties (Frozen)",
     "category": "Frozen Meat & Seafood",
     "tags": "",
     "serving_size": "2 links / 1 patty",
@@ -99,7 +99,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "H-E-B wild caught Texas Gulf shrimp (large, raw, peeled, frozen)",
+    "name": "H-E-B Wild Caught Texas Gulf Shrimp (Large, Raw, Peeled, Frozen)",
     "category": "Frozen Meat & Seafood",
     "tags": "\ud83e\udd69 Lean Protein",
     "serving_size": "4 oz (112g)",
@@ -110,7 +110,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Costco Ribeyes",
+    "name": "Kirkland Signature (Costco) USDA Choice Ribeye Steaks (Frozen)",
     "category": "Frozen Meat & Seafood",
     "tags": "",
     "serving_size": "4 oz raw (112g)",
@@ -121,7 +121,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Chicken breast",
+    "name": "Boneless Skinless Chicken Breast Fillets (Frozen)",
     "category": "Frozen Meat & Seafood",
     "tags": "\ud83e\udd69 Lean Protein",
     "serving_size": "4 oz raw (112g)",
@@ -132,10 +132,10 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Eggs",
+    "name": "USDA Large Whole Eggs",
     "category": "Dairy, Eggs & Protein Supplements",
     "tags": "\ud83e\udd69 Lean Protein",
-    "serving_size": "1 large egg",
+    "serving_size": "1 large egg (50g)",
     "calories": 70.0,
     "protein_g": 6.0,
     "fat_g": 5.0,
@@ -143,7 +143,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "H-E-B cage-free liquid egg whites",
+    "name": "H-E-B Cage-Free 100% Liquid Egg Whites",
     "category": "Dairy, Eggs & Protein Supplements",
     "tags": "\ud83e\udd69 Lean Protein",
     "serving_size": "100g (~6 tbsp)",
@@ -154,7 +154,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Fairlife fat-free milk",
+    "name": "Fairlife Fat-Free Ultra-Filtered Lactose-Free Milk",
     "category": "Dairy, Eggs & Protein Supplements",
     "tags": "\ud83e\udd69 Lean Protein, \ud83c\udf19 Midnight Snacks",
     "serving_size": "1 cup (240ml)",
@@ -165,10 +165,10 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Fairlife 30g chocolate protein shakes",
+    "name": "Fairlife Nutrition Plan 30g Chocolate Protein Shakes",
     "category": "Dairy, Eggs & Protein Supplements",
     "tags": "\ud83e\udd69 Lean Protein, \ud83c\udf19 Midnight Snacks",
-    "serving_size": "1 bottle (11.5 oz)",
+    "serving_size": "1 bottle (11.5 fl oz)",
     "calories": 150.0,
     "protein_g": 30.0,
     "fat_g": 2.5,
@@ -176,10 +176,10 @@
     "fiber_g": 1.0
   },
   {
-    "name": "Premier Protein shakes (30g)",
+    "name": "Premier Protein 30g Chocolate Protein Shakes",
     "category": "Dairy, Eggs & Protein Supplements",
     "tags": "\ud83e\udd69 Lean Protein, \ud83c\udf19 Midnight Snacks",
-    "serving_size": "1 shake (11 oz)",
+    "serving_size": "1 carton (11 fl oz)",
     "calories": 160.0,
     "protein_g": 30.0,
     "fat_g": 3.0,
@@ -187,18 +187,29 @@
     "fiber_g": 1.0
   },
   {
-    "name": "Oikos Pro 20g protein strawberry yogurt",
+    "name": "Oikos Pro 20g Protein Cultured Ultra-Filtered Yogurt (Strawberry)",
     "category": "Dairy, Eggs & Protein Supplements",
     "tags": "\ud83e\udd69 Lean Protein, \ud83c\udf19 Midnight Snacks",
     "serving_size": "1 cup (150g)",
-    "calories": 140.0,
+    "calories": 130.0,
     "protein_g": 20.0,
     "fat_g": 3.0,
-    "carbs_g": 8.0,
+    "carbs_g": 7.0,
     "fiber_g": 0.0
   },
   {
-    "name": "Low-fat cottage cheese",
+    "name": "Oikos Triple Zero Blended Greek Yogurt (100 Cal)",
+    "category": "Dairy, Eggs & Protein Supplements",
+    "tags": "\ud83e\udd69 Lean Protein, \ud83c\udf19 Midnight Snacks",
+    "serving_size": "1 cup (150g)",
+    "calories": 100.0,
+    "protein_g": 15.0,
+    "fat_g": 0.0,
+    "carbs_g": 7.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "H-E-B Low-Fat Small Curd Cottage Cheese",
     "category": "Dairy, Eggs & Protein Supplements",
     "tags": "\ud83e\udd69 Lean Protein, \ud83c\udf19 Midnight Snacks",
     "serving_size": "1/2 cup (113g)",
@@ -209,7 +220,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Reduced-fat mozzarella cheese",
+    "name": "H-E-B Reduced-Fat Shredded Mozzarella Cheese",
     "category": "Dairy, Eggs & Protein Supplements",
     "tags": "\ud83e\udd69 Lean Protein",
     "serving_size": "1/4 cup (28g)",
@@ -220,7 +231,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Tillamook sharp cheddar individual packets",
+    "name": "Tillamook Sharp Cheddar Individual Cheese Portions (21g Packets)",
     "category": "Dairy, Eggs & Protein Supplements",
     "tags": "\ud83c\udf19 Midnight Snacks",
     "serving_size": "1 packet (21g)",
@@ -231,7 +242,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Babybel circular wax cheeses",
+    "name": "Babybel Original Circular Wax Semisoft Cheeses",
     "category": "Dairy, Eggs & Protein Supplements",
     "tags": "\ud83c\udf19 Midnight Snacks",
     "serving_size": "1 piece (21g)",
@@ -242,7 +253,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "The Laughing Cow Creamy Light spreadable cheese wedges",
+    "name": "The Laughing Cow Creamy Light Swiss Cheese Wedges",
     "category": "Dairy, Eggs & Protein Supplements",
     "tags": "\ud83c\udf19 Midnight Snacks",
     "serving_size": "1 wedge (21g)",
@@ -253,7 +264,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "H-E-B cream cheese",
+    "name": "H-E-B Regular Cream Cheese",
     "category": "Dairy, Eggs & Protein Supplements",
     "tags": "",
     "serving_size": "1 serving",
@@ -264,7 +275,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Grated parmesan",
+    "name": "Grated Parmesan Cheese",
     "category": "Dairy, Eggs & Protein Supplements",
     "tags": "",
     "serving_size": "1 serving",
@@ -275,7 +286,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Sour cream",
+    "name": "H-E-B Sour Cream",
     "category": "Dairy, Eggs & Protein Supplements",
     "tags": "",
     "serving_size": "1 serving",
@@ -286,7 +297,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Spray butter",
+    "name": "Kerrygold Pure Irish Salted Butter",
     "category": "Dairy, Eggs & Protein Supplements",
     "tags": "",
     "serving_size": "1 serving",
@@ -297,7 +308,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Kerrygold butter",
+    "name": "Zero-Calorie Spray Butter",
     "category": "Dairy, Eggs & Protein Supplements",
     "tags": "",
     "serving_size": "1 serving",
@@ -308,7 +319,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Whey protein powder",
+    "name": "Whey Protein Isolate / Concentrate Powder",
     "category": "Dairy, Eggs & Protein Supplements",
     "tags": "\ud83e\udd69 Lean Protein, \ud83c\udf19 Midnight Snacks",
     "serving_size": "1 scoop (~31g)",
@@ -319,7 +330,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Fit PB Organic Roasted Peanut Powder (60 cal, 7g protein)",
+    "name": "Fit PB Organic Roasted Peanut Powder (60 kcal, 7g Protein)",
     "category": "Dairy, Eggs & Protein Supplements",
     "tags": "\ud83e\udd69 Lean Protein, \ud83c\udf19 Midnight Snacks",
     "serving_size": "2 tbsp (16g)",
@@ -330,7 +341,7 @@
     "fiber_g": 2.0
   },
   {
-    "name": "Bananas",
+    "name": "Fresh Bananas (Raw)",
     "category": "Produce (Fresh & Frozen)",
     "tags": "\u26a1 Pre-Workout Carbs, \ud83c\udf3e High Whole-Food Fiber",
     "serving_size": "1 medium (118g)",
@@ -341,7 +352,7 @@
     "fiber_g": 3.0
   },
   {
-    "name": "Apples",
+    "name": "H-E-B Red Apples (Fresh / Sliced)",
     "category": "Produce (Fresh & Frozen)",
     "tags": "\ud83c\udf3e High Whole-Food Fiber, \u26a1 Pre-Workout Carbs, \ud83c\udf19 Midnight Snacks",
     "serving_size": "1 medium (182g)",
@@ -352,7 +363,7 @@
     "fiber_g": 4.5
   },
   {
-    "name": "Oranges",
+    "name": "Fresh Navel Oranges (Raw)",
     "category": "Produce (Fresh & Frozen)",
     "tags": "\ud83c\udf3e High Whole-Food Fiber, \u26a1 Pre-Workout Carbs",
     "serving_size": "1 medium (131g)",
@@ -363,18 +374,18 @@
     "fiber_g": 3.0
   },
   {
-    "name": "Avocados",
+    "name": "Hass Avocados (Fresh)",
     "category": "Produce (Fresh & Frozen)",
     "tags": "\ud83c\udf3e High Whole-Food Fiber",
-    "serving_size": "1/2 medium (75g)",
-    "calories": 120.0,
-    "protein_g": 1.5,
-    "fat_g": 11.0,
-    "carbs_g": 6.0,
-    "fiber_g": 5.0
+    "serving_size": "50g (~1/3 medium)",
+    "calories": 83.0,
+    "protein_g": 1.0,
+    "fat_g": 7.5,
+    "carbs_g": 4.0,
+    "fiber_g": 3.4
   },
   {
-    "name": "Carrots",
+    "name": "Fresh Whole / Baby Carrots",
     "category": "Produce (Fresh & Frozen)",
     "tags": "\ud83c\udf3e High Whole-Food Fiber",
     "serving_size": "1 cup (128g)",
@@ -385,7 +396,7 @@
     "fiber_g": 3.5
   },
   {
-    "name": "Garlic cloves",
+    "name": "Fresh Garlic Cloves",
     "category": "Produce (Fresh & Frozen)",
     "tags": "",
     "serving_size": "1 serving",
@@ -396,7 +407,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Minced garlic",
+    "name": "Fresh Cilantro Leaves",
     "category": "Produce (Fresh & Frozen)",
     "tags": "",
     "serving_size": "1 serving",
@@ -407,51 +418,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Fresh cilantro",
-    "category": "Produce (Fresh & Frozen)",
-    "tags": "",
-    "serving_size": "1 serving",
-    "calories": 0.0,
-    "protein_g": 0.0,
-    "fat_g": 0.0,
-    "carbs_g": 0.0,
-    "fiber_g": 0.0
-  },
-  {
-    "name": "Frozen blueberries (H-E-B)",
-    "category": "Produce (Fresh & Frozen)",
-    "tags": "\ud83c\udf3e High Whole-Food Fiber, \u26a1 Pre-Workout Carbs, \ud83c\udf19 Midnight Snacks",
-    "serving_size": "1 cup (140g)",
-    "calories": 80.0,
-    "protein_g": 1.0,
-    "fat_g": 0.5,
-    "carbs_g": 19.0,
-    "fiber_g": 4.0
-  },
-  {
-    "name": "Frozen strawberries (H-E-B)",
-    "category": "Produce (Fresh & Frozen)",
-    "tags": "\ud83c\udf3e High Whole-Food Fiber, \ud83c\udf19 Midnight Snacks",
-    "serving_size": "1 cup (140g)",
-    "calories": 50.0,
-    "protein_g": 1.0,
-    "fat_g": 0.0,
-    "carbs_g": 12.0,
-    "fiber_g": 3.0
-  },
-  {
-    "name": "Frozen bananas",
-    "category": "Produce (Fresh & Frozen)",
-    "tags": "",
-    "serving_size": "1 serving",
-    "calories": 0.0,
-    "protein_g": 0.0,
-    "fat_g": 0.0,
-    "carbs_g": 0.0,
-    "fiber_g": 0.0
-  },
-  {
-    "name": "H-E-B premier edamame",
+    "name": "H-E-B Premier Shelled Edamame (Frozen)",
     "category": "Produce (Fresh & Frozen)",
     "tags": "\ud83c\udf3e High Whole-Food Fiber, \ud83e\udd69 Lean Protein",
     "serving_size": "1 cup shelled (155g)",
@@ -462,29 +429,40 @@
     "fiber_g": 8.0
   },
   {
-    "name": "Sara Lee Delightful bread (keto-friendly)",
-    "category": "Bread, Tortillas & Bakery",
-    "tags": "\ud83c\udf3e High Whole-Food Fiber, \u26a1 Pre-Workout Carbs",
-    "serving_size": "2 slices (45g)",
-    "calories": 90.0,
-    "protein_g": 5.0,
-    "fat_g": 1.0,
-    "carbs_g": 19.0,
-    "fiber_g": 6.0
-  },
-  {
-    "name": "Sourdough bread",
-    "category": "Bread, Tortillas & Bakery",
-    "tags": "\u26a1 Pre-Workout Carbs",
-    "serving_size": "1 slice (50g)",
-    "calories": 130.0,
-    "protein_g": 5.0,
+    "name": "H-E-B Whole Frozen Blueberries",
+    "category": "Produce (Fresh & Frozen)",
+    "tags": "\ud83c\udf3e High Whole-Food Fiber, \u26a1 Pre-Workout Carbs, \ud83c\udf19 Midnight Snacks",
+    "serving_size": "1 cup (140g)",
+    "calories": 80.0,
+    "protein_g": 1.0,
     "fat_g": 0.5,
-    "carbs_g": 26.0,
-    "fiber_g": 1.0
+    "carbs_g": 19.0,
+    "fiber_g": 4.0
   },
   {
-    "name": "Thomas' brand bagels",
+    "name": "H-E-B Whole Frozen Strawberries",
+    "category": "Produce (Fresh & Frozen)",
+    "tags": "\ud83c\udf3e High Whole-Food Fiber, \ud83c\udf19 Midnight Snacks",
+    "serving_size": "1 cup (140g)",
+    "calories": 50.0,
+    "protein_g": 1.0,
+    "fat_g": 0.0,
+    "carbs_g": 12.0,
+    "fiber_g": 3.0
+  },
+  {
+    "name": "Frozen Sliced Bananas",
+    "category": "Produce (Fresh & Frozen)",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Thomas' Plain / Original Bagels",
     "category": "Bread, Tortillas & Bakery",
     "tags": "\u26a1 Pre-Workout Carbs",
     "serving_size": "1 bagel (95g)",
@@ -495,7 +473,40 @@
     "fiber_g": 2.0
   },
   {
-    "name": "Mission Carb Balance flour tortillas (70 cal)",
+    "name": "Sara Lee Delightful 45-Calorie Keto-Friendly Bread",
+    "category": "Bread, Tortillas & Bakery",
+    "tags": "\ud83c\udf3e High Whole-Food Fiber, \u26a1 Pre-Workout Carbs",
+    "serving_size": "2 slices (45g)",
+    "calories": 90.0,
+    "protein_g": 5.0,
+    "fat_g": 1.0,
+    "carbs_g": 19.0,
+    "fiber_g": 6.0
+  },
+  {
+    "name": "H-E-B Higher Harvest Low-Carb Lifestyle Wheat Bread",
+    "category": "Bread, Tortillas & Bakery",
+    "tags": "\ud83c\udf3e High Whole-Food Fiber, \u26a1 Pre-Workout Carbs",
+    "serving_size": "2 slices (28g)",
+    "calories": 60.0,
+    "protein_g": 6.0,
+    "fat_g": 1.0,
+    "carbs_g": 12.0,
+    "fiber_g": 8.0
+  },
+  {
+    "name": "Easy Tiger Sourdough Bread",
+    "category": "Bread, Tortillas & Bakery",
+    "tags": "\u26a1 Pre-Workout Carbs",
+    "serving_size": "1 slice (40g)",
+    "calories": 98.0,
+    "protein_g": 4.0,
+    "fat_g": 0.0,
+    "carbs_g": 18.5,
+    "fiber_g": 1.0
+  },
+  {
+    "name": "Mission Carb Balance Soft Taco Flour Tortillas (70 kcal)",
     "category": "Bread, Tortillas & Bakery",
     "tags": "\ud83c\udf3e High Whole-Food Fiber",
     "serving_size": "1 tortilla (43g)",
@@ -506,7 +517,7 @@
     "fiber_g": 15.0
   },
   {
-    "name": "Wasa Sourdough Swedish Style crispbread crackers",
+    "name": "Wasa Sourdough Swedish Style Crispbread Crackers",
     "category": "Bread, Tortillas & Bakery",
     "tags": "\ud83c\udf3e High Whole-Food Fiber, \ud83c\udf19 Midnight Snacks",
     "serving_size": "2 slices (28g)",
@@ -517,73 +528,7 @@
     "fiber_g": 4.0
   },
   {
-    "name": "White rice",
-    "category": "Grains, Rice, Oats & Pasta",
-    "tags": "",
-    "serving_size": "1 serving",
-    "calories": 0.0,
-    "protein_g": 0.0,
-    "fat_g": 0.0,
-    "carbs_g": 0.0,
-    "fiber_g": 0.0
-  },
-  {
-    "name": "Brown rice",
-    "category": "Grains, Rice, Oats & Pasta",
-    "tags": "",
-    "serving_size": "1 serving",
-    "calories": 0.0,
-    "protein_g": 0.0,
-    "fat_g": 0.0,
-    "carbs_g": 0.0,
-    "fiber_g": 0.0
-  },
-  {
-    "name": "Jasmine rice",
-    "category": "Grains, Rice, Oats & Pasta",
-    "tags": "",
-    "serving_size": "1 serving",
-    "calories": 0.0,
-    "protein_g": 0.0,
-    "fat_g": 0.0,
-    "carbs_g": 0.0,
-    "fiber_g": 0.0
-  },
-  {
-    "name": "Bibigo sticky white rice (microwave individual packets)",
-    "category": "Grains, Rice, Oats & Pasta",
-    "tags": "\u26a1 Pre-Workout Carbs",
-    "serving_size": "1 bowl (210g)",
-    "calories": 310.0,
-    "protein_g": 5.0,
-    "fat_g": 1.0,
-    "carbs_g": 70.0,
-    "fiber_g": 1.0
-  },
-  {
-    "name": "Hill Country Fare quick heat long grain white rice",
-    "category": "Grains, Rice, Oats & Pasta",
-    "tags": "",
-    "serving_size": "1 serving",
-    "calories": 0.0,
-    "protein_g": 0.0,
-    "fat_g": 0.0,
-    "carbs_g": 0.0,
-    "fiber_g": 0.0
-  },
-  {
-    "name": "Ben's Original ready rice packets: Roasted Chicken, Whole Grain Brown, Spanish Style, Jasmine Rice, Garden Vegetable",
-    "category": "Grains, Rice, Oats & Pasta",
-    "tags": "",
-    "serving_size": "1 serving",
-    "calories": 0.0,
-    "protein_g": 0.0,
-    "fat_g": 0.0,
-    "carbs_g": 0.0,
-    "fiber_g": 0.0
-  },
-  {
-    "name": "Rolled oats",
+    "name": "Old Fashioned Rolled Oats (Dry)",
     "category": "Grains, Rice, Oats & Pasta",
     "tags": "\ud83c\udf3e High Whole-Food Fiber, \u26a1 Pre-Workout Carbs",
     "serving_size": "1/2 cup dry (40g)",
@@ -594,7 +539,7 @@
     "fiber_g": 4.0
   },
   {
-    "name": "H-E-B Protein Instant Oatmeal (170 cal, 10g protein)",
+    "name": "H-E-B Protein Instant Oatmeal Packets (170 kcal, 10g Protein)",
     "category": "Grains, Rice, Oats & Pasta",
     "tags": "\u26a1 Pre-Workout Carbs, \ud83c\udf3e High Whole-Food Fiber",
     "serving_size": "1 packet (43g)",
@@ -605,7 +550,7 @@
     "fiber_g": 4.0
   },
   {
-    "name": "Pasta (assorted)",
+    "name": "Long-Grain White Rice (Dry / Cooked)",
     "category": "Grains, Rice, Oats & Pasta",
     "tags": "",
     "serving_size": "1 serving",
@@ -616,7 +561,95 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Barilla Protein+ Thin Spaghetti (10g protein)",
+    "name": "Whole-Grain Brown Rice (Dry / Cooked)",
+    "category": "Grains, Rice, Oats & Pasta",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Bibigo Cooked Sticky White Rice (Microwave Individual Bowls)",
+    "category": "Grains, Rice, Oats & Pasta",
+    "tags": "\u26a1 Pre-Workout Carbs",
+    "serving_size": "1 bowl (210g)",
+    "calories": 310.0,
+    "protein_g": 5.0,
+    "fat_g": 1.0,
+    "carbs_g": 70.0,
+    "fiber_g": 1.0
+  },
+  {
+    "name": "Hill Country Fare Quick Heat Long-Grain White Rice",
+    "category": "Grains, Rice, Oats & Pasta",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Ben's Original Ready Rice: Roasted Chicken",
+    "category": "Grains, Rice, Oats & Pasta",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Ben's Original Ready Rice: Whole Grain Brown",
+    "category": "Grains, Rice, Oats & Pasta",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Ben's Original Ready Rice: Spanish Style",
+    "category": "Grains, Rice, Oats & Pasta",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Ben's Original Ready Rice: Jasmine Rice",
+    "category": "Grains, Rice, Oats & Pasta",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Ben's Original Ready Rice: Garden Vegetable",
+    "category": "Grains, Rice, Oats & Pasta",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Barilla Protein+ (10g Protein) Thin Spaghetti Pasta",
     "category": "Grains, Rice, Oats & Pasta",
     "tags": "\ud83c\udf3e High Whole-Food Fiber",
     "serving_size": "2 oz dry (56g)",
@@ -627,7 +660,7 @@
     "fiber_g": 5.0
   },
   {
-    "name": "Banza Chickpea Cheddar Mac & Cheese Shells (16g protein)",
+    "name": "Banza Chickpea Pasta Cheddar Mac & Cheese Shells (16g Protein)",
     "category": "Grains, Rice, Oats & Pasta",
     "tags": "\ud83c\udf3e High Whole-Food Fiber",
     "serving_size": "2.5 oz dry",
@@ -638,7 +671,7 @@
     "fiber_g": 5.0
   },
   {
-    "name": "Higher Harvest by H-E-B Chickpea Elbows (12g protein)",
+    "name": "Higher Harvest by H-E-B Gluten-Free Organic Chickpea Elbows (12g Protein)",
     "category": "Grains, Rice, Oats & Pasta",
     "tags": "\ud83c\udf3e High Whole-Food Fiber",
     "serving_size": "2 oz dry (56g)",
@@ -649,7 +682,7 @@
     "fiber_g": 8.0
   },
   {
-    "name": "Higher Harvest by H-E-B Chickpea Shells (12g protein)",
+    "name": "Higher Harvest by H-E-B Gluten-Free Organic Chickpea Shells (12g Protein)",
     "category": "Grains, Rice, Oats & Pasta",
     "tags": "\ud83c\udf3e High Whole-Food Fiber",
     "serving_size": "2 oz dry (56g)",
@@ -660,7 +693,7 @@
     "fiber_g": 8.0
   },
   {
-    "name": "Kraft Mac & Cheese",
+    "name": "Kraft Original Macaroni & Cheese Dinner",
     "category": "Grains, Rice, Oats & Pasta",
     "tags": "",
     "serving_size": "1 serving",
@@ -671,7 +704,40 @@
     "fiber_g": 0.0
   },
   {
-    "name": "H-E-B black beans",
+    "name": "Assorted Traditional Semolina Pasta",
+    "category": "Grains, Rice, Oats & Pasta",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Italian Style Seasoned Bread Crumbs",
+    "category": "Grains, Rice, Oats & Pasta",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "H-E-B Canned Black Beans (Drained / Cooked)",
+    "category": "Canned Beans, Broths & Sauces",
+    "tags": "\ud83c\udf3e High Whole-Food Fiber",
+    "serving_size": "150g cooked",
+    "calories": 171.0,
+    "protein_g": 11.5,
+    "fat_g": 0.7,
+    "carbs_g": 25.5,
+    "fiber_g": 11.0
+  },
+  {
+    "name": "H-E-B Canned Pinto Beans",
     "category": "Canned Beans, Broths & Sauces",
     "tags": "\ud83c\udf3e High Whole-Food Fiber",
     "serving_size": "1/2 cup (130g)",
@@ -682,7 +748,7 @@
     "fiber_g": 6.0
   },
   {
-    "name": "H-E-B pinto beans",
+    "name": "Dark Red Kidney Beans (Canned)",
     "category": "Canned Beans, Broths & Sauces",
     "tags": "\ud83c\udf3e High Whole-Food Fiber",
     "serving_size": "1/2 cup (130g)",
@@ -693,18 +759,7 @@
     "fiber_g": 6.0
   },
   {
-    "name": "Dark red kidney beans",
-    "category": "Canned Beans, Broths & Sauces",
-    "tags": "\ud83c\udf3e High Whole-Food Fiber",
-    "serving_size": "1/2 cup (130g)",
-    "calories": 110.0,
-    "protein_g": 7.0,
-    "fat_g": 0.5,
-    "carbs_g": 20.0,
-    "fiber_g": 6.0
-  },
-  {
-    "name": "Navy beans",
+    "name": "Canned Navy Beans",
     "category": "Canned Beans, Broths & Sauces",
     "tags": "\ud83c\udf3e High Whole-Food Fiber",
     "serving_size": "1/2 cup (130g)",
@@ -715,7 +770,7 @@
     "fiber_g": 7.0
   },
   {
-    "name": "Cento chickpeas",
+    "name": "Cento Canned Chickpeas (Garbanzo Beans)",
     "category": "Canned Beans, Broths & Sauces",
     "tags": "\ud83c\udf3e High Whole-Food Fiber",
     "serving_size": "1/2 cup (130g)",
@@ -726,7 +781,7 @@
     "fiber_g": 5.0
   },
   {
-    "name": "Bush's Baked Beans",
+    "name": "Bush's Original / Homestyle Baked Beans",
     "category": "Canned Beans, Broths & Sauces",
     "tags": "",
     "serving_size": "1 serving",
@@ -737,7 +792,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "H-E-B Baked Beans",
+    "name": "H-E-B Charro / Baked Beans",
     "category": "Canned Beans, Broths & Sauces",
     "tags": "",
     "serving_size": "1 serving",
@@ -748,7 +803,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Beef broth",
+    "name": "H-E-B Beef Broth",
     "category": "Canned Beans, Broths & Sauces",
     "tags": "",
     "serving_size": "1 serving",
@@ -759,7 +814,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Pasta sauce",
+    "name": "Marinara / Traditional Pasta Sauce",
     "category": "Canned Beans, Broths & Sauces",
     "tags": "",
     "serving_size": "1 serving",
@@ -770,7 +825,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Green chili enchilada sauce",
+    "name": "Green Chile Enchilada Sauce",
     "category": "Canned Beans, Broths & Sauces",
     "tags": "",
     "serving_size": "1 serving",
@@ -781,7 +836,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Kashi GO cereal: Mixed Berry Crunch (10g protein, 10g fiber)",
+    "name": "Kashi GO Protein + Fiber Cereal: Mixed Berry Crunch (10g Protein, 10g Fiber)",
     "category": "Cereals, Granola & Snacks",
     "tags": "\ud83c\udf3e High Whole-Food Fiber, \u26a1 Pre-Workout Carbs, \ud83c\udf19 Midnight Snacks",
     "serving_size": "1 cup (53g)",
@@ -792,40 +847,40 @@
     "fiber_g": 10.0
   },
   {
-    "name": "Kashi GO cereal: Chocolate Crunch (10g protein, 10g fiber)",
+    "name": "Kashi GO Protein + Fiber Cereal: Chocolate Crunch (10g Protein, 10g Fiber)",
     "category": "Cereals, Granola & Snacks",
     "tags": "\ud83c\udf3e High Whole-Food Fiber, \u26a1 Pre-Workout Carbs, \ud83c\udf19 Midnight Snacks",
-    "serving_size": "1 cup (53g)",
-    "calories": 190.0,
-    "protein_g": 10.0,
-    "fat_g": 3.0,
-    "carbs_g": 37.0,
-    "fiber_g": 10.0
+    "serving_size": "30g (~3/5 cup)",
+    "calories": 117.0,
+    "protein_g": 6.0,
+    "fat_g": 4.0,
+    "carbs_g": 12.0,
+    "fiber_g": 5.7
   },
   {
-    "name": "Honey Nut Cheerios (Protein version)",
+    "name": "General Mills Cheerios Protein: Honey Nut",
     "category": "Cereals, Granola & Snacks",
     "tags": "\u26a1 Pre-Workout Carbs, \ud83c\udf19 Midnight Snacks",
-    "serving_size": "1 1/4 cup (42g)",
-    "calories": 160.0,
-    "protein_g": 7.0,
-    "fat_g": 2.5,
-    "carbs_g": 29.0,
-    "fiber_g": 3.0
+    "serving_size": "30g (~1 cup)",
+    "calories": 114.0,
+    "protein_g": 5.0,
+    "fat_g": 1.2,
+    "carbs_g": 16.8,
+    "fiber_g": 1.1
   },
   {
-    "name": "Purely Elizabeth chocolate sea salt granola",
+    "name": "Purely Elizabeth Ancient Grain Granola: Chocolate Sea Salt",
     "category": "Cereals, Granola & Snacks",
-    "tags": "",
-    "serving_size": "1 serving",
-    "calories": 0.0,
-    "protein_g": 0.0,
-    "fat_g": 0.0,
-    "carbs_g": 0.0,
-    "fiber_g": 0.0
+    "tags": "\u26a1 Pre-Workout Carbs, \ud83c\udf19 Midnight Snacks",
+    "serving_size": "30g (1/3 cup)",
+    "calories": 130.0,
+    "protein_g": 3.0,
+    "fat_g": 6.0,
+    "carbs_g": 17.0,
+    "fiber_g": 2.0
   },
   {
-    "name": "Quaker lightly salted rice cakes",
+    "name": "Quaker Lightly Salted Rice Cakes",
     "category": "Cereals, Granola & Snacks",
     "tags": "\u26a1 Pre-Workout Carbs, \ud83c\udf19 Midnight Snacks",
     "serving_size": "2 cakes (18g)",
@@ -836,18 +891,18 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Good Thins Gluten Free corn snacks (130 cal)",
+    "name": "Good Thins Gluten-Free Corn & Rice Snacks (130 kcal)",
     "category": "Cereals, Granola & Snacks",
     "tags": "\ud83c\udf19 Midnight Snacks",
-    "serving_size": "41 pieces (30g)",
-    "calories": 130.0,
-    "protein_g": 2.0,
-    "fat_g": 3.5,
-    "carbs_g": 23.0,
+    "serving_size": "30g",
+    "calories": 126.0,
+    "protein_g": 3.6,
+    "fat_g": 3.2,
+    "carbs_g": 17.5,
     "fiber_g": 1.0
   },
   {
-    "name": "Quest protein chips",
+    "name": "Quest Tortilla Style Protein Chips",
     "category": "Cereals, Granola & Snacks",
     "tags": "\ud83e\udd69 Lean Protein, \ud83c\udf19 Midnight Snacks",
     "serving_size": "1 bag (32g)",
@@ -858,7 +913,7 @@
     "fiber_g": 1.0
   },
   {
-    "name": "Hill Country Fare popcorn: Light Butter & Kettle Corn",
+    "name": "Hill Country Fare Microwave Popcorn: Light Butter",
     "category": "Cereals, Granola & Snacks",
     "tags": "\ud83c\udf3e High Whole-Food Fiber, \ud83c\udf19 Midnight Snacks",
     "serving_size": "3 cups popped",
@@ -869,7 +924,18 @@
     "fiber_g": 3.0
   },
   {
-    "name": "El Monterey bean and cheese burritos",
+    "name": "Hill Country Fare Microwave Popcorn: Kettle Corn",
+    "category": "Cereals, Granola & Snacks",
+    "tags": "\ud83c\udf3e High Whole-Food Fiber, \ud83c\udf19 Midnight Snacks",
+    "serving_size": "3 cups popped",
+    "calories": 130.0,
+    "protein_g": 2.0,
+    "fat_g": 4.0,
+    "carbs_g": 21.0,
+    "fiber_g": 3.0
+  },
+  {
+    "name": "El Monterey Bean & Cheese Burritos (Frozen)",
     "category": "Cereals, Granola & Snacks",
     "tags": "",
     "serving_size": "1 serving",
@@ -880,7 +946,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Red Baron classic crust four-cheese pizza",
+    "name": "Red Baron Classic Crust Four Cheese Pizza (Frozen)",
     "category": "Cereals, Granola & Snacks",
     "tags": "",
     "serving_size": "1 serving",
@@ -891,7 +957,40 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Halo Top vanilla bean ice cream",
+    "name": "Raw / Roasted Cashews",
+    "category": "Cereals, Granola & Snacks",
+    "tags": "\ud83c\udf19 Midnight Snacks",
+    "serving_size": "28g (1 oz)",
+    "calories": 149.0,
+    "protein_g": 5.1,
+    "fat_g": 12.3,
+    "carbs_g": 8.5,
+    "fiber_g": 0.9
+  },
+  {
+    "name": "Mixed Trail Mix",
+    "category": "Cereals, Granola & Snacks",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Seedless Raisins",
+    "category": "Cereals, Granola & Snacks",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Halo Top Light Ice Cream: Vanilla Bean",
     "category": "Sweets & Treats",
     "tags": "\ud83c\udf19 Midnight Snacks",
     "serving_size": "2/3 cup (85g)",
@@ -902,7 +1001,7 @@
     "fiber_g": 2.0
   },
   {
-    "name": "H-E-B Creamy Creations orange sherbet",
+    "name": "H-E-B Creamy Creations Orange Sherbet",
     "category": "Sweets & Treats",
     "tags": "",
     "serving_size": "1 serving",
@@ -913,7 +1012,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Jell-O Sugar-Free Ready-to-Eat strawberry gelatin",
+    "name": "Jell-O Sugar-Free Ready-to-Eat Strawberry Gelatin Cups",
     "category": "Sweets & Treats",
     "tags": "\ud83c\udf19 Midnight Snacks",
     "serving_size": "1 cup",
@@ -924,7 +1023,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Hershey's kisses",
+    "name": "Hershey's Milk Chocolate Kisses",
     "category": "Sweets & Treats",
     "tags": "",
     "serving_size": "1 serving",
@@ -935,7 +1034,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Hershey's chocolate syrup",
+    "name": "Hershey's Semi-Sweet Chocolate Chips",
     "category": "Sweets & Treats",
     "tags": "",
     "serving_size": "1 serving",
@@ -946,7 +1045,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Hershey's semi-sweet chocolate chips",
+    "name": "Hershey's Chocolate Syrup",
     "category": "Sweets & Treats",
     "tags": "",
     "serving_size": "1 serving",
@@ -957,7 +1056,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Lindt Excellence 90% cocoa dark chocolate bar",
+    "name": "Lindt Excellence 90% Cocoa Supreme Dark Chocolate Bar",
     "category": "Sweets & Treats",
     "tags": "",
     "serving_size": "1 serving",
@@ -968,7 +1067,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Lindt Excellence caramel with touch of sea salt dark chocolate bar",
+    "name": "Lindt Excellence Caramel with a Touch of Sea Salt Dark Chocolate Bar",
     "category": "Sweets & Treats",
     "tags": "",
     "serving_size": "1 serving",
@@ -979,7 +1078,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Raisins",
+    "name": "Unsweetened / Cinnamon Applesauce",
     "category": "Sweets & Treats",
     "tags": "",
     "serving_size": "1 serving",
@@ -990,29 +1089,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Trail mix",
-    "category": "Sweets & Treats",
-    "tags": "",
-    "serving_size": "1 serving",
-    "calories": 0.0,
-    "protein_g": 0.0,
-    "fat_g": 0.0,
-    "carbs_g": 0.0,
-    "fiber_g": 0.0
-  },
-  {
-    "name": "Cashews",
-    "category": "Sweets & Treats",
-    "tags": "",
-    "serving_size": "1 serving",
-    "calories": 0.0,
-    "protein_g": 0.0,
-    "fat_g": 0.0,
-    "carbs_g": 0.0,
-    "fiber_g": 0.0
-  },
-  {
-    "name": "Oils: Olive oil, Avocado oil",
+    "name": "Extra Virgin Olive Oil",
     "category": "Condiments, Baking & Spices",
     "tags": "",
     "serving_size": "1 serving",
@@ -1023,7 +1100,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Sauces & Condiments: H-E-B mayonnaise, Soy sauce, Ketchup, Ranch, Italian dressing, Maple syrup, Applesauce, Peanut butter, Strawberry jelly, Grape jelly, Lime juice, Lemon juice, Minced ginger",
+    "name": "Pure Avocado Oil",
     "category": "Condiments, Baking & Spices",
     "tags": "",
     "serving_size": "1 serving",
@@ -1034,7 +1111,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Baking: Flour, Sugar, Pure vanilla extract",
+    "name": "Creamy Peanut Butter",
     "category": "Condiments, Baking & Spices",
     "tags": "",
     "serving_size": "1 serving",
@@ -1045,7 +1122,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Seasonings: Kosher salt, Sea salt, Lowry's Seasoned Salt, Slap Ya Mama low sodium, Rajun Cajun seasoning, Lemon pepper, Garlic powder, Onion powder, Paprika, Ground cumin, Coarse black pepper, Ground cinnamon, Brown sugar cinnamon, Thyme, Oregano, Rosemary, Crushed red pepper, Nutmeg, H-E-B Everything bagel seasoning, H-E-B Everything + Ranch bagel seasoning",
+    "name": "H-E-B Real Mayonnaise",
     "category": "Condiments, Baking & Spices",
     "tags": "",
     "serving_size": "1 serving",
@@ -1056,7 +1133,7 @@
     "fiber_g": 0.0
   },
   {
-    "name": "Drinks & Supplements: 0 Cal Soda, Gatorade Zero, Fiber gummies (max 10g fiber/day)",
+    "name": "Soy Sauce",
     "category": "Condiments, Baking & Spices",
     "tags": "",
     "serving_size": "1 serving",
@@ -1065,5 +1142,412 @@
     "fat_g": 0.0,
     "carbs_g": 0.0,
     "fiber_g": 0.0
+  },
+  {
+    "name": "Tomato Ketchup",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Ranch Dressing",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Pure Maple Syrup",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Strawberry Jelly / Jam",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Concord Grape Jelly",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "100% Lime Juice",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "100% Lemon Juice",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Minced Garlic (Jarred)",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Minced Ginger (Jarred)",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "All-Purpose Enriched White Flour",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Granulated White Sugar",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Pure Vanilla Extract",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Kosher Salt",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Fine Sea Salt",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Lawry's Seasoned Salt",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "H-E-B Bagel Not Included: Everything + Ranch Seasoning",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "H-E-B Bagel Not Included: Everything Bagel Seasoning",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Slap Ya Mama Low-Sodium Cajun Seasoning",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Rajun Cajun Seasoning",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Lemon Pepper Seasoning",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Italian Herb Seasoning Blend",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Garlic Powder",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Onion Powder",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Smoked / Sweet Paprika",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Ground Cumin",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Coarse Ground Black Pepper",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Ground Cinnamon",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Brown Sugar Cinnamon Blend",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Ground Ginger",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Crushed Red Pepper Flakes",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Dried Thyme Leaves",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Dried Oregano Leaves",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Dried Rosemary Leaves",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Ground Nutmeg",
+    "category": "Condiments, Baking & Spices",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Zero-Calorie Diet Soda (A&W Zero Sugar Root Beer, etc.)",
+    "category": "Drinks & Supplements",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Gatorade Zero (G Zero, All Flavors, 20 fl oz)",
+    "category": "Drinks & Supplements",
+    "tags": "",
+    "serving_size": "1 serving",
+    "calories": 0.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "H-E-B Vitamin Fiber Gummies (Peach, Strawberry & Berry \u2014 Max 10g Fiber/Day)",
+    "category": "Drinks & Supplements",
+    "tags": "",
+    "serving_size": "2 gummies",
+    "calories": 10.0,
+    "protein_g": 0.0,
+    "fat_g": 0.0,
+    "carbs_g": 0.0,
+    "fiber_g": 4.0
   }
 ]

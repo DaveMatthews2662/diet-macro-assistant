@@ -3,3 +3,4 @@ __pycache__/
 .telegram_token
 .env
 temp_receipt_upload.png
+
