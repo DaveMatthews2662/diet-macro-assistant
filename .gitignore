@@ -1,4 +1,7 @@
 .telegram_token
 .gemini_key
+bot/.telegram_token
+bot/.gemini_key
 __pycache__/
+**/__pycache__/
 rotation_state.json

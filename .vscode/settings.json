@@ -1,0 +1,9 @@
+{
+  "files.exclude": {
+    ".gitignore": true,
+    ".vscode": true,
+    "requirements.txt": true,
+    "telegram_agent.py": true,
+    "**/__pycache__": true
+  }
+}
