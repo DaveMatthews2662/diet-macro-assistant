@@ -218,22 +218,26 @@ def ask_gemini(user_text: str, chat_id: int, image_path: str = None) -> str:
         "generationConfig": {"temperature": 0.4},
     }
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key={key}"
-    req = urllib.request.Request(
-        url,
-        data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
-    )
-    with urllib.request.urlopen(req, timeout=45) as resp:
-        res = json.loads(resp.read().decode("utf-8"))
-
-    cand_parts = res["candidates"][0]["content"]["parts"]
-    reply = "\n".join(p["text"] for p in cand_parts if "text" in p).strip()
-
-    # Save conversation history (store text placeholder for image so history stays light)
-    history.append({"role": "user", "parts": [{"text": user_text or "[Sent Screenshot]"}]})
-    history.append({"role": "model", "parts": [{"text": reply}]})
-    return reply
+    last_err = None
+    for model_name in ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite"]:
+        try:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={key}"
+            req = urllib.request.Request(
+                url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+            )
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                res = json.loads(resp.read().decode("utf-8"))
+            cand_parts = res["candidates"][0]["content"]["parts"]
+            reply = "\n".join(p["text"] for p in cand_parts if "text" in p).strip()
+            history.append({"role": "user", "parts": [{"text": user_text or "[Sent Screenshot]"}]})
+            history.append({"role": "model", "parts": [{"text": reply}]})
+            return reply
+        except Exception as e:
+            last_err = e
+            continue
+    raise RuntimeError(f"Gemini API error: {last_err}")
 
 
 # ==============================================================================
@@ -273,7 +277,7 @@ def download_telegram_photo(token: str, file_id: str) -> str:
 # MESSAGE HANDLERS
 # ==============================================================================
 def handle_photo(token: str, chat_id: int, photo_list: List[Dict[str, Any]], caption: str = ""):
-    best_photo = photo_list[-1]
+    best_photo = photo_list[-2] if len(photo_list) >= 2 else photo_list[-1]
     local_path = download_telegram_photo(token, best_photo["file_id"])
     try:
         reply = ask_gemini(caption, chat_id, image_path=local_path)
