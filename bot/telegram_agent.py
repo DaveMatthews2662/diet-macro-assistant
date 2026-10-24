@@ -208,18 +208,48 @@ def ask_gemini(user_text: str, chat_id: int, image_path: str = None) -> str:
     system_prompt = (
         "You are Aaron's personal Food & Macro Assistant on Telegram.\n"
         "You MUST follow every rule in MasterRules.md below.\n"
-        "CRITICAL BEHAVIOR:\n"
-        "1. Answer Aaron's exact question directly, concisely, and in plain English. No filler, no corporate talk.\n"
-        "2. If Aaron asks a specific calculation, seasoning question, raw meat check, inventory check, or question about a meal he wants to cook, DO NOT dump a random list of meals—answer his exact question directly!\n"
-        "3. If Aaron asks for meal/snack ideas or to plan a slot/day (Step 1), give 5 distinct rotating options by NAME ONLY (no macro clutter yet), flagging any missing ingredient with [🛒 Need to buy: item].\n"
-        "4. Once Aaron picks an option or asks for numbers on a specific meal (Step 2), give the exact Grams/Cups/Units, Calories, Protein, Carbs, Fats, and Fiber.\n"
-        "5. Never adjust inventory or raw meat unless Aaron explicitly tells you to.\n\n"
+        "CRITICAL BEHAVIOR & CONTEXT GUARDRAILS:\n"
+        "1. Answer Aaron's exact question or follow-up directly, concisely, and in plain English. No filler, no corporate talk.\n"
+        "2. STAY IN CONVERSATION CONTEXT: Pay close attention to previous messages! For example, if you and Aaron are discussing how to season his chickpea pasta + ground beef bowl and he replies 'I was thinking taco', he means TACO SEASONING / TACO FLAVOR for that pasta/beef bowl—DO NOT suddenly suggest 5 taco meals on tortillas!\n"
+        "3. STRICT CALORIE & MACRO SANITY CHECK: Always check how many calories and macros Aaron has left for the day before suggesting anything. Never suggest calorie-heavy or redundant carb additions (like tortillas when he is already eating pasta or has limited calories left).\n"
+        "4. USE HIS SPICE RACK FIRST: Before saying [🛒 Need to buy: seasoning], build the flavor from his # Spices & Seasonings and # Oils & Condiments in FoodInventory.md (e.g., DIY Taco Seasoning = Ground Cumin + Smoked/Sweet Paprika + Garlic Powder + Onion Powder + Kosher Salt + Black Pepper + Crushed Red Pepper Flakes, plus optional Green Chile Enchilada Sauce, 100% Lime Juice, or Cilantro for almost 0 calories).\n"
+        "5. ONLY give a 5-option meal list (Step 1: names only) when Aaron explicitly asks for meal/snack ideas or to plan a slot/day.\n"
+        "6. Once Aaron picks an option or asks for numbers on a specific meal (Step 2), give the exact Grams/Cups/Units, Calories, Protein, Carbs, Fats, and Fiber.\n"
+        "7. Never adjust inventory or raw meat unless Aaron explicitly tells you to.\n\n"
         f"=== MasterRules.md ===\n{rules_md}\n\n"
         f"=== FoodInventory.md ===\n{inv_md}\n\n"
         f"=== InventoryData.json (Verified USDA/Brand Macros) ===\n{macro_db_text}"
     )
 
-    history = CHAT_MEMORY.setdefault(chat_id, [])
+    if chat_id not in CHAT_MEMORY:
+        CHAT_MEMORY[chat_id] = [
+            {
+                "role": "user",
+                "parts": [
+                    {
+                        "text": "For dinner I want to cook that chickpea pasta in my pantry (half a box), join with my ground beef in the fridge, then some kind of seasoning situation. How many calories would half of all that be? (I'd be saving half for tomorrow)"
+                    }
+                ],
+            },
+            {
+                "role": "model",
+                "parts": [
+                    {
+                        "text": "Remaining targets to hit before dinner: ~498 kcal | ~55g Protein | ~61g Carbs | ~21g Fat.\nHalf of that batch (half a box chickpea pasta + half of your 1.09 lbs 93/7 ground beef) is 381 kcal, 32.7g P, 23.3g C, 12.3g F, 2.9g Fiber, leaving ~117 kcal, 22g P, 38g C, and 8g F for the day."
+                    }
+                ],
+            },
+            {"role": "user", "parts": [{"text": "What are some options for seasoning that pasta/beef bowl?"}]},
+            {
+                "role": "model",
+                "parts": [
+                    {
+                        "text": "You can season that chickpea pasta + ground beef bowl using your spice rack (Soy/Ginger/Garlic, Cajun, Italian Herb, or Cumin + Smoked Paprika taco-style)."
+                    }
+                ],
+            },
+        ]
+    history = CHAT_MEMORY[chat_id]
     parts: List[Dict[str, Any]] = []
     if image_path and os.path.exists(image_path):
         with open(image_path, "rb") as f:
@@ -227,15 +257,15 @@ def ask_gemini(user_text: str, chat_id: int, image_path: str = None) -> str:
         parts.append({"inline_data": {"mime_type": "image/jpeg", "data": b64}})
     parts.append({"text": user_text or "Read this screenshot and help me plan based on MasterRules.md."})
 
-    contents = list(history[-10:]) + [{"role": "user", "parts": parts}]
+    contents = list(history[-16:]) + [{"role": "user", "parts": parts}]
     payload = {
         "system_instruction": {"parts": [{"text": system_prompt}]},
         "contents": contents,
-        "generationConfig": {"temperature": 0.4},
+        "generationConfig": {"temperature": 0.3},
     }
 
     last_err = None
-    for model_name in ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite"]:
+    for model_name in ["gemini-3.5-flash", "gemini-3-flash-preview", "gemini-3.5-flash-lite"]:
         try:
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={key}"
             req = urllib.request.Request(

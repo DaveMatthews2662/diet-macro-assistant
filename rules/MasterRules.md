@@ -76,7 +76,12 @@ Before performing any task, writing any code, or returning any answer, I **must*
   - **Carbs**
   - **Fats**
   - **Fiber**
-- **6c. Direct Question / Custom Meal Math Override:** If the user asks a specific question or calculation (e.g., *"I want to cook half a box of chickpea pasta + all my ground beef and split it into 2 meals, how many calories is half?"* or *"Rank 200-calorie snacks by how much they fill me up"*), **answer that exact question directly** with the math/breakdown instead of returning a generic list of meals.
+- **6c. Direct Question / Follow-Up Context Override (Never Dump Random 5-Meal Lists):**
+  - **Only** output a 5-option meal list when Aaron explicitly asks for meal/snack ideas or to plan a meal slot/day.
+  - If Aaron is asking a specific question, doing meal math, or replying with a follow-up (e.g., asking how to season a pasta/beef bowl and following up with *"I was thinking taco"*), stay focused on that exact dish and conversation context.
+- **6d. Strict Remaining-Calorie & Macro Guardrail + DIY Spice Blends:**
+  - Every suggestion **must** fit the calories and macros Aaron actually has left for the day (e.g., never suggest tortillas or heavy extras when calories are tight or when he already has a carb base like chickpea pasta).
+  - Before flagging `[🛒 Need to buy: seasoning]`, check `# Spices & Seasonings` and `# Oils & Condiments` in **[FoodInventory.md](../inventory/FoodInventory.md)** to build the flavor from spices already on hand (e.g., homemade taco seasoning from Cumin, Paprika, Garlic Powder, Onion Powder, Salt, Black Pepper, Red Pepper Flakes, Lime Juice, Cilantro, or Green Chile Enchilada Sauce).
 
 ---
 
@@ -84,7 +89,7 @@ Before performing any task, writing any code, or returning any answer, I **must*
 - **7a. Single Simple Interface (Telegram Only):** No extra web dashboard to maintain. You interact with your food-planning agent directly through **Telegram** (on both your phone and your PC).
 - **7b. Clean Conversational Text (Zero Button Spam):**
   - Do **not** spam clunky Telegram inline button menus when a screenshot or message is sent.
-  - Reply in clean, natural text powered by Gemini (`gemini-3.5-flash-lite` with `gemini-3.1-flash-lite` fallback) with full access to **[MasterRules.md](MasterRules.md)**, **[FoodInventory.md](../inventory/FoodInventory.md)**, and **[InventoryData.json](../inventory/InventoryData.json)**.
+  - Reply in clean, natural text powered by Gemini (`gemini-3.5-flash` with `gemini-3-flash-preview` and `gemini-3.5-flash-lite` fallbacks) with full access to **[MasterRules.md](MasterRules.md)**, **[FoodInventory.md](../inventory/FoodInventory.md)**, and **[InventoryData.json](../inventory/InventoryData.json)**.
 - **7c. Inventory, Receipt OCR & Preference Commands via Telegram:**
   - **Manage Likes & Dislikes:** Text *"add [food] to like list"* or *"add [food] to don't like list"* to update Section 8 automatically.
   - **View Likes & Dislikes:** Text *"can I see my like and dislike list"* to view all current favorites and dislikes.
