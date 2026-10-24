@@ -1,3 +1,8 @@
+# Raw Meat (Finite Tracked Stock)
+- Kirkland Signature USDA Prime Top Sirloin Steak (Boneless, Cap-Off) — 1 steak in fridge (~14 oz), 3 steaks frozen (3.54 lbs total pack)
+- 93/7 Lean Ground Beef — 1.09 lbs in fridge
+- Boneless Skinless Chicken Thighs — 1.085 lbs in fridge
+
 # Frozen Meat & Seafood
 - H-E-B Italian Style Meatballs (Frozen, Raw)
 - Foster Farms Take Out Crispy Chicken Wings (Frozen)
@@ -28,6 +33,11 @@
 - H-E-B Sour Cream
 - Kerrygold Pure Irish Salted Butter
 - Jell-O Sugar-Free Ready-to-Eat Strawberry Gelatin Cups
+- Oikos Triple Zero 15g Protein Greek Yogurt (Vanilla)
+- Oikos Triple Zero 15g Protein Greek Yogurt (Strawberry)
+- Oikos Triple Zero 15g Protein Greek Yogurt (Mixed Berry)
+- Oikos Triple Zero 15g Protein Greek Yogurt (Blueberry)
+- Kirkland Signature Grass-Fed Salted Butter
 
 # Produce
 - Fresh Bananas (Raw)
@@ -50,6 +60,7 @@
 - Starkist / H-E-B Chunk Light Canned Tuna in Water
 - Canned White Meat Chicken Breast in Water
 - Whey Protein Isolate / Concentrate Powder
+- PBfit Peanut Butter Protein Powder (70 kcal, 8g Protein)
 - Fit PB Organic Roasted Peanut Powder (60 kcal, 7g Protein)
 - Bibigo Cooked Sticky White Rice (Microwave Individual Bowls)
 - Hill Country Fare Quick Heat Long-Grain White Rice
@@ -83,6 +94,7 @@
 - Frozen Sliced Bananas
 - El Monterey Bean & Cheese Burritos (Frozen)
 - Red Baron Classic Crust Four Cheese Pizza (Frozen)
+- Kirkland Signature Frozen Strawberries
 
 # Desserts, Candy & Snacks
 - Kashi GO Protein + Fiber Cereal: Mixed Berry Crunch (10g Protein, 10g Fiber)
@@ -100,6 +112,10 @@
 - Hershey's Milk Chocolate Kisses
 - Hershey's Semi-Sweet Chocolate Chips
 - Lindt Excellence 90% Cocoa Supreme Dark Chocolate Bar
+- Kirkland Signature Protein Bar (Chocolate Brownie)
+- Kirkland Signature Protein Bar (Chocolate Chip Cookie Dough)
+- Purely Elizabeth Ancient Grain Granola: Original Salty Sweet
+- Kirkland Signature Grass-Fed Beef Stick
 
 # Oils & Condiments
 - Zero-Calorie Spray Butter

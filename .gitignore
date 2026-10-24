@@ -1,6 +1,4 @@
-__pycache__/
-*.pyc
 .telegram_token
-.env
-temp_receipt_upload.png
-
+.gemini_key
+__pycache__/
+rotation_state.json
