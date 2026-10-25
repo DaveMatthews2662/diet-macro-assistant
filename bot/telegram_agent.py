@@ -210,49 +210,29 @@ def ask_gemini(user_text: str, chat_id: int, image_path: str = None) -> str:
         "You MUST follow every rule in MasterRules.md below.\n"
         "STRICT OUTPUT & FORMATTING RULES (NEVER VIOLATE):\n"
         "1. AS SHORT AS HUMANLY POSSIBLE — ZERO FLUFF: Never write intro sentences ('That sounds like a great combo!'), food descriptions ('keeps it juicy and melts nicely'), or outro sentences ('Fits right into your remaining budget!'). Output ONLY the raw answer.\n"
-        "2. NO DECIMALS EVER: Round all Calories, Protein, Carbs, and Fats to whole integers (e.g., 40g P, NEVER 39.7g P).\n"
-        "3. NO FIBER EVER: Never output or mention Fiber anywhere.\n"
-        "4. NO PER-INGREDIENT MACROS: When giving a meal breakdown, list ONLY the portion/weight of each ingredient, followed by ONE single Total line at the bottom:\n"
+        "2. ALWAYS INCLUDE EXACT GRAMS (g) FOR EVERY INGREDIENT: Every single ingredient line in a meal MUST start with its exact weight in grams (e.g., '- 80g Easy Tiger Sourdough Bread', '- 32g PBfit Peanut Butter Powder', '- 227g raw Boneless Skinless Chicken Thighs', '- 140g Ben\\'s Original Ready Rice: Jasmine Rice', '- 150g Oikos Triple Zero Vanilla Greek Yogurt', '- 118g Fresh Banana'). NEVER write '2 slices', '4 tbsp', '1 cup', '8 oz', or '1 medium' without the exact gram weight (Xg) at the front.\n"
+        "3. NO DECIMALS EVER: Round all Calories, Protein, Carbs, and Fats to whole integers (e.g., 40g P, NEVER 39.7g P).\n"
+        "4. NO FIBER EVER: Never output or mention Fiber anywhere.\n"
+        "5. NO PER-INGREDIENT MACROS: When giving a meal breakdown, list ONLY the gram weight + ingredient name, followed by ONE single Total line at the bottom:\n"
         "   [Meal Name]\n"
-        "   - [Amount] [Ingredient 1]\n"
-        "   - [Amount] [Ingredient 2]\n"
+        "   - [Xg] [Ingredient 1]\n"
+        "   - [Xg] [Ingredient 2]\n"
         "   Total: [X] kcal | [X]g P | [X]g C | [X]g F\n"
-        "5. STAY IN CONVERSATION CONTEXT & RESPECT REMAINING CALORIES: Check previous messages and remaining daily calories/macros. Never suggest high-calorie or redundant carb extras (like tortillas on top of pasta). Use spices from # Spices & Seasonings first before ever flagging [🛒 Need to buy].\n"
-        "6. ONLY give a 5-option meal list (Step 1: names only) when Aaron explicitly asks for meal/snack ideas or to plan a slot/day.\n"
-        "7. Never adjust inventory or raw meat unless Aaron explicitly tells you to.\n\n"
+        "6. STRICTLY HIT MASTERRULES.MD GOALS & IGNORE CRONOMETER APP TARGETS:\n"
+        "   - Aaron's true daily goals are in MasterRules.md Section 3: 1,900 kcal planned target (2,100 kcal max with 200 kcal buffer) | 180g P | 190g C (180g min) | 55-60g F (50g min).\n"
+        "   - When reading a Cronometer screenshot, ONLY read the left-side CONSUMED numbers and 100% IGNORE the right-side target denominators ('/ 2100.0 kcal', '/ 200.0 g', etc.) and percentages shown inside the Cronometer app.\n"
+        "   - When planning a day or remaining meals, verify your math across all meals BEFORE replying so Daily Total hits ~1,900 kcal, ~180g P (do NOT overshoot to 200-220g P), 180-195g C (do NOT leave carbs under 180g), and 50-60g F (do NOT exceed 60g F). Scale ingredient gram weights to hit these targets accurately.\n"
+        "7. CUSTOM X OPTIONS COUNT: Whenever Aaron asks for X options/ideas (e.g., '3 options', '10 snack ideas'), output exactly X options. Default to 5 options per slot only when no number is specified.\n"
+        "8. DINING OUT & TRAVEL MODE: When Aaron asks for tips when going out to eat, restaurant orders, or travel foods, do NOT restrict suggestions to FoodInventory.md. Give ultra-short, high-protein, macro-friendly restaurant picks, ordering modifications, or travel staples with estimated macros (kcal | P | C | F) tailored to his goals.\n"
+        "9. STAY IN CONVERSATION CONTEXT & RESPECT REMAINING CALORIES: Check previous messages and remaining daily calories/macros. Never suggest high-calorie or redundant carb extras (like tortillas on top of pasta). Use spices from # Spices & Seasonings first before ever flagging [🛒 Need to buy].\n"
+        "10. Never adjust inventory or raw meat unless Aaron explicitly tells you to.\n\n"
         f"=== MasterRules.md ===\n{rules_md}\n\n"
         f"=== FoodInventory.md ===\n{inv_md}\n\n"
         f"=== InventoryData.json (Verified USDA/Brand Macros) ===\n{macro_db_text}"
     )
 
     if chat_id not in CHAT_MEMORY:
-        CHAT_MEMORY[chat_id] = [
-            {
-                "role": "user",
-                "parts": [
-                    {
-                        "text": "For dinner I want to cook that chickpea pasta in my pantry (half a box), join with my ground beef in the fridge, then some kind of seasoning situation. How many calories would half of all that be? (I'd be saving half for tomorrow)"
-                    }
-                ],
-            },
-            {
-                "role": "model",
-                "parts": [
-                    {
-                        "text": "Chickpea Pasta & 93/7 Ground Beef (1/2 Batch):\n- 1.25 oz (35g) dry Chickpea Pasta\n- 4.4 oz (124g) raw 93/7 Ground Beef\n\nTotal: 381 kcal | 33g P | 23g C | 12g F\nRemaining after meal: 117 kcal | 22g P | 38g C | 8g F"
-                    }
-                ],
-            },
-            {"role": "user", "parts": [{"text": "What are some options for seasoning that pasta/beef bowl?"}]},
-            {
-                "role": "model",
-                "parts": [
-                    {
-                        "text": "- Soy Sauce + Minced Garlic + Ginger\n- Slap Ya Mama or Rajun Cajun\n- Italian Herb + Garlic/Onion Powder + Marinara\n- Taco Spice (Cumin + Smoked Paprika + Garlic/Onion Powder + Salt/Pepper)"
-                    }
-                ],
-            },
-        ]
+        CHAT_MEMORY[chat_id] = []
     history = CHAT_MEMORY[chat_id]
     parts: List[Dict[str, Any]] = []
     if image_path and os.path.exists(image_path):

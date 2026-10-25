@@ -115,6 +115,7 @@
 - Kirkland Signature Protein Bar (Chocolate Brownie)
 - Kirkland Signature Protein Bar (Chocolate Chip Cookie Dough)
 - Purely Elizabeth Ancient Grain Granola: Original Salty Sweet
+- Julian Bakery ProGranola: Chocolate Clusters (12g Protein)
 - Kirkland Signature Grass-Fed Beef Stick
 
 # Oils & Condiments
