@@ -296,31 +296,38 @@ def ask_gemini(user_text: str, chat_id: int, image_paths: List[str] = None) -> s
     payload = {
         "system_instruction": {"parts": [{"text": system_prompt}]},
         "contents": contents,
-        "generationConfig": {"temperature": 0.65},
+        "generationConfig": {
+            "temperature": 0.65,
+            "thinkingConfig": {"thinkingBudget": 8192},
+        },
     }
 
     last_err = None
-    for model_name in ["gemini-4-argon", "gemini-3.8-flash", "gemini-3.5-flash"]:
-        try:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={key}"
-            req = urllib.request.Request(
-                url,
-                data=json.dumps(payload).encode("utf-8"),
-                headers={"Content-Type": "application/json"},
-            )
-            with urllib.request.urlopen(req, timeout=45) as resp:
-                res = json.loads(resp.read().decode("utf-8"))
-            cand_parts = res["candidates"][0]["content"]["parts"]
-            visible_texts = [p["text"] for p in cand_parts if "text" in p and not p.get("thought")]
-            if not visible_texts:
-                visible_texts = [p["text"] for p in cand_parts if "text" in p]
-            reply = "\n".join(visible_texts).strip()
-            history.append({"role": "user", "parts": parts})
-            history.append({"role": "model", "parts": [{"text": reply}]})
-            return reply
-        except Exception as e:
-            last_err = e
-            continue
+    models = ["gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.5-flash-lite"]
+    for attempt in range(2):
+        for model_name in models:
+            try:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={key}"
+                req = urllib.request.Request(
+                    url,
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                )
+                with urllib.request.urlopen(req, timeout=45) as resp:
+                    res = json.loads(resp.read().decode("utf-8"))
+                cand_parts = res["candidates"][0]["content"]["parts"]
+                visible_texts = [p["text"] for p in cand_parts if "text" in p and not p.get("thought")]
+                if not visible_texts:
+                    visible_texts = [p["text"] for p in cand_parts if "text" in p]
+                reply = "\n".join(visible_texts).strip()
+                history.append({"role": "user", "parts": parts})
+                history.append({"role": "model", "parts": [{"text": reply}]})
+                return reply
+            except Exception as e:
+                last_err = e
+                time.sleep(1.5)
+                continue
+        time.sleep(2.0)
     raise RuntimeError(f"Gemini API error: {last_err}")
 
 
