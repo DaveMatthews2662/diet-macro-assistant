@@ -33,6 +33,17 @@
     "fiber_g": 0.0
   },
   {
+    "name": "Costco Hand Pulled Rotisserie Chicken Breast Meat",
+    "category": "Dairy & Refrigerated",
+    "tags": "Good Protein Options",
+    "serving_size": "85g (3 oz)",
+    "calories": 120.0,
+    "protein_g": 24.0,
+    "fat_g": 2.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
     "name": "H-E-B Honey Turkey Breast Deli Meat (Sliced)",
     "category": "Dairy & Refrigerated",
     "tags": "Good Protein Options",
@@ -495,15 +506,15 @@
     "fiber_g": 3.6
   },
   {
-    "name": "Thomas' Plain / Original Bagels",
+    "name": "Sola Soft Bagels: Cinnamon & Raisin (120 Cal)",
     "category": "Bakery & Bread",
-    "tags": "Good Protein Options, Good Carb Options",
-    "serving_size": "1 bagel (95g)",
-    "calories": 270.0,
-    "protein_g": 10.0,
-    "fat_g": 1.5,
-    "carbs_g": 53.0,
-    "fiber_g": 2.0
+    "tags": "Good Protein Options, Good Fiber Options",
+    "serving_size": "85g (1 bagel)",
+    "calories": 120.0,
+    "protein_g": 14.0,
+    "fat_g": 3.0,
+    "carbs_g": 29.0,
+    "fiber_g": 23.0
   },
   {
     "name": "Sara Lee Delightful 45-Calorie Keto-Friendly Bread",

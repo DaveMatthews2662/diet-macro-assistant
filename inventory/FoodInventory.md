@@ -14,6 +14,7 @@
 - Boneless Skinless Chicken Breast Fillets (Frozen)
 
 # Dairy & Refrigerated
+- Costco Hand Pulled Rotisserie Chicken Breast Meat
 - H-E-B Honey Turkey Breast Deli Meat (Sliced)
 - H-E-B Thick Cut / Center Cut Bacon
 - USDA Large Whole Eggs
@@ -49,7 +50,7 @@
 - Fresh Cilantro Leaves
 
 # Bakery & Bread
-- Thomas' Plain / Original Bagels
+- Sola Soft Bagels: Cinnamon & Raisin (120 Cal)
 - Sara Lee Delightful 45-Calorie Keto-Friendly Bread
 - H-E-B Higher Harvest Low-Carb Lifestyle Wheat Bread
 - Easy Tiger Sourdough Bread

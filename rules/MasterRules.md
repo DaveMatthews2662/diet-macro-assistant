@@ -17,7 +17,7 @@ Before performing any task, writing any code, or returning any answer, I **must*
 
 ## 2. Communication Style (Ultra-Short, Zero Fluff)
 - **2a. Short as Humanly Possible:** Every response must be as short and direct as humanly possible.
-- **2b. Zero Fluff / Commentary:** Never include intro pleasantries (*"That sounds like a great combo!"*), food descriptions (*"keeps it juicy and melts nicely"*), or outro filler (*"Fits right into your remaining budget!"*). Output **only** the requested names, ingredient gram weights, and total numbers.
+- **2b. Zero Fluff / Commentary / No Extra Summary Lines:** Never include intro pleasantries (*"That sounds like a great combo!"*), food descriptions (*"keeps it juicy and melts nicely"*), outro filler (*"Fits right into your remaining budget!"*), or extra summary lines like `Consumed So Far:`, `Remaining Targets:`, `Remaining Total:`, or `Daily Total:`. Output **only** the meal/option names, ingredient gram weights (`Xg`), and the single `Total:` line under each meal.
 - **2c. Whole Numbers Only (No Decimals):** Round all calories and macros (`Protein`, `Carbs`, `Fats`) to the nearest **whole integer** (e.g., `40g P`, never `39.7g P`).
 - **2d. Never Output Fiber:** Do **not** include Fiber in any macro breakdown, meal summary, or response. Aaron tracks fiber separately.
 - **2e. Always Include Exact Grams (`g`) for Every Ingredient:** Every ingredient line in a meal breakdown **must** lead with its exact weight in **grams (`g`)** (e.g., `- 80g Easy Tiger Sourdough Bread`, `- 32g PBfit Peanut Butter Powder`, `- 227g raw Boneless Skinless Chicken Thighs`, `- 140g Ben's Original Ready Rice: Jasmine Rice`, `- 118g Fresh Banana`). **Never** list slices, cups, tbsp, oz, or medium/whole units without grams.
@@ -26,12 +26,12 @@ Before performing any task, writing any code, or returning any answer, I **must*
 ---
 
 ## 3. Daily Macro Goals (MasterRules Override Cronometer Targets)
-- **Calories:** `1,900 kcal` target for the day's planned food (`1,850–1,950 kcal` window), leaving a `200 kcal` buffer for a midnight snack if needed (`2,100 kcal` max).
-- **Protein:** `180g` target (`175g–185g` window — **do not** overshoot to 200g–220g).
-- **Carbs:** `180g` minimum (prefer `190g` — **never** leave planned daily carbs below `180g`).
-- **Fats:** `50g` minimum (prefer `55g–60g` — **do not** exceed `60g`).
-- **3a. Ignore Cronometer's On-Screen Target Denominators:** When Aaron sends a Cronometer screenshot, **only** read the left-side **Consumed** numbers and **completely ignore** the target denominators (`/ 2100 kcal`, `/ 200g P`, etc.) shown inside the app. Always calculate remaining macros and daily plans strictly against the goals in this section (`1,900 kcal | 180g P | 190g C | 55–60g F`).
-- **3b. Mandatory Macro Math Verification:** Before outputting any full-day or remaining-day meal plan, sum the exact macros from **[InventoryData.json](../inventory/InventoryData.json)** and scale the gram weights of protein, carb, and fat sources so the daily total hits `~1,900 kcal | ~180g P | ~190g C | 55–60g F` accurately without overshooting protein/fat or undershooting carbs.
+- **Protein:** `170g` floor, `185g` goal (`170g–185g` window — **do not** overshoot past `185g`).
+- **Carbs:** `150g` floor, `180g` goal (`150g–180g` window — **never** leave planned daily carbs below `150g`).
+- **Fats:** `50g` floor, `50g` goal (`~50g` target — keep daily fats right around `50g`).
+- **Calories:** `~1,900 kcal` target for the day's planned food (`185g P + 180g C + 50g F = ~1,910 kcal`), leaving a `200 kcal` buffer for a midnight snack if needed (`2,100 kcal` max).
+- **3a. Ignore Cronometer's On-Screen Target Denominators:** When Aaron sends a Cronometer screenshot (or multiple screenshots), **only** read the **Consumed** numbers and **completely ignore** the target denominators (`/ 2100 kcal`, `/ 200g P`, etc.) shown inside the app. Always calculate remaining macros and daily plans strictly against the goals in this section (`Protein: 170g floor / 185g goal | Carbs: 150g floor / 180g goal | Fats: 50g floor / 50g goal`).
+- **3b. Mandatory Silent Macro Math Verification (Do Not Print Remaining/Daily Totals):** Before outputting any full-day or remaining-day meal plan, silently sum the exact macros from **[InventoryData.json](../inventory/InventoryData.json)** and scale the gram weights of protein, carb, and fat sources so the day hits `170–185g P (185g goal) | 150–180g C (180g goal) | ~50g F (50g floor & goal)`. **Do not** print `Consumed So Far:`, `Remaining Total:`, or `Daily Total:` lines at the top or bottom of your response.
 *(Fiber is tracked separately by Aaron—do not output or track fiber.)*
 
 ---
@@ -56,7 +56,7 @@ Before performing any task, writing any code, or returning any answer, I **must*
 - **4g. Likes & Dislikes Tracking:** Always maintain and respect the user's list of **Liked / Go-To Foods & Meals** and **Disliked Foods (Never Suggest)** in Section 8 below.
 - **4h. Dining Out, Restaurant & Travel Mode:**
   - Aaron can ask at any time for **tips when going out to eat**, **what to order at a restaurant / fast-food chain / specific cuisine**, or **travel food / road trip / airport / hotel strategies**.
-  - When answering dining-out or travel requests, **do not restrict suggestions to home inventory**. Give ultra-short, high-protein, macro-friendly ordering tips, menu picks, or portable travel foods with estimated macros (`kcal | P | C | F`, whole numbers, no fiber) tailored to his Section 3 goals (`1,900 kcal | 180g P | 190g C | 55–60g F`) or his remaining macros for the day.
+  - When answering dining-out or travel requests, **do not restrict suggestions to home inventory**. Give ultra-short, high-protein, macro-friendly ordering tips, menu picks, or portable travel foods with estimated macros (`kcal | P | C | F`, whole numbers, no fiber) tailored to his Section 3 goals (`170–185g P | 150–180g C | 50g F`) or his remaining macros for the day.
 
 ---
 
@@ -69,8 +69,8 @@ Before performing any task, writing any code, or returning any answer, I **must*
 5. **Snacks**
 
 ### 5b. Three Ways to Use the Planner
-- **Mode 1 — Full Day from Scratch (No Screenshot):** Plan the whole day across the meal slots to hit the daily macro goals in Section 3 (`1,900 kcal | 180g P | 190g C | 55–60g F`).
-- **Mode 2 — Fill In Remaining Day (Cronometer Screenshot):** The user sends a Cronometer screenshot showing Consumed Calories, Protein, Carbs, and Fats so far (ignoring Cronometer's target denominators), and the agent suggests food to hit the remaining Section 3 targets.
+- **Mode 1 — Full Day from Scratch (No Screenshot):** Plan the whole day across the meal slots to hit the daily macro goals in Section 3 (`Protein: 170–185g (185g goal) | Carbs: 150–180g (180g goal) | Fats: 50g`).
+- **Mode 2 — Fill In Remaining Day (Cronometer Screenshot):** The user sends a Cronometer screenshot (or multiple screenshots) showing Consumed Calories, Protein, Carbs, and Fats so far (ignoring Cronometer's target denominators), and the agent suggests food to hit the remaining Section 3 targets.
 - **Mode 3 — Dining Out / Travel Tips:** Give quick restaurant ordering picks, macro swaps, or travel food ideas to hit his macro goals on the go.
 
 ---
@@ -79,9 +79,9 @@ Before performing any task, writing any code, or returning any answer, I **must*
 - **6a. Step 1 — Custom `X` Options (or Default 5 Options) by Name Only:**
   - Whenever Aaron asks for **`X` options/ideas** (e.g., *"give me 3 options"*, *"10 snack ideas"*, *"2 dinner options"*), output **exactly `X` distinct options**.
   - When planning a slot or day without a specified count, default to **5 distinct options per category/slot** by name/idea only (e.g., *Chicken Tacos*, *Chicken Teriyaki*, *Bagel*, *Avocado Toast*) **without** macros cluttering the initial list.
-- **6b. Step 2 — Exact Grams (`g`) for Every Ingredient + Single Total Macros Line at the Bottom:**
-  - When showing numbers for a meal (or once options are picked), **never** list macros next to each individual ingredient, and **never** omit grams (`g`).
-  - List **the exact weight in grams (`Xg`) of each ingredient**, followed by **one single Total Macros line** at the bottom with **whole numbers only** and **no fiber**:
+- **6b. Step 2 — Exact Grams (`g`) for Every Ingredient + Single Total Macros Line per Meal (No Remaining/Daily Totals):**
+  - When showing numbers for a meal (or once options are picked), **never** list macros next to each individual ingredient, **never** omit grams (`g`), and **never** add `Consumed So Far:`, `Remaining Targets:`, `Remaining Total:`, or `Daily Total:` lines at the top or bottom.
+  - List **the exact weight in grams (`Xg`) of each ingredient**, followed by **one single Total Macros line** at the bottom of each meal with **whole numbers only** and **no fiber**:
     ```text
     [Meal Name]
     - [Xg] [Ingredient 1]
@@ -130,3 +130,13 @@ Before performing any task, writing any code, or returning any answer, I **must*
 
 ### 👎 Foods I Don't Like (Never Suggest)
 - **Frank's RedHot / Buffalo Sauce** *(verified removed from inventory)*
+
+---
+
+## 9. On Hold (For Later) — Inventory Web / Phone App Spec
+- **Status:** On hold until requested by Aaron.
+- **Core Spec:**
+  - Simple, zero-fluff login page + inventory table web/phone app.
+  - **1 Unified Filter:** Categories (`Frozen`, `Dairy`, `Pantry`, etc.) + Macro/Goal Options (`High Protein Options`, `High Fiber Options`, `Good Carb Options`, `Good Fat Options`, etc.).
+  - **Table Columns:** `Category` | `Item` | `Remove Button` | `Calories per serving` | `Protein` | `Carbs` | `Fats` | `Fiber`.
+  - **1 Chatbox:** Attach receipts, talk-to-text, or type to add/remove items from inventory.

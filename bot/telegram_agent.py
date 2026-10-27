@@ -33,6 +33,11 @@ USDA_API_KEY = os.environ.get("USDA_API_KEY", "DEMO_KEY")
 # Per-chat conversation history so Gemini remembers the whole conversation
 CHAT_MEMORY: Dict[int, List[Dict[str, Any]]] = {}
 
+# Per-chat batching so multi-screenshot uploads / rapid messages produce ONE single reply
+BATCH_LOCK = threading.Lock()
+CHAT_BATCH: Dict[int, Dict[str, Any]] = {}
+BATCH_DELAY_SEC = 2.0
+
 
 # ==============================================================================
 # RULE 1a: ALWAYS READ MasterRules.md, FoodInventory.md, AND InventoryData.json
@@ -195,7 +200,7 @@ def remove_item_from_inventory(item_query: str) -> str:
 # ==============================================================================
 # GEMINI CONVERSATIONAL AGENT (READS ALL FILES EVERY TIME)
 # ==============================================================================
-def ask_gemini(user_text: str, chat_id: int, image_path: str = None) -> str:
+def ask_gemini(user_text: str, chat_id: int, image_paths: List[str] = None) -> str:
     key = get_gemini_key()
     rules_md, inv_md, inv_json = load_all_context()
 
@@ -210,22 +215,27 @@ def ask_gemini(user_text: str, chat_id: int, image_path: str = None) -> str:
         "You MUST follow every rule in MasterRules.md below.\n"
         "STRICT OUTPUT & FORMATTING RULES (NEVER VIOLATE):\n"
         "1. AS SHORT AS HUMANLY POSSIBLE — ZERO FLUFF: Never write intro sentences ('That sounds like a great combo!'), food descriptions ('keeps it juicy and melts nicely'), or outro sentences ('Fits right into your remaining budget!'). Output ONLY the raw answer.\n"
-        "2. ALWAYS INCLUDE EXACT GRAMS (g) FOR EVERY INGREDIENT: Every single ingredient line in a meal MUST start with its exact weight in grams (e.g., '- 80g Easy Tiger Sourdough Bread', '- 32g PBfit Peanut Butter Powder', '- 227g raw Boneless Skinless Chicken Thighs', '- 140g Ben\\'s Original Ready Rice: Jasmine Rice', '- 150g Oikos Triple Zero Vanilla Greek Yogurt', '- 118g Fresh Banana'). NEVER write '2 slices', '4 tbsp', '1 cup', '8 oz', or '1 medium' without the exact gram weight (Xg) at the front.\n"
-        "3. NO DECIMALS EVER: Round all Calories, Protein, Carbs, and Fats to whole integers (e.g., 40g P, NEVER 39.7g P).\n"
-        "4. NO FIBER EVER: Never output or mention Fiber anywhere.\n"
-        "5. NO PER-INGREDIENT MACROS: When giving a meal breakdown, list ONLY the gram weight + ingredient name, followed by ONE single Total line at the bottom:\n"
+        "2. NO REMAINING OR DAILY TOTAL LINES: NEVER output 'Consumed So Far:', 'Remaining Targets:', 'Remaining Total:', 'Total Added:', or 'Daily Total:' at the top or bottom of your response. Output ONLY the meals/options and the single 'Total:' line directly underneath each meal.\n"
+        "3. ALWAYS INCLUDE EXACT GRAMS (g) FOR EVERY INGREDIENT: Every single ingredient line in a meal MUST start with its exact weight in grams (e.g., '- 80g Easy Tiger Sourdough Bread', '- 32g PBfit Peanut Butter Powder', '- 227g raw Boneless Skinless Chicken Thighs', '- 140g Ben\\'s Original Ready Rice: Jasmine Rice', '- 150g Oikos Triple Zero Vanilla Greek Yogurt', '- 118g Fresh Banana'). NEVER write '2 slices', '4 tbsp', '1 cup', '8 oz', or '1 medium' without the exact gram weight (Xg) at the front.\n"
+        "4. NO DECIMALS EVER: Round all Calories, Protein, Carbs, and Fats to whole integers (e.g., 40g P, NEVER 39.7g P).\n"
+        "5. NO FIBER EVER: Never output or mention Fiber anywhere.\n"
+        "6. NO PER-INGREDIENT MACROS: When giving a meal breakdown, list ONLY the gram weight + ingredient name, followed by ONE single Total line at the bottom of that meal:\n"
         "   [Meal Name]\n"
         "   - [Xg] [Ingredient 1]\n"
         "   - [Xg] [Ingredient 2]\n"
         "   Total: [X] kcal | [X]g P | [X]g C | [X]g F\n"
-        "6. STRICTLY HIT MASTERRULES.MD GOALS & IGNORE CRONOMETER APP TARGETS:\n"
-        "   - Aaron's true daily goals are in MasterRules.md Section 3: 1,900 kcal planned target (2,100 kcal max with 200 kcal buffer) | 180g P | 190g C (180g min) | 55-60g F (50g min).\n"
-        "   - When reading a Cronometer screenshot, ONLY read the left-side CONSUMED numbers and 100% IGNORE the right-side target denominators ('/ 2100.0 kcal', '/ 200.0 g', etc.) and percentages shown inside the Cronometer app.\n"
-        "   - When planning a day or remaining meals, verify your math across all meals BEFORE replying so Daily Total hits ~1,900 kcal, ~180g P (do NOT overshoot to 200-220g P), 180-195g C (do NOT leave carbs under 180g), and 50-60g F (do NOT exceed 60g F). Scale ingredient gram weights to hit these targets accurately.\n"
-        "7. CUSTOM X OPTIONS COUNT: Whenever Aaron asks for X options/ideas (e.g., '3 options', '10 snack ideas'), output exactly X options. Default to 5 options per slot only when no number is specified.\n"
-        "8. DINING OUT & TRAVEL MODE: When Aaron asks for tips when going out to eat, restaurant orders, or travel foods, do NOT restrict suggestions to FoodInventory.md. Give ultra-short, high-protein, macro-friendly restaurant picks, ordering modifications, or travel staples with estimated macros (kcal | P | C | F) tailored to his goals.\n"
-        "9. STAY IN CONVERSATION CONTEXT & RESPECT REMAINING CALORIES: Check previous messages and remaining daily calories/macros. Never suggest high-calorie or redundant carb extras (like tortillas on top of pasta). Use spices from # Spices & Seasonings first before ever flagging [🛒 Need to buy].\n"
-        "10. Never adjust inventory or raw meat unless Aaron explicitly tells you to.\n\n"
+        "7. STRICTLY HIT MASTERRULES.MD GOALS & IGNORE CRONOMETER APP TARGETS:\n"
+        "   - Aaron's true daily goals are in MasterRules.md Section 3:\n"
+        "     * Protein: 170g floor, 185g goal (stay within 170g-185g)\n"
+        "     * Carbs: 150g floor, 180g goal (stay within 150g-180g)\n"
+        "     * Fats: 50g floor, 50g goal (target ~50g F)\n"
+        "     * Calories: ~1,900 kcal planned target (2,100 kcal max with 200 kcal buffer)\n"
+        "   - When reading one or more Cronometer screenshots, ONLY read the CONSUMED numbers and 100% IGNORE the target denominators ('/ 2100.0 kcal', '/ 200.0 g', etc.) and percentages shown inside the Cronometer app.\n"
+        "   - Silently verify your math across all meals BEFORE replying so the full day lands inside 170-185g P (185g goal), 150-180g C (180g goal), and ~50g F (50g floor/goal). Do NOT print 'Remaining Total:' or 'Daily Total:' at the bottom.\n"
+        "8. CUSTOM X OPTIONS COUNT: Whenever Aaron asks for X options/ideas (e.g., '3 options', '10 snack ideas'), output exactly X options. Default to 5 options per slot only when no number is specified.\n"
+        "9. DINING OUT & TRAVEL MODE: When Aaron asks for tips when going out to eat, restaurant orders, or travel foods, do NOT restrict suggestions to FoodInventory.md. Give ultra-short, high-protein, macro-friendly restaurant picks, ordering modifications, or travel staples with estimated macros (kcal | P | C | F) tailored to his goals.\n"
+        "10. STAY IN CONVERSATION CONTEXT & RESPECT REMAINING CALORIES: Check previous messages and remaining daily calories/macros. Use spices from # Spices & Seasonings first before ever flagging [🛒 Need to buy].\n"
+        "11. Never adjust inventory or raw meat unless Aaron explicitly tells you to.\n\n"
         f"=== MasterRules.md ===\n{rules_md}\n\n"
         f"=== FoodInventory.md ===\n{inv_md}\n\n"
         f"=== InventoryData.json (Verified USDA/Brand Macros) ===\n{macro_db_text}"
@@ -235,11 +245,12 @@ def ask_gemini(user_text: str, chat_id: int, image_path: str = None) -> str:
         CHAT_MEMORY[chat_id] = []
     history = CHAT_MEMORY[chat_id]
     parts: List[Dict[str, Any]] = []
-    if image_path and os.path.exists(image_path):
-        with open(image_path, "rb") as f:
-            b64 = base64.b64encode(f.read()).decode("utf-8")
-        parts.append({"inline_data": {"mime_type": "image/jpeg", "data": b64}})
-    parts.append({"text": user_text or "Read this screenshot and help me plan based on MasterRules.md."})
+    for img_path in (image_paths or []):
+        if img_path and os.path.exists(img_path):
+            with open(img_path, "rb") as f:
+                b64 = base64.b64encode(f.read()).decode("utf-8")
+            parts.append({"inline_data": {"mime_type": "image/jpeg", "data": b64}})
+    parts.append({"text": user_text or "Read the screenshot(s) and help me plan based on MasterRules.md."})
 
     contents = list(history[-16:]) + [{"role": "user", "parts": parts}]
     payload = {
@@ -261,7 +272,7 @@ def ask_gemini(user_text: str, chat_id: int, image_path: str = None) -> str:
                 res = json.loads(resp.read().decode("utf-8"))
             cand_parts = res["candidates"][0]["content"]["parts"]
             reply = "\n".join(p["text"] for p in cand_parts if "text" in p).strip()
-            history.append({"role": "user", "parts": [{"text": user_text or "[Sent Screenshot]"}]})
+            history.append({"role": "user", "parts": [{"text": user_text or "[Sent Screenshot(s)]"}]})
             history.append({"role": "model", "parts": [{"text": reply}]})
             return reply
         except Exception as e:
@@ -284,12 +295,8 @@ def tg_api(token: str, method: str, payload: Dict[str, Any]) -> Dict[str, Any]:
 def send_message(token: str, chat_id: int, text: str):
     chunks = [text[i : i + 3900] for i in range(0, len(text), 3900)] or [text]
     for chunk in chunks:
-        payload: Dict[str, Any] = {"chat_id": chat_id, "text": chunk, "parse_mode": "Markdown"}
-        try:
-            tg_api(token, "sendMessage", payload)
-        except Exception:
-            payload.pop("parse_mode", None)
-            tg_api(token, "sendMessage", payload)
+        payload: Dict[str, Any] = {"chat_id": chat_id, "text": chunk}
+        tg_api(token, "sendMessage", payload)
 
 
 def download_telegram_photo(token: str, file_id: str) -> str:
@@ -303,51 +310,70 @@ def download_telegram_photo(token: str, file_id: str) -> str:
 
 
 # ==============================================================================
-# MESSAGE HANDLERS
+# BATCHED MESSAGE & MULTI-PHOTO HANDLER (PREVENTS MULTIPLE REPLIES)
 # ==============================================================================
-def handle_photo(token: str, chat_id: int, photo_list: List[Dict[str, Any]], caption: str = ""):
-    best_photo = photo_list[-2] if len(photo_list) >= 2 else photo_list[-1]
-    local_path = download_telegram_photo(token, best_photo["file_id"])
+def flush_chat_batch(token: str, chat_id: int):
+    with BATCH_LOCK:
+        batch = CHAT_BATCH.pop(chat_id, None)
+    if not batch:
+        return
+
+    texts: List[str] = batch.get("texts", [])
+    photos: List[str] = batch.get("photos", [])
+    combined_text = "\n".join(t for t in texts if t).strip()
+
     try:
-        reply = ask_gemini(caption, chat_id, image_path=local_path)
+        if not photos and combined_text:
+            s = combined_text
+            m_dis = re.search(r"^add\s+(.+?)\s+to\s+(?:my\s+)?(?:don'?t\s+like|dislike)\s*(?:list)?$", s, re.I)
+            if m_dis:
+                send_message(token, chat_id, add_to_dislikes(m_dis.group(1).strip()))
+                return
+
+            m_like = re.search(r"^add\s+(.+?)\s+to\s+(?:my\s+)?like\s*(?:list)?$", s, re.I)
+            if m_like:
+                send_message(token, chat_id, add_to_likes(m_like.group(1).strip()))
+                return
+
+            m_add_inv = re.search(r"^add\s+(.+?)\s+to\s+(?:my\s+)?inventory$", s, re.I)
+            if m_add_inv:
+                send_message(token, chat_id, add_item_to_inventory(m_add_inv.group(1).strip()))
+                return
+
+            m_rem_inv = re.search(r"^remove\s+(.+?)\s+from\s+(?:my\s+)?inventory$", s, re.I)
+            if m_rem_inv:
+                send_message(token, chat_id, remove_item_from_inventory(m_rem_inv.group(1).strip()))
+                return
+
+        reply = ask_gemini(combined_text, chat_id, image_paths=photos)
         send_message(token, chat_id, reply)
     except Exception as e:
-        send_message(token, chat_id, f"⚠️ Error reading image: {e}")
+        send_message(token, chat_id, f"⚠️ Error: {e}")
     finally:
-        try:
-            os.remove(local_path)
-        except Exception:
-            pass
+        for p in photos:
+            try:
+                if os.path.exists(p):
+                    os.remove(p)
+            except Exception:
+                pass
 
 
-def handle_text(token: str, chat_id: int, text: str):
-    s = text.strip()
-
-    m_dis = re.search(r"^add\s+(.+?)\s+to\s+(?:my\s+)?(?:don'?t\s+like|dislike)\s*(?:list)?$", s, re.I)
-    if m_dis:
-        send_message(token, chat_id, add_to_dislikes(m_dis.group(1).strip()))
-        return
-
-    m_like = re.search(r"^add\s+(.+?)\s+to\s+(?:my\s+)?like\s*(?:list)?$", s, re.I)
-    if m_like:
-        send_message(token, chat_id, add_to_likes(m_like.group(1).strip()))
-        return
-
-    m_add_inv = re.search(r"^add\s+(.+?)\s+to\s+(?:my\s+)?inventory$", s, re.I)
-    if m_add_inv:
-        send_message(token, chat_id, add_item_to_inventory(m_add_inv.group(1).strip()))
-        return
-
-    m_rem_inv = re.search(r"^remove\s+(.+?)\s+from\s+(?:my\s+)?inventory$", s, re.I)
-    if m_rem_inv:
-        send_message(token, chat_id, remove_item_from_inventory(m_rem_inv.group(1).strip()))
-        return
-
-    try:
-        reply = ask_gemini(s, chat_id)
-        send_message(token, chat_id, reply)
-    except Exception as e:
-        send_message(token, chat_id, f"⚠️ Gemini error: {e}")
+def enqueue_turn(token: str, chat_id: int, text: str = "", photo_path: str = None):
+    with BATCH_LOCK:
+        entry = CHAT_BATCH.get(chat_id)
+        if not entry:
+            entry = {"texts": [], "photos": [], "timer": None}
+            CHAT_BATCH[chat_id] = entry
+        if entry["timer"] is not None:
+            entry["timer"].cancel()
+        if text:
+            entry["texts"].append(text.strip())
+        if photo_path:
+            entry["photos"].append(photo_path)
+        timer = threading.Timer(BATCH_DELAY_SEC, flush_chat_batch, args=(token, chat_id))
+        timer.daemon = True
+        entry["timer"] = timer
+        timer.start()
 
 
 def process_update(token: str, upd: Dict[str, Any]):
@@ -355,9 +381,15 @@ def process_update(token: str, upd: Dict[str, Any]):
         msg = upd["message"]
         cid = msg["chat"]["id"]
         if "photo" in msg:
-            handle_photo(token, cid, msg["photo"], msg.get("caption", ""))
+            photo_list = msg["photo"]
+            best_photo = photo_list[-2] if len(photo_list) >= 2 else photo_list[-1]
+            try:
+                local_path = download_telegram_photo(token, best_photo["file_id"])
+                enqueue_turn(token, cid, text=msg.get("caption", ""), photo_path=local_path)
+            except Exception as e:
+                send_message(token, cid, f"⚠️ Error downloading image: {e}")
         elif "text" in msg:
-            handle_text(token, cid, msg["text"])
+            enqueue_turn(token, cid, text=msg["text"])
 
 
 # ==============================================================================
@@ -418,8 +450,6 @@ def run_bot():
     threading.Thread(target=server.serve_forever, daemon=True).start()
 
     if external_url:
-        # On Render: register webhook so incoming messages wake up the container even if it ever sleeps,
-        # AND run an 8-minute self-ping so it stays warm 24/7.
         webhook_url = f"{external_url}/webhook"
         try:
             tg_api(token, "setWebhook", {"url": webhook_url})
