@@ -26,12 +26,16 @@ Before performing any task, writing any code, or returning any answer, I **must*
 ---
 
 ## 3. Daily Macro Goals (MasterRules Override Cronometer Targets)
-- **Protein:** `170g` floor, `185g` goal (`170g–185g` window — **do not** overshoot past `185g`).
-- **Carbs:** `150g` floor, `180g` goal (`150g–180g` window — **never** leave planned daily carbs below `150g`).
+- **Protein:** `170g` floor, `185g` goal (`170g–185g` window — **NEVER** leave planned daily protein below `170g` or overshoot past `185g`).
+- **Carbs:** `150g` floor, `180g` goal (`150g–180g` window — **NEVER** leave planned daily carbs below `150g`).
 - **Fats:** `50g` floor, `50g` goal (`~50g` target — keep daily fats right around `50g`).
-- **Calories:** `~1,900 kcal` target for the day's planned food (`185g P + 180g C + 50g F = ~1,910 kcal`), leaving a `200 kcal` buffer for a midnight snack if needed (`2,100 kcal` max).
-- **3a. Ignore Cronometer's On-Screen Target Denominators:** When Aaron sends a Cronometer screenshot (or multiple screenshots), **only** read the **Consumed** numbers and **completely ignore** the target denominators (`/ 2100 kcal`, `/ 200g P`, etc.) shown inside the app. Always calculate remaining macros and daily plans strictly against the goals in this section (`Protein: 170g floor / 185g goal | Carbs: 150g floor / 180g goal | Fats: 50g floor / 50g goal`).
-- **3b. Mandatory Silent Macro Math Verification (Do Not Print Remaining/Daily Totals):** Before outputting any full-day or remaining-day meal plan, silently sum the exact macros from **[InventoryData.json](../inventory/InventoryData.json)** and scale the gram weights of protein, carb, and fat sources so the day hits `170–185g P (185g goal) | 150–180g C (180g goal) | ~50g F (50g floor & goal)`. **Do not** print `Consumed So Far:`, `Remaining Total:`, or `Daily Total:` lines at the top or bottom of your response.
+- **Calories:** `1,900 kcal` target for the day's planned food (`1,850–1,950 kcal` window — **NEVER** push planned food to `2,050–2,100+ kcal`; the `200 kcal` buffer up to `2,100 kcal` is reserved strictly for an unplanned midnight snack if needed).
+- **3a. Ignore Cronometer's On-Screen Target Denominators:** When Aaron sends a Cronometer screenshot (or multiple screenshots), **only** read the **Consumed** numbers and **completely ignore** the target denominators (`/ 2100 kcal`, `/ 200g P`, etc.) shown inside the app. Always calculate remaining macros and daily plans strictly against the goals in this section (`1,900 kcal | Protein: 170g floor / 185g goal | Carbs: 150g floor / 180g goal | Fats: 50g floor / 50g goal`).
+- **3b. Every Single Option Must Hit the Macro Floor & Calorie Target:**
+  - If Aaron needs e.g. `+35g P` and only has `~150–250 kcal` left to reach `1,900 kcal`, **every single option** you suggest must actually deliver that `+35g P` within those calories so his day finishes at `170–185g P` and `~1,900 kcal`. **Never** suggest low-protein/high-carb options (like `11g P` rice cakes or `23g P` bagel) that leave him at `164g P` and `2,060 kcal`.
+- **3c. Adjust Existing Planned Meals Instead of Piling On More Calories:**
+  - Whenever Aaron's Cronometer plan is already near/at/over `1,900 kcal` (e.g., `2,060 kcal` with only `164g P`), or whenever Aaron says *"you can adjust other stuff"* / *"what adjustments can I make"*, **DO NOT suggest adding extra snacks or meals on top!**
+  - Instead, look at the meals already logged in his Cronometer screenshot and output **exact gram adjustments / swaps to his existing meals** (e.g. reducing a high-calorie carb/fat item from `Xg` to `Yg` and increasing a lean protein in his existing meals from `Ag` to `Bg`) so total daily calories drop back to `~1,900 kcal` while protein rises into `170–185g P` (`185g` goal).
 *(Fiber is tracked separately by Aaron—do not output or track fiber.)*
 
 ---
@@ -95,6 +99,8 @@ Before performing any task, writing any code, or returning any answer, I **must*
 - **6d. Strict Remaining-Calorie & Macro Guardrail + DIY Spice Blends:**
   - Every suggestion **must** fit the calories and macros Aaron actually has left for the day (e.g., never suggest tortillas or heavy extras when calories are tight or when he already has a carb base like chickpea pasta).
   - Before flagging `[🛒 Need to buy: seasoning]`, check `# Spices & Seasonings` and `# Oils & Condiments` in **[FoodInventory.md](../inventory/FoodInventory.md)** to build the flavor from spices already on hand (e.g., homemade taco seasoning from Cumin, Paprika, Garlic Powder, Onion Powder, Salt, Black Pepper, Red Pepper Flakes, Lime Juice, Cilantro, or Green Chile Enchilada Sauce).
+- **6e. Zero Repeats When Asked for More Options:**
+  - Whenever Aaron asks for *"more options"*, *"other ideas"*, or *"anything besides [X]"*, check all previous assistant messages in the conversation and **never** repeat any food, meal, or ingredient combination that was already suggested earlier. Every new option must be 100% new and distinct.
 
 ---
 
