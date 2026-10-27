@@ -2,6 +2,7 @@ import base64
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 import os
+import random
 import re
 import tempfile
 import threading
@@ -30,7 +31,7 @@ TOKEN_FILE = resolve_path(".telegram_token", "bot")
 GEMINI_KEY_FILE = resolve_path(".gemini_key", "bot")
 USDA_API_KEY = os.environ.get("USDA_API_KEY", "DEMO_KEY")
 
-# Per-chat conversation history so Gemini remembers the whole conversation
+# Per-chat conversation history so Gemini remembers the whole conversation + screenshots
 CHAT_MEMORY: Dict[int, List[Dict[str, Any]]] = {}
 
 # Per-chat batching so multi-screenshot uploads / rapid messages produce ONE single reply
@@ -198,70 +199,92 @@ def remove_item_from_inventory(item_query: str) -> str:
 
 
 # ==============================================================================
-# GEMINI CONVERSATIONAL AGENT (READS ALL FILES EVERY TIME)
+# GEMINI 4 ARGON CONVERSATIONAL AGENT (WITH INVENTORY SHUFFLING & MEMORY)
 # ==============================================================================
 def ask_gemini(user_text: str, chat_id: int, image_paths: List[str] = None) -> str:
     key = get_gemini_key()
     rules_md, inv_md, inv_json = load_all_context()
 
+    # Shuffle inventory order on every turn so the model doesn't fixate on the first 10 items in the file!
+    shuffled_inv = list(inv_json)
+    random.shuffle(shuffled_inv)
+
     macro_lines = [
-        f"- {x['name']} ({x['serving_size']}): {int(round(x['calories']))} kcal | {int(round(x['protein_g']))}g P | {int(round(x['carbs_g']))}g C | {int(round(x['fat_g']))}g F"
-        for x in inv_json
+        f"- [{x.get('category', '')}] {x['name']} ({x['serving_size']}): {int(round(x['calories']))} kcal | {int(round(x['protein_g']))}g P | {int(round(x['carbs_g']))}g C | {int(round(x['fat_g']))}g F"
+        for x in shuffled_inv
     ]
     macro_db_text = "\n".join(macro_lines)
 
-    system_prompt = (
-        "You are Aaron's personal Food & Macro Assistant on Telegram.\n"
-        "You MUST follow every rule in MasterRules.md below.\n"
-        "STRICT OUTPUT & FORMATTING RULES (NEVER VIOLATE):\n"
-        "1. AS SHORT AS HUMANLY POSSIBLE — ZERO FLUFF: Never write intro sentences ('That sounds like a great combo!'), food descriptions ('keeps it juicy and melts nicely'), or outro sentences ('Fits right into your remaining budget!'). Output ONLY the raw answer.\n"
-        "2. NO REMAINING OR DAILY TOTAL LINES: NEVER output 'Consumed So Far:', 'Remaining Targets:', 'Remaining Total:', 'Total Added:', or 'Daily Total:' at the top or bottom of your response. Output ONLY the meals/options/adjustments and the single 'Total:' line directly underneath each meal.\n"
-        "3. ALWAYS INCLUDE EXACT GRAMS (g) FOR EVERY INGREDIENT: Every single ingredient line in a meal MUST start with its exact weight in grams (e.g., '- 80g Easy Tiger Sourdough Bread', '- 32g PBfit Peanut Butter Powder', '- 227g raw Boneless Skinless Chicken Thighs', '- 140g Ben\\'s Original Ready Rice: Jasmine Rice', '- 150g Oikos Triple Zero Vanilla Greek Yogurt', '- 118g Fresh Banana'). NEVER write '2 slices', '4 tbsp', '1 cup', '8 oz', or '1 medium' without the exact gram weight (Xg) at the front.\n"
-        "4. NO DECIMALS EVER: Round all Calories, Protein, Carbs, and Fats to whole integers (e.g., 40g P, NEVER 39.7g P).\n"
-        "5. NO FIBER EVER: Never output or mention Fiber anywhere.\n"
-        "6. NO PER-INGREDIENT MACROS: When giving a meal breakdown, list ONLY the gram weight + ingredient name, followed by ONE single Total line at the bottom of that meal:\n"
-        "   [Meal Name]\n"
-        "   - [Xg] [Ingredient 1]\n"
-        "   - [Xg] [Ingredient 2]\n"
-        "   Total: [X] kcal | [X]g P | [X]g C | [X]g F\n"
-        "7. STRICTLY HIT MASTERRULES.MD GOALS & NEVER LEAVE PROTEIN UNDER 170g OR CALORIES OVER ~1,950 kcal:\n"
-        "   - Aaron's true daily goals are in MasterRules.md Section 3:\n"
-        "     * Protein: 170g floor, 185g goal (MUST finish the day at 170g-185g P — NEVER leave him at 164g P!)\n"
-        "     * Carbs: 150g floor, 180g goal (stay within 150g-180g C)\n"
-        "     * Fats: 50g floor, 50g goal (target ~50g F)\n"
-        "     * Calories: 1,900 kcal planned target (1,850-1,950 kcal window — NEVER push his planned day to 2,060 kcal! The 200 kcal buffer up to 2,100 kcal is reserved ONLY for an unplanned midnight snack).\n"
-        "   - When reading one or more Cronometer screenshots, ONLY read the CONSUMED numbers and logged foods, and 100% IGNORE the target denominators ('/ 2100.0 kcal', '/ 200.0 g', etc.) shown inside the Cronometer app.\n"
-        "   - EVERY SINGLE OPTION you suggest to fill out a day MUST actually hit the remaining protein needed to reach 170-185g P WITHOUT pushing daily calories past ~1,900-1,950 kcal. Never suggest a low-protein, high-carb option (like 11g P rice cakes or 18g P oatmeal) when he needs 35-40g P on a tight calorie budget!\n"
-        "8. ADJUST EXISTING PLANNED MEALS WHEN CALORIES ARE HIGH OR WHEN TOLD YOU CAN ADJUST:\n"
-        "   - If his Cronometer screenshot is already near/at/over 1,900 kcal (e.g., 2,060 kcal and 164g P) OR if Aaron says 'you can adjust other stuff' / 'we adjust other stuff tomorrow too', DO NOT suggest adding extra snacks or meals on top of 2,060 kcal!\n"
-        "   - Instead, look at the specific foods and gram weights already logged in his Cronometer screenshot(s) and give him the exact gram-weight adjustments / swaps to his EXISTING planned meals (e.g., 'In [Meal], drop [Item A] from Xg to Yg and increase [Protein Item B] from Ag to Bg') so total daily calories drop back to ~1,900 kcal while daily protein rises to 175-185g P.\n"
-        "9. ZERO REPEATS WHEN ASKED FOR MORE OPTIONS:\n"
-        "   - Whenever Aaron asks for 'more options', 'other ideas', or 'anything besides [X]', check all previous assistant messages in the conversation history and NEVER repeat any food, meal, or ingredient combo that you already suggested earlier. Every new option must be 100% new and distinct.\n"
-        "10. CUSTOM X OPTIONS COUNT: Whenever Aaron asks for X options/ideas (e.g., '3 options', '10 snack ideas'), output exactly X options. Default to 5 options only when he asks for options without specifying a number.\n"
-        "11. DINING OUT & TRAVEL MODE: When Aaron asks for tips when going out to eat, restaurant orders, or travel foods, do NOT restrict suggestions to FoodInventory.md. Give ultra-short, high-protein, macro-friendly restaurant picks, ordering modifications, or travel staples with estimated macros (kcal | P | C | F) tailored to his goals.\n"
-        "12. Never adjust inventory or raw meat unless Aaron explicitly tells you to.\n\n"
-        f"=== MasterRules.md ===\n{rules_md}\n\n"
-        f"=== FoodInventory.md ===\n{inv_md}\n\n"
-        f"=== InventoryData.json (Verified USDA/Brand Macros) ===\n{macro_db_text}"
-    )
+    # Pick a random spotlight of 25 non-spice foods from across the inventory to inspire fresh rotation
+    food_candidates = [
+        x["name"]
+        for x in shuffled_inv
+        if x.get("calories", 0) >= 20 and "Spices" not in x.get("category", "")
+    ]
+    spotlight_sample = food_candidates[:25]
+    spotlight_text = ", ".join(spotlight_sample)
 
     if chat_id not in CHAT_MEMORY:
         CHAT_MEMORY[chat_id] = []
     history = CHAT_MEMORY[chat_id]
+
+    # Collect previously suggested lines from recent assistant responses so it NEVER repeats them
+    previous_model_texts = []
+    for turn in history[-8:]:
+        if turn.get("role") == "model":
+            for p in turn.get("parts", []):
+                if "text" in p:
+                    previous_model_texts.append(p["text"])
+    already_suggested_block = "\n---\n".join(previous_model_texts[-3:]) if previous_model_texts else "None yet."
+
+    system_prompt = (
+        "You are Aaron's personal Food & Macro Assistant on Telegram, powered by Gemini 4 Argon.\n"
+        "You have the exact same deep reasoning and macro-math intelligence as normal Gemini chat, PLUS full access to Aaron's kitchen inventory (`FoodInventory.md` and `InventoryData.json`) and rules (`MasterRules.md`).\n\n"
+        "HOW TO THINK & SOLVE MACRO MATH (USE YOUR INTERNAL THINKING STEP):\n"
+        "1. Read all meals, gram weights, and Consumed totals from the Cronometer screenshot(s) in the conversation (100% ignore Cronometer's right-side target denominators like '/ 2100 kcal' or '/ 200g P').\n"
+        "2. Compare against Aaron's true daily goals from MasterRules.md Section 3:\n"
+        "   - Protein: 170g floor, 185g goal (MUST end the day between 170g and 185g P — never leave him under 170g P!)\n"
+        "   - Carbs: 150g floor, 180g goal (stay between 150g and 180g C)\n"
+        "   - Fats: 50g floor, 50g goal (target ~50g F)\n"
+        "   - Calories: ~1,900 kcal target for planned food (1,850-1,950 kcal window — never leave him at 2,060 kcal with 164g P!).\n"
+        "3. SMART ADJUSTMENTS VS. ADDING FOOD:\n"
+        "   - Just like normal Gemini chat: look at the whole day holistically!\n"
+        "   - If his current plan is ALREADY high in calories (e.g. ~1,900-2,060 kcal) or if adding a snack would push calories over ~1,950 kcal while leaving protein short, OR whenever Aaron says you can adjust other stuff in his day: DO NOT just dump 5 extra snacks on top! Instead, adjust the gram weights or swap items in his existing planned meals on the screenshot (e.g., trim fat/carb-heavy items or swap a lower-protein item for a leaner high-protein item, and scale the grams of his existing protein sources) so the whole day lands right on ~1,900 kcal | 175-185g P | 150-180g C | ~50g F.\n"
+        "   - If he has calories/macros open and asks for options to fill a slot/day, make sure EVERY option you give is scaled in exact grams (Xg) so that choosing it actually hits his 170-185g P and ~1,900 kcal goals (combine a high-protein item with a carb/snack if needed so no option leaves him short on protein).\n"
+        "4. WIDE KITCHEN VARIETY & ZERO REPEATS:\n"
+        "   - Actively use the full 157-item inventory! Don't just suggest Egg Whites, Oikos Yogurt, PBfit, and Honey Turkey every time. Draw from his frozen meats/shrimp/chicken strips/meatballs, canned tuna/chicken, edamame, cottage cheese, protein bars, beef sticks, cheeses, breads, bagels, tortillas, beans, rices, pastas, fruits, and snacks.\n"
+        "   - Here is a randomized spotlight of items from his inventory to consider rotating in if they fit his macros:\n"
+        f"     [{spotlight_text}]\n"
+        "   - NEVER repeat any option, meal, or food combo that appears in 'RECENTLY SUGGESTED IN THIS CHAT' below when Aaron asks for more options or alternatives.\n\n"
+        "STRICT OUTPUT & FORMATTING RULES (NEVER VIOLATE):\n"
+        "- AS SHORT AS HUMANLY POSSIBLE — ZERO FLUFF: No intro pleasantries, no food descriptions, no outro commentary.\n"
+        "- NO REMAINING OR DAILY TOTAL LINES: Never output 'Consumed So Far:', 'Remaining Targets:', 'Remaining Total:', or 'Daily Total:' at the top or bottom.\n"
+        "- EXACT GRAMS (Xg) FIRST ON EVERY INGREDIENT: Every ingredient line MUST start with exact grams (e.g. '- 85g Sola Soft Bagels: Cinnamon & Raisin', '- 150g Oikos Triple Zero Vanilla Greek Yogurt').\n"
+        "- NO DECIMALS EVER (whole integers only) & NO FIBER EVER.\n"
+        "- SINGLE TOTAL LINE PER MEAL/OPTION:\n"
+        "  [Meal or Option Name]\n"
+        "  - [Xg] [Ingredient 1]\n"
+        "  - [Xg] [Ingredient 2]\n"
+        "  Total: [X] kcal | [X]g P | [X]g C | [X]g F\n\n"
+        f"=== RECENTLY SUGGESTED IN THIS CHAT (DO NOT REPEAT THESE WHEN ASKED FOR MORE) ===\n{already_suggested_block}\n\n"
+        f"=== MasterRules.md ===\n{rules_md}\n\n"
+        f"=== FoodInventory.md ===\n{inv_md}\n\n"
+        f"=== InventoryData.json (Shuffled Full Kitchen Macro Database) ===\n{macro_db_text}"
+    )
+
     parts: List[Dict[str, Any]] = []
     for img_path in (image_paths or []):
         if img_path and os.path.exists(img_path):
             with open(img_path, "rb") as f:
                 b64 = base64.b64encode(f.read()).decode("utf-8")
             parts.append({"inline_data": {"mime_type": "image/jpeg", "data": b64}})
-    parts.append({"text": user_text or "Read the screenshot(s) and help me plan based on MasterRules.md."})
+    parts.append({"text": user_text or "Read the screenshot(s) and help me hit my MasterRules.md goals."})
 
-    # Keep inline_data images in the last 4 turns of history so follow-up questions ('Anything besides a shake?', 'give me more', 'adjust other stuff') still see the Cronometer screenshot!
+    # Keep inline_data images in the last 6 history entries so follow-up messages always see the Cronometer screenshot!
     trimmed_history: List[Dict[str, Any]] = []
     recent_slice = list(history[-12:])
     for idx, turn in enumerate(recent_slice):
         if idx < len(recent_slice) - 6:
-            # Strip old base64 images from older turns to keep requests fast
             text_only_parts = [p for p in turn.get("parts", []) if "text" in p]
             if not text_only_parts:
                 text_only_parts = [{"text": "[Earlier Screenshot]"}]
@@ -273,11 +296,11 @@ def ask_gemini(user_text: str, chat_id: int, image_paths: List[str] = None) -> s
     payload = {
         "system_instruction": {"parts": [{"text": system_prompt}]},
         "contents": contents,
-        "generationConfig": {"temperature": 0.3},
+        "generationConfig": {"temperature": 0.65},
     }
 
     last_err = None
-    for model_name in ["gemini-3.5-flash", "gemini-3-flash-preview", "gemini-3.5-flash-lite"]:
+    for model_name in ["gemini-4-argon", "gemini-3.8-flash", "gemini-3.5-flash"]:
         try:
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={key}"
             req = urllib.request.Request(
@@ -285,10 +308,13 @@ def ask_gemini(user_text: str, chat_id: int, image_paths: List[str] = None) -> s
                 data=json.dumps(payload).encode("utf-8"),
                 headers={"Content-Type": "application/json"},
             )
-            with urllib.request.urlopen(req, timeout=30) as resp:
+            with urllib.request.urlopen(req, timeout=45) as resp:
                 res = json.loads(resp.read().decode("utf-8"))
             cand_parts = res["candidates"][0]["content"]["parts"]
-            reply = "\n".join(p["text"] for p in cand_parts if "text" in p).strip()
+            visible_texts = [p["text"] for p in cand_parts if "text" in p and not p.get("thought")]
+            if not visible_texts:
+                visible_texts = [p["text"] for p in cand_parts if "text" in p]
+            reply = "\n".join(visible_texts).strip()
             history.append({"role": "user", "parts": parts})
             history.append({"role": "model", "parts": [{"text": reply}]})
             return reply

@@ -108,7 +108,7 @@ Before performing any task, writing any code, or returning any answer, I **must*
 - **7a. Single Simple Interface (Telegram Only):** No extra web dashboard to maintain. You interact with your food-planning agent directly through **Telegram** (on both your phone and your PC).
 - **7b. Clean Conversational Text (Zero Button Spam):**
   - Do **not** spam clunky Telegram inline button menus when a screenshot or message is sent.
-  - Reply in ultra-short, plain text powered by Gemini (`gemini-3.5-flash` with `gemini-3-flash-preview` and `gemini-3.5-flash-lite` fallbacks) with full access to **[MasterRules.md](MasterRules.md)**, **[FoodInventory.md](../inventory/FoodInventory.md)**, and **[InventoryData.json](../inventory/InventoryData.json)**.
+  - Reply in ultra-short, plain text powered by Gemini (`gemini-4-argon` with `gemini-3.8-flash` and `gemini-3.5-flash` fallbacks) with full access to **[MasterRules.md](MasterRules.md)**, **[FoodInventory.md](../inventory/FoodInventory.md)**, and **[InventoryData.json](../inventory/InventoryData.json)**.
 - **7c. Inventory, Receipt OCR & Preference Commands via Telegram:**
   - **Manage Likes & Dislikes:** Text *"add [food] to like list"* or *"add [food] to don't like list"* to update Section 8 automatically.
   - **View Likes & Dislikes:** Text *"can I see my like and dislike list"* to view all current favorites and dislikes.
