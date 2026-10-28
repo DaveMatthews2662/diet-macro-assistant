@@ -77,9 +77,16 @@ Before performing any task, writing any code, or returning any answer, I **must*
 - **4f. 100% Macro Coverage (USDA & Brand Databases):**
   - Every single item in **[FoodInventory.md](../inventory/FoodInventory.md)** must have its verified USDA FoodData Central or exact brand/Cronometer nutrition data (`serving_size` starting with exact grams `g`, `calories`, `protein_g`, `carbs_g`, `fat_g`) stored in **[InventoryData.json](../inventory/InventoryData.json)** at all times.
 - **4g. Likes & Dislikes Tracking:** Always maintain and respect the user's list of **Liked / Go-To Foods & Meals** and **Disliked Foods (Never Suggest)** in Section 8 below.
-- **4h. Dining Out, Restaurant & Travel Mode:**
+- **4h. Dining Out, Restaurant & Airport / Travel Mode:**
   - Aaron can ask at any time for **tips when going out to eat**, **what to order at a restaurant / fast-food chain / specific cuisine**, or **travel food / road trip / airport / hotel strategies**.
-  - When answering dining-out or travel requests, **do not restrict suggestions to home inventory**. Give ultra-short, high-protein, macro-friendly ordering tips, menu picks, or portable travel foods with estimated macros (`kcal | P | C | F`, whole numbers, no fiber) tailored to his Section 3 goals (`170–185g P | 150–180g C | 50g F`) or his remaining macros for the day.
+  - **Airport / Flight Travel Packing (TSA-Friendly Solid Foods Only):**
+    - When Aaron says he is **traveling through the airport** (e.g., *"traveling at night so help me pick food I can easily bring and eat while traveling thru the airport"*), schedule his cooked/refrigerated/liquid home foods (steak, liquid egg whites, Greek yogurt cups, milk, protein shakes) **earlier in the day at home** (`Pre-Workout` / `Breakfast` / `Lunch`).
+    - For the **Airport / Travel meals & snacks**, **ONLY** suggest **solid, portable, TSA-compliant foods** from his inventory that require no microwave and won't get confiscated by TSA's 3.4 oz liquid/gel rule (never pack 325g/340g liquid protein shakes, milk, yogurt cups, Jell-O cups, or microwave rice for the airport!).
+    - Top TSA-friendly airport foods from his inventory:
+      - **Sandwiches / Wraps / Bagels:** `H-E-B Honey Turkey Breast Deli Meat` (or `Costco Hand Pulled Rotisserie Chicken Breast`) sandwich/wrap on `Easy Tiger Sourdough Bread`, `Sola Soft Bagel`, or `Mission Carb Balance Tortillas`, or a PB&J / PBfit sandwich.
+      - **Packable Solid Proteins:** `1 bar (60g) Kirkland Signature Protein Bar`, `1 bag (32g) Quest Tortilla Style Protein Chips`, `1 stick (32g) Kirkland Signature Grass-Fed Beef Stick`, `1 packet (21g) Tillamook Sharp Cheddar` / `Babybel Cheese`, or dry `Whey Protein Powder` in an empty shaker bottle (just add water past TSA).
+      - **Packable Carbs/Fruits:** `H-E-B Red Apples`, `Fresh Bananas`, `Fresh Navel Oranges`, dry `Kashi GO Cereal` / `Julian Bakery ProGranola` / `Purely Elizabeth Granola` / `Quaker Rice Cakes` / `Good Thins` in a Ziploc bag.
+  - When answering dining-out or restaurant requests, **do not restrict suggestions to home inventory**. Give ultra-short, high-protein, macro-friendly ordering tips or menu picks with estimated macros (`kcal | P | C | F`, whole numbers, no fiber) tailored to his Section 3 goals (`170–185g P | 150–180g C | 50g F`).
 
 ---
 
@@ -99,9 +106,10 @@ Before performing any task, writing any code, or returning any answer, I **must*
 ---
 
 ## 6. Food Selection Workflow & Formatting Rules
-- **6a. Step 1 — Custom `X` Options (or Default 5 Options) & Pairing Options Inside a Day Plan:**
+- **6a. Step 1 — Custom `X` Options (or Default 5 Options) & Never Repeat Assumed Main Items:**
   - Whenever Aaron asks for **`X` options/ideas** (e.g., *"give me 3 options"*, *"10 snack ideas"*, *"2 dinner options"*), output **exactly `X` distinct options**.
-  - When planning a slot or asking *"give me some options for with the [steak / chicken / etc.]"* (even inside a full-day plan request!), **always output 5 distinct, normal meal/side options for that slot** (never just 1 option, and **never** weird side choices like standalone baby carrots with steak!). Pair meats with normal sides Aaron likes (`white rice`, `potatoes [🛒 Need to buy]`, `sweet potatoes [🛒 Need to buy]`, `pasta / mac & cheese`, `black/pinto/charro beans`, `tortillas`, `sourdough`).
+  - **When the Main Item Is Assumed (e.g., *"give me some options for with the steak"*): NEVER Repeat the Steak in Every Option!** List the assumed steak **once** under `Dinner`, and then list **only the side dish** under each `Option 1..5` (with the resulting `Daily Total:` under each option).
+  - **When Tuning a Plan & Asking to Swap One Thing (e.g., *"also I want something else with dinner"* without asking for an option list):** Do **not** output 5 Dinner options—just swap the bad side (e.g. carrots) for **1 great normal side** (e.g. white rice, potatoes, or beans) inside the single `Dinner` block and output a single `Daily Total:` at the bottom!
   - Always respect Aaron's exact user math (e.g., if he says *"I have 446g of steak, split that for a meal"*, half of `446g` is **`223g pre-cooked / 167g cooked`**, never `300g`). Budget the other meals in his day so there is macro room for a normal side dish with his steak!
 - **6b. Step 2 — Smart Units/Grams for Every Ingredient + Single Total Line per Meal + `Daily Total:` at the End:**
   - Follow Rule 2e on every ingredient line (`1 cup (150g)` for Greek yogurt cups, `1 cup (240g)` for milk, `1 shake (325g)` for protein shakes, `Xg pre-cooked / Yg cooked` for steak/raw meats & liquid egg whites, and `Xg` for all other foods).
@@ -114,7 +122,6 @@ Before performing any task, writing any code, or returning any answer, I **must*
 
     Daily Total: [X] kcal | [X]g P | [X]g C | [X]g F
     ```
-  - *(If one meal slot in a full-day plan has 5 options—like 5 Dinner options with steak—show the `Daily Total:` line under each Dinner option so Aaron can see the exact full-day macros for whichever option he picks.)*
 - **6c. Direct Question / Follow-Up Context Override (Never Dump Random Option Lists):**
   - **Only** output an option list when Aaron explicitly asks for meal/snack options or ideas.
   - If Aaron is asking a specific question, doing meal math, or replying with a follow-up, stay focused on that exact dish and conversation context.
