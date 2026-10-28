@@ -4,9 +4,9 @@
     "category": "Raw Meat (Finite Tracked Stock)",
     "tags": "Good Protein Options",
     "serving_size": "112g raw (4 oz)",
-    "calories": 190.0,
-    "protein_g": 24.0,
-    "fat_g": 10.0,
+    "calories": 210.0,
+    "protein_g": 22.8,
+    "fat_g": 12.1,
     "carbs_g": 0.0,
     "fiber_g": 0.0
   },
@@ -26,9 +26,9 @@
     "category": "Raw Meat (Finite Tracked Stock)",
     "tags": "Good Protein Options",
     "serving_size": "112g raw (4 oz)",
-    "calories": 193.0,
+    "calories": 188.8,
     "protein_g": 22.0,
-    "fat_g": 11.0,
+    "fat_g": 10.5,
     "carbs_g": 0.0,
     "fiber_g": 0.0
   },
@@ -38,8 +38,8 @@
     "tags": "Good Protein Options",
     "serving_size": "85g (3 oz)",
     "calories": 120.0,
-    "protein_g": 24.0,
-    "fat_g": 2.0,
+    "protein_g": 22.4,
+    "fat_g": 2.8,
     "carbs_g": 0.0,
     "fiber_g": 0.0
   },
@@ -47,11 +47,11 @@
     "name": "H-E-B Honey Turkey Breast Deli Meat (Sliced)",
     "category": "Dairy & Refrigerated",
     "tags": "Good Protein Options",
-    "serving_size": "112g (4 oz)",
-    "calories": 140.0,
-    "protein_g": 20.0,
-    "fat_g": 3.0,
-    "carbs_g": 1.0,
+    "serving_size": "56g (2 oz)",
+    "calories": 70.0,
+    "protein_g": 9.0,
+    "fat_g": 2.0,
+    "carbs_g": 5.0,
     "fiber_g": 0.0
   },
   {
@@ -117,7 +117,7 @@
     "calories": 230.0,
     "protein_g": 13.0,
     "fat_g": 13.0,
-    "carbs_g": 14.0,
+    "carbs_g": 13.0,
     "fiber_g": 1.0
   },
   {
@@ -128,7 +128,7 @@
     "calories": 210.0,
     "protein_g": 14.0,
     "fat_g": 11.0,
-    "carbs_g": 13.0,
+    "carbs_g": 12.0,
     "fiber_g": 1.0
   },
   {
@@ -187,17 +187,6 @@
     "fiber_g": 0.0
   },
   {
-    "name": "H-E-B Cage-Free 100% Liquid Egg Whites",
-    "category": "Dairy & Refrigerated",
-    "tags": "Good Protein Options",
-    "serving_size": "100g (~6 tbsp)",
-    "calories": 50.0,
-    "protein_g": 11.0,
-    "fat_g": 0.0,
-    "carbs_g": 0.0,
-    "fiber_g": 0.0
-  },
-  {
     "name": "Fairlife Fat-Free Ultra-Filtered Lactose-Free Milk",
     "category": "Dairy & Refrigerated",
     "tags": "Good Protein Options",
@@ -216,29 +205,29 @@
     "calories": 150.0,
     "protein_g": 30.0,
     "fat_g": 2.5,
-    "carbs_g": 4.0,
+    "carbs_g": 3.0,
     "fiber_g": 1.0
   },
   {
     "name": "Premier Protein 30g Chocolate Protein Shakes",
     "category": "Dairy & Refrigerated",
     "tags": "Good Protein Options",
-    "serving_size": "325g (1 carton)",
-    "calories": 160.0,
+    "serving_size": "341g (1 carton / 11 fl oz)",
+    "calories": 160.9,
     "protein_g": 30.0,
     "fat_g": 3.0,
-    "carbs_g": 5.0,
-    "fiber_g": 1.0
+    "carbs_g": 3.0,
+    "fiber_g": 2.0
   },
   {
     "name": "Oikos Pro 20g Protein Cultured Ultra-Filtered Yogurt (Strawberry)",
     "category": "Dairy & Refrigerated",
     "tags": "Good Protein Options, Good Carb Options, Good Fiber Options",
     "serving_size": "150g (1 cup)",
-    "calories": 150.0,
+    "calories": 130.0,
     "protein_g": 20.0,
-    "fat_g": 3.0,
-    "carbs_g": 8.0,
+    "fat_g": 1.5,
+    "carbs_g": 6.0,
     "fiber_g": 0.0
   },
   {
@@ -250,17 +239,6 @@
     "protein_g": 15.0,
     "fat_g": 0.0,
     "carbs_g": 7.0,
-    "fiber_g": 0.0
-  },
-  {
-    "name": "H-E-B Low-Fat Small Curd Cottage Cheese",
-    "category": "Dairy & Refrigerated",
-    "tags": "Good Protein Options",
-    "serving_size": "113g (1/2 cup)",
-    "calories": 90.0,
-    "protein_g": 13.0,
-    "fat_g": 2.5,
-    "carbs_g": 5.0,
     "fiber_g": 0.0
   },
   {
@@ -312,9 +290,9 @@
     "category": "Dairy & Refrigerated",
     "tags": "",
     "serving_size": "28g (2 tbsp)",
-    "calories": 100.0,
+    "calories": 90.0,
     "protein_g": 2.0,
-    "fat_g": 10.0,
+    "fat_g": 9.0,
     "carbs_g": 1.0,
     "fiber_g": 0.0
   },
@@ -379,9 +357,9 @@
     "tags": "Good Protein Options",
     "serving_size": "16g (2 tbsp)",
     "calories": 60.0,
-    "protein_g": 7.0,
-    "fat_g": 1.5,
-    "carbs_g": 5.0,
+    "protein_g": 8.0,
+    "fat_g": 2.0,
+    "carbs_g": 3.0,
     "fiber_g": 2.0
   },
   {
@@ -389,22 +367,22 @@
     "category": "Produce",
     "tags": "Good Carb Options, Good Fiber Options",
     "serving_size": "118g (1 medium)",
-    "calories": 105.0,
+    "calories": 103.8,
     "protein_g": 1.3,
     "fat_g": 0.4,
-    "carbs_g": 27.0,
-    "fiber_g": 3.0
+    "carbs_g": 24.0,
+    "fiber_g": 3.1
   },
   {
     "name": "H-E-B Red Apples (Fresh / Sliced)",
     "category": "Produce",
     "tags": "Good Carb Options, Good Fiber Options",
     "serving_size": "182g (1 medium)",
-    "calories": 95.0,
+    "calories": 99.5,
     "protein_g": 0.5,
     "fat_g": 0.3,
-    "carbs_g": 25.0,
-    "fiber_g": 4.5
+    "carbs_g": 21.0,
+    "fiber_g": 4.4
   },
   {
     "name": "Fresh Navel Oranges (Raw)",
@@ -414,7 +392,7 @@
     "calories": 65.0,
     "protein_g": 1.2,
     "fat_g": 0.2,
-    "carbs_g": 15.0,
+    "carbs_g": 12.0,
     "fiber_g": 3.0
   },
   {
@@ -422,10 +400,10 @@
     "category": "Produce",
     "tags": "Good Fat Options, Good Fiber Options",
     "serving_size": "50g (~1/3 medium)",
-    "calories": 83.0,
+    "calories": 83.5,
     "protein_g": 1.0,
-    "fat_g": 7.5,
-    "carbs_g": 4.0,
+    "fat_g": 7.3,
+    "carbs_g": 0.9,
     "fiber_g": 3.4
   },
   {
@@ -436,7 +414,7 @@
     "calories": 50.0,
     "protein_g": 1.0,
     "fat_g": 0.0,
-    "carbs_g": 12.0,
+    "carbs_g": 8.5,
     "fiber_g": 3.5
   },
   {
@@ -447,7 +425,7 @@
     "calories": 4.0,
     "protein_g": 0.2,
     "fat_g": 0.0,
-    "carbs_g": 1.0,
+    "carbs_g": 0.9,
     "fiber_g": 0.1
   },
   {
@@ -458,7 +436,7 @@
     "calories": 1.0,
     "protein_g": 0.1,
     "fat_g": 0.0,
-    "carbs_g": 0.1,
+    "carbs_g": 0.0,
     "fiber_g": 0.1
   },
   {
@@ -469,7 +447,7 @@
     "calories": 180.0,
     "protein_g": 18.0,
     "fat_g": 8.0,
-    "carbs_g": 14.0,
+    "carbs_g": 6.0,
     "fiber_g": 8.0
   },
   {
@@ -480,7 +458,7 @@
     "calories": 80.0,
     "protein_g": 1.0,
     "fat_g": 0.5,
-    "carbs_g": 19.0,
+    "carbs_g": 15.0,
     "fiber_g": 4.0
   },
   {
@@ -491,7 +469,7 @@
     "calories": 50.0,
     "protein_g": 1.0,
     "fat_g": 0.0,
-    "carbs_g": 12.0,
+    "carbs_g": 9.0,
     "fiber_g": 3.0
   },
   {
@@ -502,7 +480,7 @@
     "calories": 125.0,
     "protein_g": 1.5,
     "fat_g": 0.5,
-    "carbs_g": 32.0,
+    "carbs_g": 28.4,
     "fiber_g": 3.6
   },
   {
@@ -513,7 +491,7 @@
     "calories": 120.0,
     "protein_g": 14.0,
     "fat_g": 3.0,
-    "carbs_g": 29.0,
+    "carbs_g": 6.0,
     "fiber_g": 23.0
   },
   {
@@ -524,7 +502,7 @@
     "calories": 90.0,
     "protein_g": 5.0,
     "fat_g": 1.0,
-    "carbs_g": 19.0,
+    "carbs_g": 13.0,
     "fiber_g": 6.0
   },
   {
@@ -535,7 +513,7 @@
     "calories": 60.0,
     "protein_g": 6.0,
     "fat_g": 1.0,
-    "carbs_g": 12.0,
+    "carbs_g": 4.0,
     "fiber_g": 8.0
   },
   {
@@ -543,9 +521,9 @@
     "category": "Bakery & Bread",
     "tags": "Good Carb Options",
     "serving_size": "40g (1 slice)",
-    "calories": 109.0,
-    "protein_g": 4.0,
-    "fat_g": 1.0,
+    "calories": 98.2,
+    "protein_g": 2.4,
+    "fat_g": 0.0,
     "carbs_g": 21.0,
     "fiber_g": 1.0
   },
@@ -557,7 +535,7 @@
     "calories": 70.0,
     "protein_g": 5.0,
     "fat_g": 2.0,
-    "carbs_g": 19.0,
+    "carbs_g": 4.0,
     "fiber_g": 15.0
   },
   {
@@ -568,7 +546,7 @@
     "calories": 90.0,
     "protein_g": 3.0,
     "fat_g": 0.5,
-    "carbs_g": 20.0,
+    "carbs_g": 16.0,
     "fiber_g": 4.0
   },
   {
@@ -579,7 +557,7 @@
     "calories": 150.0,
     "protein_g": 5.0,
     "fat_g": 2.5,
-    "carbs_g": 27.0,
+    "carbs_g": 23.0,
     "fiber_g": 4.0
   },
   {
@@ -590,7 +568,7 @@
     "calories": 170.0,
     "protein_g": 10.0,
     "fat_g": 2.5,
-    "carbs_g": 27.0,
+    "carbs_g": 23.0,
     "fiber_g": 4.0
   },
   {
@@ -598,10 +576,10 @@
     "category": "Baking & Grains",
     "tags": "Good Carb Options",
     "serving_size": "158g (1 cup cooked)",
-    "calories": 205.0,
-    "protein_g": 4.3,
+    "calories": 232.3,
+    "protein_g": 4.2,
     "fat_g": 0.4,
-    "carbs_g": 44.5,
+    "carbs_g": 52.1,
     "fiber_g": 0.6
   },
   {
@@ -612,7 +590,7 @@
     "calories": 216.0,
     "protein_g": 5.0,
     "fat_g": 1.8,
-    "carbs_g": 44.8,
+    "carbs_g": 41.3,
     "fiber_g": 3.5
   },
   {
@@ -623,7 +601,7 @@
     "calories": 310.0,
     "protein_g": 5.0,
     "fat_g": 1.0,
-    "carbs_g": 70.0,
+    "carbs_g": 69.0,
     "fiber_g": 1.0
   },
   {
@@ -634,7 +612,7 @@
     "calories": 210.0,
     "protein_g": 4.0,
     "fat_g": 1.5,
-    "carbs_g": 45.0,
+    "carbs_g": 44.0,
     "fiber_g": 1.0
   },
   {
@@ -645,7 +623,7 @@
     "calories": 220.0,
     "protein_g": 5.0,
     "fat_g": 3.0,
-    "carbs_g": 43.0,
+    "carbs_g": 42.0,
     "fiber_g": 1.0
   },
   {
@@ -656,7 +634,7 @@
     "calories": 230.0,
     "protein_g": 5.0,
     "fat_g": 3.5,
-    "carbs_g": 43.0,
+    "carbs_g": 40.0,
     "fiber_g": 3.0
   },
   {
@@ -667,7 +645,7 @@
     "calories": 220.0,
     "protein_g": 5.0,
     "fat_g": 2.5,
-    "carbs_g": 44.0,
+    "carbs_g": 42.0,
     "fiber_g": 2.0
   },
   {
@@ -678,7 +656,7 @@
     "calories": 251.0,
     "protein_g": 5.0,
     "fat_g": 2.5,
-    "carbs_g": 52.0,
+    "carbs_g": 51.0,
     "fiber_g": 1.0
   },
   {
@@ -689,7 +667,7 @@
     "calories": 220.0,
     "protein_g": 5.0,
     "fat_g": 2.5,
-    "carbs_g": 44.0,
+    "carbs_g": 42.0,
     "fiber_g": 2.0
   },
   {
@@ -700,7 +678,7 @@
     "calories": 190.0,
     "protein_g": 10.0,
     "fat_g": 1.0,
-    "carbs_g": 38.0,
+    "carbs_g": 33.0,
     "fiber_g": 5.0
   },
   {
@@ -711,7 +689,7 @@
     "calories": 260.0,
     "protein_g": 16.0,
     "fat_g": 4.5,
-    "carbs_g": 41.0,
+    "carbs_g": 36.0,
     "fiber_g": 5.0
   },
   {
@@ -722,7 +700,7 @@
     "calories": 190.0,
     "protein_g": 12.0,
     "fat_g": 3.0,
-    "carbs_g": 34.0,
+    "carbs_g": 26.0,
     "fiber_g": 8.0
   },
   {
@@ -733,7 +711,7 @@
     "calories": 190.0,
     "protein_g": 12.0,
     "fat_g": 3.0,
-    "carbs_g": 34.0,
+    "carbs_g": 26.0,
     "fiber_g": 8.0
   },
   {
@@ -744,7 +722,7 @@
     "calories": 350.0,
     "protein_g": 9.0,
     "fat_g": 11.0,
-    "carbs_g": 50.0,
+    "carbs_g": 48.0,
     "fiber_g": 2.0
   },
   {
@@ -755,7 +733,7 @@
     "calories": 200.0,
     "protein_g": 7.0,
     "fat_g": 1.0,
-    "carbs_g": 42.0,
+    "carbs_g": 40.0,
     "fiber_g": 2.0
   },
   {
@@ -766,7 +744,7 @@
     "calories": 110.0,
     "protein_g": 4.0,
     "fat_g": 1.5,
-    "carbs_g": 20.0,
+    "carbs_g": 19.0,
     "fiber_g": 1.0
   },
   {
@@ -788,7 +766,7 @@
     "calories": 110.0,
     "protein_g": 7.0,
     "fat_g": 0.5,
-    "carbs_g": 20.0,
+    "carbs_g": 14.0,
     "fiber_g": 6.0
   },
   {
@@ -799,7 +777,7 @@
     "calories": 110.0,
     "protein_g": 7.0,
     "fat_g": 0.5,
-    "carbs_g": 20.0,
+    "carbs_g": 14.0,
     "fiber_g": 6.0
   },
   {
@@ -810,7 +788,7 @@
     "calories": 110.0,
     "protein_g": 7.0,
     "fat_g": 0.5,
-    "carbs_g": 20.0,
+    "carbs_g": 13.0,
     "fiber_g": 7.0
   },
   {
@@ -821,7 +799,7 @@
     "calories": 120.0,
     "protein_g": 6.0,
     "fat_g": 2.0,
-    "carbs_g": 20.0,
+    "carbs_g": 15.0,
     "fiber_g": 5.0
   },
   {
@@ -830,9 +808,9 @@
     "tags": "Good Carb Options, Good Fiber Options",
     "serving_size": "130g (1/2 cup)",
     "calories": 140.0,
-    "protein_g": 7.0,
+    "protein_g": 6.0,
     "fat_g": 1.0,
-    "carbs_g": 29.0,
+    "carbs_g": 20.0,
     "fiber_g": 5.0
   },
   {
@@ -840,11 +818,11 @@
     "category": "Pantry & Canned",
     "tags": "Good Carb Options, Good Fiber Options",
     "serving_size": "130g (1/2 cup)",
-    "calories": 130.0,
-    "protein_g": 7.0,
-    "fat_g": 2.0,
-    "carbs_g": 22.0,
-    "fiber_g": 6.0
+    "calories": 140.0,
+    "protein_g": 6.0,
+    "fat_g": 1.0,
+    "carbs_g": 20.0,
+    "fiber_g": 5.0
   },
   {
     "name": "H-E-B Beef Broth",
@@ -865,7 +843,7 @@
     "calories": 70.0,
     "protein_g": 2.0,
     "fat_g": 2.0,
-    "carbs_g": 10.0,
+    "carbs_g": 8.0,
     "fiber_g": 2.0
   },
   {
@@ -876,7 +854,7 @@
     "calories": 20.0,
     "protein_g": 0.0,
     "fat_g": 0.5,
-    "carbs_g": 3.0,
+    "carbs_g": 2.0,
     "fiber_g": 1.0
   },
   {
@@ -887,19 +865,19 @@
     "calories": 190.0,
     "protein_g": 10.0,
     "fat_g": 2.5,
-    "carbs_g": 38.0,
+    "carbs_g": 28.0,
     "fiber_g": 10.0
   },
   {
     "name": "Kashi GO Protein + Fiber Cereal: Chocolate Crunch (10g Protein, 10g Fiber)",
     "category": "Desserts, Candy & Snacks",
     "tags": "Good Protein Options, Good Carb Options, Good Fiber Options",
-    "serving_size": "30g (~3/5 cup)",
-    "calories": 117.0,
-    "protein_g": 6.0,
-    "fat_g": 4.0,
-    "carbs_g": 12.0,
-    "fiber_g": 5.7
+    "serving_size": "54g (1 cup)",
+    "calories": 210.0,
+    "protein_g": 10.0,
+    "fat_g": 6.0,
+    "carbs_g": 24.0,
+    "fiber_g": 10.0
   },
   {
     "name": "General Mills Cheerios Protein: Honey Nut",
@@ -919,8 +897,8 @@
     "serving_size": "30g (1/3 cup)",
     "calories": 130.0,
     "protein_g": 3.0,
-    "fat_g": 6.0,
-    "carbs_g": 17.0,
+    "fat_g": 7.0,
+    "carbs_g": 15.0,
     "fiber_g": 2.0
   },
   {
@@ -953,7 +931,7 @@
     "calories": 140.0,
     "protein_g": 19.0,
     "fat_g": 5.0,
-    "carbs_g": 4.0,
+    "carbs_g": 3.0,
     "fiber_g": 1.0
   },
   {
@@ -964,7 +942,7 @@
     "calories": 120.0,
     "protein_g": 2.0,
     "fat_g": 4.0,
-    "carbs_g": 19.0,
+    "carbs_g": 16.0,
     "fiber_g": 3.0
   },
   {
@@ -975,7 +953,7 @@
     "calories": 130.0,
     "protein_g": 2.0,
     "fat_g": 4.0,
-    "carbs_g": 21.0,
+    "carbs_g": 18.0,
     "fiber_g": 3.0
   },
   {
@@ -986,7 +964,7 @@
     "calories": 310.0,
     "protein_g": 10.0,
     "fat_g": 9.0,
-    "carbs_g": 46.0,
+    "carbs_g": 41.0,
     "fiber_g": 5.0
   },
   {
@@ -997,7 +975,7 @@
     "calories": 370.0,
     "protein_g": 16.0,
     "fat_g": 17.0,
-    "carbs_g": 39.0,
+    "carbs_g": 37.0,
     "fiber_g": 2.0
   },
   {
@@ -1005,10 +983,10 @@
     "category": "Desserts, Candy & Snacks",
     "tags": "Good Fat Options",
     "serving_size": "28g (1 oz)",
-    "calories": 149.0,
+    "calories": 149.2,
     "protein_g": 5.1,
     "fat_g": 12.3,
-    "carbs_g": 8.5,
+    "carbs_g": 7.6,
     "fiber_g": 0.9
   },
   {
@@ -1019,7 +997,7 @@
     "calories": 150.0,
     "protein_g": 4.0,
     "fat_g": 9.0,
-    "carbs_g": 14.0,
+    "carbs_g": 12.0,
     "fiber_g": 2.0
   },
   {
@@ -1030,7 +1008,7 @@
     "calories": 120.0,
     "protein_g": 1.0,
     "fat_g": 0.0,
-    "carbs_g": 31.0,
+    "carbs_g": 29.0,
     "fiber_g": 2.0
   },
   {
@@ -1041,7 +1019,7 @@
     "calories": 100.0,
     "protein_g": 6.0,
     "fat_g": 3.0,
-    "carbs_g": 18.0,
+    "carbs_g": 16.0,
     "fiber_g": 2.0
   },
   {
@@ -1074,7 +1052,7 @@
     "calories": 200.0,
     "protein_g": 3.0,
     "fat_g": 12.0,
-    "carbs_g": 25.0,
+    "carbs_g": 24.0,
     "fiber_g": 1.0
   },
   {
@@ -1085,7 +1063,7 @@
     "calories": 70.0,
     "protein_g": 1.0,
     "fat_g": 4.0,
-    "carbs_g": 10.0,
+    "carbs_g": 9.0,
     "fiber_g": 1.0
   },
   {
@@ -1096,7 +1074,7 @@
     "calories": 90.0,
     "protein_g": 0.0,
     "fat_g": 0.0,
-    "carbs_g": 24.0,
+    "carbs_g": 23.0,
     "fiber_g": 1.0
   },
   {
@@ -1107,7 +1085,7 @@
     "calories": 180.0,
     "protein_g": 3.0,
     "fat_g": 16.0,
-    "carbs_g": 9.0,
+    "carbs_g": 5.0,
     "fiber_g": 4.0
   },
   {
@@ -1118,7 +1096,7 @@
     "calories": 150.0,
     "protein_g": 2.0,
     "fat_g": 9.0,
-    "carbs_g": 18.0,
+    "carbs_g": 16.0,
     "fiber_g": 2.0
   },
   {
@@ -1129,7 +1107,7 @@
     "calories": 50.0,
     "protein_g": 0.0,
     "fat_g": 0.0,
-    "carbs_g": 13.0,
+    "carbs_g": 11.0,
     "fiber_g": 2.0
   },
   {
@@ -1162,7 +1140,7 @@
     "calories": 190.0,
     "protein_g": 7.0,
     "fat_g": 16.0,
-    "carbs_g": 8.0,
+    "carbs_g": 6.0,
     "fiber_g": 2.0
   },
   {
@@ -1294,7 +1272,7 @@
     "calories": 110.0,
     "protein_g": 3.0,
     "fat_g": 0.0,
-    "carbs_g": 23.0,
+    "carbs_g": 22.0,
     "fiber_g": 1.0
   },
   {
@@ -1602,7 +1580,7 @@
     "calories": 50.0,
     "protein_g": 1.0,
     "fat_g": 0.0,
-    "carbs_g": 12.0,
+    "carbs_g": 9.0,
     "fiber_g": 3.0
   },
   {
@@ -1613,7 +1591,7 @@
     "calories": 190.0,
     "protein_g": 21.0,
     "fat_g": 7.0,
-    "carbs_g": 22.0,
+    "carbs_g": 12.0,
     "fiber_g": 10.0
   },
   {
@@ -1624,7 +1602,7 @@
     "calories": 190.0,
     "protein_g": 21.0,
     "fat_g": 7.0,
-    "carbs_g": 22.0,
+    "carbs_g": 12.0,
     "fiber_g": 10.0
   },
   {
@@ -1635,8 +1613,8 @@
     "calories": 90.0,
     "protein_g": 15.0,
     "fat_g": 0.0,
-    "carbs_g": 10.0,
-    "fiber_g": 3.0
+    "carbs_g": 7.0,
+    "fiber_g": 0.0
   },
   {
     "name": "Oikos Triple Zero 15g Protein Greek Yogurt (Strawberry)",
@@ -1646,8 +1624,8 @@
     "calories": 90.0,
     "protein_g": 15.0,
     "fat_g": 0.0,
-    "carbs_g": 10.0,
-    "fiber_g": 3.0
+    "carbs_g": 7.0,
+    "fiber_g": 0.0
   },
   {
     "name": "Oikos Triple Zero 15g Protein Greek Yogurt (Mixed Berry)",
@@ -1657,8 +1635,8 @@
     "calories": 90.0,
     "protein_g": 15.0,
     "fat_g": 0.0,
-    "carbs_g": 10.0,
-    "fiber_g": 3.0
+    "carbs_g": 7.0,
+    "fiber_g": 0.0
   },
   {
     "name": "Oikos Triple Zero 15g Protein Greek Yogurt (Blueberry)",
@@ -1668,8 +1646,8 @@
     "calories": 90.0,
     "protein_g": 15.0,
     "fat_g": 0.0,
-    "carbs_g": 10.0,
-    "fiber_g": 3.0
+    "carbs_g": 7.0,
+    "fiber_g": 0.0
   },
   {
     "name": "Kirkland Signature Grass-Fed Salted Butter",
@@ -1688,9 +1666,9 @@
     "tags": "Good Fat Options, Good Carb Options",
     "serving_size": "30g (1/3 cup)",
     "calories": 130.0,
-    "protein_g": 2.0,
-    "fat_g": 5.0,
-    "carbs_g": 19.0,
+    "protein_g": 3.0,
+    "fat_g": 7.0,
+    "carbs_g": 15.0,
     "fiber_g": 2.0
   },
   {
@@ -1712,18 +1690,7 @@
     "calories": 60.0,
     "protein_g": 8.0,
     "fat_g": 2.0,
-    "carbs_g": 5.0,
+    "carbs_g": 3.0,
     "fiber_g": 2.0
-  },
-  {
-    "name": "Julian Bakery ProGranola: Chocolate Clusters (12g Protein)",
-    "category": "Desserts, Candy & Snacks",
-    "tags": "Good Protein Options, Good Fiber Options",
-    "serving_size": "37g (1/2 cup)",
-    "calories": 103.0,
-    "protein_g": 12.0,
-    "fat_g": 4.0,
-    "carbs_g": 16.0,
-    "fiber_g": 14.0
   }
 ]

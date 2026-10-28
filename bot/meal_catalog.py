@@ -99,14 +99,13 @@ MEAL_CATALOG: Dict[str, List[Dict[str, Any]]] = {
     "Breakfast": [
         {
             "id": "bf_1",
-            "name": "Avocado Sourdough Toast + Scrambled Eggs & Egg Whites",
-            "prep": "Toast sourdough, mash fresh avocado with Everything Bagel seasoning, and scramble eggs + egg whites in a pan.",
+            "name": "Avocado Sourdough Toast + Scrambled Whole Eggs",
+            "prep": "Toast sourdough, mash fresh avocado with Everything Bagel seasoning, and scramble whole eggs in a pan.",
             "need_to_buy": [],
             "items": [
                 {"item": "Easy Tiger Sourdough Bread", "portion": "1 slice (58g)", "cal": 150, "p": 6.0, "c": 29.0, "f": 0.8, "fib": 1.0},
                 {"item": "Hass Avocados (Fresh)", "portion": "70g mashed", "cal": 112, "p": 1.4, "c": 6.0, "f": 10.3, "fib": 4.7},
-                {"item": "USDA Large Whole Eggs", "portion": "2 large eggs (100g)", "cal": 143, "p": 12.6, "c": 0.7, "f": 9.5, "fib": 0.0},
-                {"item": "H-E-B Cage-Free 100% Liquid Egg Whites", "portion": "150g (~2/3 cup)", "cal": 81, "p": 16.3, "c": 0.0, "f": 0.0, "fib": 0.0},
+                {"item": "USDA Large Whole Eggs", "portion": "3 large eggs (150g)", "cal": 210, "p": 18.0, "c": 0.0, "f": 15.0, "fib": 0.0},
             ],
         },
         {
@@ -124,14 +123,14 @@ MEAL_CATALOG: Dict[str, List[Dict[str, Any]]] = {
         },
         {
             "id": "bf_3",
-            "name": "Toasted Bagel with Cream Cheese + Turkey Bacon & Egg Whites",
-            "prep": "Toast Thomas' plain bagel with cream cheese & Everything seasoning; pan-fry 2 slices center-cut bacon and egg whites.",
+            "name": "Toasted Sola Bagel with Cream Cheese + Bacon & Whole Eggs",
+            "prep": "Toast Sola bagel with cream cheese & Everything seasoning; pan-fry 2 slices center-cut bacon and 2 whole eggs.",
             "need_to_buy": [],
             "items": [
-                {"item": "Thomas' Plain / Original Bagels", "portion": "1 bagel (95g)", "cal": 270, "p": 10.0, "c": 53.0, "f": 2.0, "fib": 2.0},
-                {"item": "H-E-B Regular Cream Cheese", "portion": "2 tbsp (28g)", "cal": 100, "p": 2.0, "c": 1.0, "f": 10.0, "fib": 0.0},
+                {"item": "Sola Soft Bagels: Cinnamon & Raisin (120 Cal)", "portion": "1 bagel (85g)", "cal": 120, "p": 14.0, "c": 6.0, "f": 3.0, "fib": 23.0},
+                {"item": "H-E-B Regular Cream Cheese", "portion": "2 tbsp (28g)", "cal": 90, "p": 2.0, "c": 1.0, "f": 9.0, "fib": 0.0},
                 {"item": "H-E-B Thick Cut / Center Cut Bacon", "portion": "2 slices pan-fried", "cal": 80, "p": 6.0, "c": 0.0, "f": 6.0, "fib": 0.0},
-                {"item": "H-E-B Cage-Free 100% Liquid Egg Whites", "portion": "184g (3/4 cup)", "cal": 100, "p": 20.0, "c": 0.0, "f": 0.0, "fib": 0.0},
+                {"item": "USDA Large Whole Eggs", "portion": "2 large eggs (100g)", "cal": 140, "p": 12.0, "c": 0.0, "f": 10.0, "fib": 0.0},
             ],
         },
         {
@@ -147,13 +146,13 @@ MEAL_CATALOG: Dict[str, List[Dict[str, Any]]] = {
         },
         {
             "id": "bf_5",
-            "name": "High-Fiber Breakfast Burrito (Eggs, Maple Sausage, Mozzarella & Carb Balance Tortilla)",
-            "prep": "Scramble eggs + egg whites, heat maple breakfast sausage, wrap in Mission Carb Balance tortilla with mozzarella.",
+            "name": "High-Fiber Breakfast Burrito (Whole Eggs, Maple Sausage, Mozzarella & Carb Balance Tortilla)",
+            "prep": "Scramble whole eggs, heat maple breakfast sausage, wrap in Mission Carb Balance tortilla with mozzarella.",
             "need_to_buy": [],
             "items": [
                 {"item": "Mission Carb Balance Soft Taco Flour Tortillas (70 kcal)", "portion": "2 tortillas (86g)", "cal": 140, "p": 10.0, "c": 38.0, "f": 3.0, "fib": 30.0},
                 {"item": "H-E-B Maple Flavor Breakfast Sausage Links/Patties (Frozen)", "portion": "2 links/1 patty (56g)", "cal": 180, "p": 9.0, "c": 2.0, "f": 15.0, "fib": 0.0},
-                {"item": "H-E-B Cage-Free 100% Liquid Egg Whites", "portion": "184g (3/4 cup)", "cal": 100, "p": 20.0, "c": 0.0, "f": 0.0, "fib": 0.0},
+                {"item": "USDA Large Whole Eggs", "portion": "2 large eggs (100g)", "cal": 140, "p": 12.0, "c": 0.0, "f": 10.0, "fib": 0.0},
                 {"item": "H-E-B Reduced-Fat Shredded Mozzarella Cheese", "portion": "28g (1/4 cup)", "cal": 70, "p": 7.0, "c": 1.0, "f": 4.5, "fib": 0.0},
             ],
         },
@@ -182,13 +181,13 @@ MEAL_CATALOG: Dict[str, List[Dict[str, Any]]] = {
         },
         {
             "id": "bf_8",
-            "name": "Cottage Cheese & Egg White Scramble on Low-Carb Wheat Toast",
-            "prep": "Scramble egg whites with cottage cheese until fluffy, serve over 2 slices toasted H-E-B Higher Harvest low-carb bread.",
+            "name": "Turkey & Egg Scramble on Low-Carb Wheat Toast",
+            "prep": "Scramble whole eggs with diced honey turkey breast, serve over 2 slices toasted H-E-B Higher Harvest low-carb bread.",
             "need_to_buy": [],
             "items": [
-                {"item": "H-E-B Low-Fat Small Curd Cottage Cheese", "portion": "113g (1/2 cup)", "cal": 90, "p": 13.0, "c": 5.0, "f": 1.5, "fib": 0.0},
-                {"item": "H-E-B Cage-Free 100% Liquid Egg Whites", "portion": "184g (3/4 cup)", "cal": 100, "p": 20.0, "c": 0.0, "f": 0.0, "fib": 0.0},
-                {"item": "H-E-B Higher Harvest Low-Carb Lifestyle Wheat Bread", "portion": "2 slices (56g)", "cal": 120, "p": 12.0, "c": 24.0, "f": 2.0, "fib": 16.0},
+                {"item": "H-E-B Honey Turkey Breast Deli Meat (Sliced)", "portion": "85g (3 oz)", "cal": 106, "p": 13.7, "c": 7.5, "f": 3.0, "fib": 0.0},
+                {"item": "USDA Large Whole Eggs", "portion": "2 large eggs (100g)", "cal": 140, "p": 12.0, "c": 0.0, "f": 10.0, "fib": 0.0},
+                {"item": "H-E-B Higher Harvest Low-Carb Lifestyle Wheat Bread", "portion": "2 slices (28g)", "cal": 60, "p": 6.0, "c": 4.0, "f": 1.0, "fib": 8.0},
             ],
         },
     ],
@@ -451,11 +450,11 @@ MEAL_CATALOG: Dict[str, List[Dict[str, Any]]] = {
         },
         {
             "id": "sn_7",
-            "name": "Cottage Cheese + Frozen Strawberries & Jell-O Sugar-Free Cup",
-            "prep": "Bowl of H-E-B low-fat cottage cheese with strawberries, plus a sugar-free Jell-O cup.",
+            "name": "Oikos Triple Zero Vanilla Yogurt + Frozen Strawberries & Jell-O Sugar-Free Cup",
+            "prep": "Cup of Oikos Triple Zero Vanilla Greek yogurt with strawberries, plus a sugar-free Jell-O cup.",
             "need_to_buy": [],
             "items": [
-                {"item": "H-E-B Low-Fat Small Curd Cottage Cheese", "portion": "113g (1/2 cup)", "cal": 90, "p": 13.0, "c": 5.0, "f": 1.5, "fib": 0.0},
+                {"item": "Oikos Triple Zero 15g Protein Greek Yogurt (Vanilla)", "portion": "1 cup (150g)", "cal": 100, "p": 15.0, "c": 7.0, "f": 0.0, "fib": 0.0},
                 {"item": "Kirkland Signature Frozen Strawberries", "portion": "140g (1 cup)", "cal": 50, "p": 1.0, "c": 13.0, "f": 0.0, "fib": 3.0},
                 {"item": "Jell-O Sugar-Free Ready-to-Eat Strawberry Gelatin Cups", "portion": "1 cup", "cal": 10, "p": 1.0, "c": 0.0, "f": 0.0, "fib": 0.0},
             ],

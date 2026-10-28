@@ -18,13 +18,11 @@
 - H-E-B Honey Turkey Breast Deli Meat (Sliced)
 - H-E-B Thick Cut / Center Cut Bacon
 - USDA Large Whole Eggs
-- H-E-B Cage-Free 100% Liquid Egg Whites
 - Fairlife Fat-Free Ultra-Filtered Lactose-Free Milk
 - Fairlife Nutrition Plan 30g Chocolate Protein Shakes
 - Premier Protein 30g Chocolate Protein Shakes
 - Oikos Pro 20g Protein Cultured Ultra-Filtered Yogurt (Strawberry)
 - Oikos Triple Zero Blended Greek Yogurt (100 Cal)
-- H-E-B Low-Fat Small Curd Cottage Cheese
 - H-E-B Reduced-Fat Shredded Mozzarella Cheese
 - Tillamook Sharp Cheddar Individual Cheese Portions (21g Packets)
 - Babybel Original Circular Wax Semisoft Cheeses
@@ -116,7 +114,6 @@
 - Kirkland Signature Protein Bar (Chocolate Brownie)
 - Kirkland Signature Protein Bar (Chocolate Chip Cookie Dough)
 - Purely Elizabeth Ancient Grain Granola: Original Salty Sweet
-- Julian Bakery ProGranola: Chocolate Clusters (12g Protein)
 - Kirkland Signature Grass-Fed Beef Stick
 
 # Oils & Condiments
