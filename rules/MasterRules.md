@@ -77,16 +77,9 @@ Before performing any task, writing any code, or returning any answer, I **must*
 - **4f. 100% Macro Coverage (USDA & Brand Databases):**
   - Every single item in **[FoodInventory.md](../inventory/FoodInventory.md)** must have its verified USDA FoodData Central or exact brand/Cronometer nutrition data (`serving_size` starting with exact grams `g`, `calories`, `protein_g`, `carbs_g`, `fat_g`) stored in **[InventoryData.json](../inventory/InventoryData.json)** at all times.
 - **4g. Likes & Dislikes Tracking:** Always maintain and respect the user's list of **Liked / Go-To Foods & Meals** and **Disliked Foods (Never Suggest)** in Section 8 below.
-- **4h. Dining Out, Restaurant & Airport / Travel Mode:**
+- **4h. Dining Out, Restaurant & Travel Mode:**
   - Aaron can ask at any time for **tips when going out to eat**, **what to order at a restaurant / fast-food chain / specific cuisine**, or **travel food / road trip / airport / hotel strategies**.
-  - **Airport / Flight Travel Packing (TSA-Friendly Solid Foods Only):**
-    - When Aaron says he is **traveling through the airport** (e.g., *"traveling at night so help me pick food I can easily bring and eat while traveling thru the airport"*), schedule his cooked/refrigerated/liquid home foods (steak, liquid egg whites, Greek yogurt cups, milk, protein shakes) **earlier in the day at home** (`Pre-Workout` / `Breakfast` / `Lunch`).
-    - For the **Airport / Travel meals & snacks**, **ONLY** suggest **solid, portable, TSA-compliant foods** from his inventory that require no microwave and won't get confiscated by TSA's 3.4 oz liquid/gel rule (never pack 325g/340g liquid protein shakes, milk, yogurt cups, Jell-O cups, or microwave rice for the airport!).
-    - Top TSA-friendly airport foods from his inventory:
-      - **Sandwiches / Wraps / Bagels:** `H-E-B Honey Turkey Breast Deli Meat` (or `Costco Hand Pulled Rotisserie Chicken Breast`) sandwich/wrap on `Easy Tiger Sourdough Bread`, `Sola Soft Bagel`, or `Mission Carb Balance Tortillas`, or a PB&J / PBfit sandwich.
-      - **Packable Solid Proteins:** `1 bar (60g) Kirkland Signature Protein Bar`, `1 bag (32g) Quest Tortilla Style Protein Chips`, `1 stick (32g) Kirkland Signature Grass-Fed Beef Stick`, `1 packet (21g) Tillamook Sharp Cheddar` / `Babybel Cheese`, or dry `Whey Protein Powder` in an empty shaker bottle (just add water past TSA).
-      - **Packable Carbs/Fruits:** `H-E-B Red Apples`, `Fresh Bananas`, `Fresh Navel Oranges`, dry `Kashi GO Cereal` / `Julian Bakery ProGranola` / `Purely Elizabeth Granola` / `Quaker Rice Cakes` / `Good Thins` in a Ziploc bag.
-  - When answering dining-out or restaurant requests, **do not restrict suggestions to home inventory**. Give ultra-short, high-protein, macro-friendly ordering tips or menu picks with estimated macros (`kcal | P | C | F`, whole numbers, no fiber) tailored to his Section 3 goals (`170–185g P | 150–180g C | 50g F`).
+  - When answering dining-out or travel requests, **do not restrict suggestions to home inventory**. Give ultra-short, high-protein, macro-friendly ordering tips, menu picks, or portable travel foods with estimated macros (`kcal | P | C | F`, whole numbers, no fiber) tailored to his Section 3 goals (`170–185g P | 150–180g C | 50g F`) or his remaining macros for the day.
 
 ---
 
