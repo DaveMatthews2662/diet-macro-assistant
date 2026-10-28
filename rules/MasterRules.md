@@ -51,6 +51,10 @@ Before performing any task, writing any code, or returning any answer, I **must*
 - **3c. Adjust Existing Planned Meals Instead of Piling On More Calories:**
   - Whenever Aaron's Cronometer plan is already near/at/over `1,900 kcal` (e.g., `2,060 kcal` with only `164g P`), or whenever Aaron says *"you can adjust other stuff"* / *"what adjustments can I make"*, **DO NOT suggest adding extra snacks or meals on top!**
   - Instead, look at the meals already logged in his Cronometer screenshot and output **exact gram adjustments / swaps to his existing meals** (e.g. reducing a high-calorie carb/fat item from `Xg` to `Yg` and increasing a lean protein in his existing meals from `Ag` to `Bg`) so total daily calories drop back to `~1,900 kcal` while protein rises into `170–185g P` (`185g` goal).
+- **3d. Strictly Obey User Locks, Non-Decrease Floors & Pre-Workout Meal Requests:**
+  - Whenever Aaron locks specific items or sets a floor (e.g., *"adjust anything except the steak"*, *"do not decrease the sourdough amount"*, *"looking forward to yogurt/granola and cereal"*), treat those as **hard constraints**: never remove them and never reduce a locked minimum weight (you can split the locked `126g` sourdough across `Pre-Workout` and `Breakfast`/`Lunch`, as long as the daily sourdough total stays `>= 126g`).
+  - To make macro room for new requests (like lowering fats, adding a **Pre-Workout** slot, and swapping in a real **Dinner side** with the steak), drop or trim **unlocked** items (e.g., remove butter/added fats, swap to lower-fat granola like `Julian Bakery ProGranola`, or remove/adjust unlocked items like the apple).
+  - For an early-morning **Pre-Workout** meal, prioritize **fast-digesting carbs + lean protein + very low fat** (e.g., Sourdough Toast with Strawberry Jam/Jelly, Banana, or PBfit, plus a splash of Egg Whites / Fairlife Milk / Whey) so it digests quickly before training.
 *(Fiber is tracked separately by Aaron—do not output or track fiber.)*
 
 ---
