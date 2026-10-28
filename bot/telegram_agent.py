@@ -396,6 +396,22 @@ def flush_chat_batch(token: str, chat_id: int):
     combined_text = "\n".join(t for t in texts if t).strip()
 
     try:
+        # Rule 2g: If image/screenshot is sent with no text, save image(s) in memory and ask for context
+        if photos and not combined_text:
+            if chat_id not in CHAT_MEMORY:
+                CHAT_MEMORY[chat_id] = []
+            img_parts: List[Dict[str, Any]] = []
+            for img_path in photos:
+                if img_path and os.path.exists(img_path):
+                    with open(img_path, "rb") as f:
+                        b64 = base64.b64encode(f.read()).decode("utf-8")
+                    img_parts.append({"inline_data": {"mime_type": "image/jpeg", "data": b64}})
+            img_parts.append({"text": "[User uploaded screenshot(s) without text]"})
+            CHAT_MEMORY[chat_id].append({"role": "user", "parts": img_parts})
+            CHAT_MEMORY[chat_id].append({"role": "model", "parts": [{"text": "I need more context."}]})
+            send_message(token, chat_id, "I need more context.")
+            return
+
         if not photos and combined_text:
             s = combined_text
             m_dis = re.search(r"^add\s+(.+?)\s+to\s+(?:my\s+)?(?:don'?t\s+like|dislike)\s*(?:list)?$", s, re.I)

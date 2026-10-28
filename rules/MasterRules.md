@@ -37,6 +37,7 @@ Before performing any task, writing any code, or returning any answer, I **must*
        - `- 227g pre-cooked / 170g cooked Boneless Skinless Chicken Thighs`
   5. **All Other Weighable Foods (Bread, Cereal, Granola, Bulk Rice/Pasta, Fruit, Butter, PBfit, Deli Meat, etc.):** Lead with exact **grams (`Xg`)** (e.g., `- 80g Easy Tiger Sourdough Bread`, `- 53g Kashi GO Cereal`, `- 182g H-E-B Red Apples`).
 - **2f.** If anything about a request is unclear, ask a quick 1-line clarifying question.
+- **2g. Image / Screenshot Sent With No Text:** Whenever Aaron sends an image or screenshot with **no text/caption included**, immediately reply `"I need more context."` (while keeping the image saved in conversation memory so his next text message can reference it without re-uploading).
 
 ---
 
