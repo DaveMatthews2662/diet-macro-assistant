@@ -11,7 +11,7 @@ Before performing any task, writing any code, or returning any answer, I **must*
 - **1b. Categorized Project Folders:**
   - `rules/` — **[MasterRules.md](MasterRules.md)** (all project rules, macro targets, and liked/disliked foods)
   - `inventory/` — **[FoodInventory.md](../inventory/FoodInventory.md)** (human-readable kitchen inventory) and **[InventoryData.json](../inventory/InventoryData.json)** (verified USDA/brand macro database)
-  - `bot/` — **[telegram_agent.py](../bot/telegram_agent.py)**, **[meal_catalog.py](../bot/meal_catalog.py)**, **[render.yaml](../bot/render.yaml)**, **[requirements.txt](../bot/requirements.txt)**, and local gitignored key files (`.telegram_token`, `.gemini_key`)
+  - `bot/` — **[telegram_agent.py](../bot/telegram_agent.py)**, **[render.yaml](../bot/render.yaml)**, **[requirements.txt](../bot/requirements.txt)**, and local gitignored key files (`.telegram_token`, `.gemini_key`)
 
 ---
 

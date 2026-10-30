@@ -109,8 +109,8 @@ def save_local_overrides(ov: Dict[str, Any]):
     try:
         with open(OVERRIDES_FILE, "w", encoding="utf-8") as f:
             json.dump(ov, f, indent=2)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"[overrides] Failed to save local overrides: {e}", flush=True)
 
 
 def save_overrides_to_telegram_cloud(ov: Dict[str, Any]):
@@ -123,7 +123,7 @@ def save_overrides_to_telegram_cloud(ov: Dict[str, Any]):
         b64_str = base64.b64encode(raw_bytes).decode("ascii")
         chunks = [b64_str[i : i + 240] for i in range(0, len(b64_str), 240)][:95]
         commands = [{"command": f"s{idx}", "description": ch} for idx, ch in enumerate(chunks)]
-        tg_api(
+        res = tg_api(
             token,
             "setMyCommands",
             {
@@ -132,8 +132,12 @@ def save_overrides_to_telegram_cloud(ov: Dict[str, Any]):
                 "language_code": "eo",
             },
         )
-    except Exception:
-        pass
+        if res.get("ok"):
+            print(f"[overrides] Saved overrides to Telegram cloud ({len(chunks)} chunks).", flush=True)
+        else:
+            print(f"[overrides] Telegram cloud save rejected: {res}", flush=True)
+    except Exception as e:
+        print(f"[overrides] Telegram cloud save FAILED: {e}", flush=True)
 
 
 def sync_overrides_from_telegram_cloud() -> Dict[str, Any]:
@@ -186,8 +190,9 @@ def sync_overrides_from_telegram_cloud() -> Dict[str, Any]:
                     save_local_overrides(local_ov)
             # Push merged state back so cloud also has any newly committed repo removals
             save_overrides_to_telegram_cloud(local_ov)
-        except Exception:
-            pass
+            print(f"[overrides] Startup sync done ({len(cmds)} cloud chunks found).", flush=True)
+        except Exception as e:
+            print(f"[overrides] Telegram cloud sync FAILED: {e}", flush=True)
         return local_ov
 
 
