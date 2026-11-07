@@ -11,6 +11,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from typing import Dict, List, Tuple, Any
+try:
+    from bot import wabbits_agent
+except Exception:
+    import wabbits_agent
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -1086,6 +1090,13 @@ class BotHTTPHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.end_headers()
         self.wfile.write(b"OK")
+        if self.path.startswith("/wabbits-webhook"):
+            threading.Thread(
+                target=wabbits_agent.process_wabbits_webhook,
+                args=(get_gemini_key(), body),
+                daemon=True,
+            ).start()
+            return
         try:
             upd = json.loads(body.decode("utf-8"))
             uid = upd.get("update_id")
@@ -1139,6 +1150,10 @@ def run_bot():
         except Exception as e:
             print(f"Webhook setup failed ({e}), falling back to polling")
             external_url = ""
+        try:
+            wabbits_agent.register_wabbits_webhook(get_gemini_key(), external_url)
+        except Exception as e:
+            print(f"Wabbits webhook setup failed ({e})")
 
     if external_url:
         threading.Thread(target=keep_alive_loop, args=(external_url,), daemon=True).start()
