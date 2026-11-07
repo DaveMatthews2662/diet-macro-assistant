@@ -44,6 +44,9 @@
 - Fresh Navel Oranges (Raw)
 - Hass Avocados (Fresh)
 - Fresh Whole / Baby Carrots
+- Fresh Celery Sticks
+- Fresh Bagged Sugar Snap Peas
+- Bulk Russet Potatoes
 - Fresh Garlic Cloves
 - Fresh Cilantro Leaves
 
@@ -80,6 +83,7 @@
 - Canned Navy Beans
 - Cento Canned Chickpeas (Garbanzo Beans)
 - Bush's Original / Homestyle Baked Beans
+- Bush's Zero Sugar Added Baked Beans
 - H-E-B Charro / Baked Beans
 - H-E-B Beef Broth
 - Marinara / Traditional Pasta Sauce
@@ -110,6 +114,7 @@
 - H-E-B Creamy Creations Orange Sherbet
 - Hershey's Milk Chocolate Kisses
 - Hershey's Semi-Sweet Chocolate Chips
+- Hershey's Special Dark Chocolate Chips
 - Lindt Excellence 90% Cocoa Supreme Dark Chocolate Bar
 - Kirkland Signature Protein Bar (Chocolate Brownie)
 - Kirkland Signature Protein Bar (Chocolate Chip Cookie Dough)

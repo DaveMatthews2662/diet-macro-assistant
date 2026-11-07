@@ -1692,5 +1692,60 @@
     "fat_g": 2.0,
     "carbs_g": 3.0,
     "fiber_g": 2.0
+  },
+  {
+    "name": "Fresh Celery Sticks",
+    "category": "Produce",
+    "tags": "Super Low-Calorie Snack Options, Good Fiber Options",
+    "serving_size": "100g (~2 medium stalks)",
+    "calories": 16.0,
+    "protein_g": 0.7,
+    "fat_g": 0.2,
+    "carbs_g": 1.4,
+    "fiber_g": 1.6
+  },
+  {
+    "name": "Fresh Bagged Sugar Snap Peas",
+    "category": "Produce",
+    "tags": "Super Low-Calorie Snack Options, Good Fiber Options",
+    "serving_size": "85g (~1 cup)",
+    "calories": 35.0,
+    "protein_g": 2.4,
+    "fat_g": 0.2,
+    "carbs_g": 4.2,
+    "fiber_g": 2.2
+  },
+  {
+    "name": "Bulk Russet Potatoes",
+    "category": "Produce",
+    "tags": "Good Carb Options, Good Fiber Options",
+    "serving_size": "148g (1 medium raw)",
+    "calories": 110.0,
+    "protein_g": 3.0,
+    "fat_g": 0.0,
+    "carbs_g": 24.0,
+    "fiber_g": 2.0
+  },
+  {
+    "name": "Bush's Zero Sugar Added Baked Beans",
+    "category": "Pantry & Canned",
+    "tags": "Good Carb Options, Good Fiber Options",
+    "serving_size": "130g (1/2 cup)",
+    "calories": 100.0,
+    "protein_g": 6.0,
+    "fat_g": 0.5,
+    "carbs_g": 13.0,
+    "fiber_g": 5.0
+  },
+  {
+    "name": "Hershey's Special Dark Chocolate Chips",
+    "category": "Desserts, Candy & Snacks",
+    "tags": "",
+    "serving_size": "15g (1 tbsp)",
+    "calories": 70.0,
+    "protein_g": 1.0,
+    "fat_g": 4.5,
+    "carbs_g": 8.0,
+    "fiber_g": 1.0
   }
 ]

@@ -55,6 +55,9 @@ Before performing any task, writing any code, or returning any answer, I **must*
   - Whenever Aaron locks specific items or sets a floor (e.g., *"adjust anything except the steak"*, *"do not decrease the sourdough amount"*, *"looking forward to yogurt/granola and cereal"*), treat those as **hard constraints**: never remove them and never reduce a locked minimum weight (you can split the locked `126g` sourdough across `Pre-Workout` and `Breakfast`/`Lunch`, as long as the daily sourdough total stays `>= 126g`).
   - To make macro room for new requests (like lowering fats, adding a **Pre-Workout** slot, and swapping in a real **Dinner side** with the steak), drop or trim **unlocked** items (e.g., remove butter/added fats, or remove/adjust unlocked items like the apple).
   - For an early-morning **Pre-Workout** meal, prioritize **fast-digesting carbs + lean protein + very low fat** (e.g., Sourdough Toast with Strawberry Jam/Jelly, Banana, or PBfit, plus Fairlife Milk or Whey) so it digests quickly before training.
+- **3e. Daily Super Low-Calorie Veggie Snacks (Every Single Day):**
+  - Aaron wants to incorporate his **super low-calorie options as snacks every single day** — currently **`Fresh Celery Sticks`**, **`Fresh Bagged Sugar Snap Peas`**, and **`Fresh Whole / Baby Carrots`**.
+  - Whenever planning a full day, filling in the remaining day from a Cronometer screenshot (unless already logged on the screenshot), or suggesting snack options, **always incorporate** at least one (or a combination) of **`Fresh Celery Sticks`**, **`Fresh Bagged Sugar Snap Peas`**, and **`Fresh Whole / Baby Carrots`** in the `Snacks` slot every single day.
 *(Fiber is tracked separately by Aaron—do not output or track fiber.)*
 
 ---
@@ -89,7 +92,7 @@ Before performing any task, writing any code, or returning any answer, I **must*
 2. **Breakfast**
 3. **Lunch**
 4. **Dinner**
-5. **Snacks**
+5. **Snacks** *(must include daily super low-cal veggie snack(s) — `Fresh Celery Sticks`, `Fresh Bagged Sugar Snap Peas`, and/or `Fresh Whole / Baby Carrots` — every single day)*
 
 ### 5b. Three Ways to Use the Planner
 - **Mode 1 — Full Day from Scratch (No Screenshot):** Plan the whole day across the meal slots to hit the daily macro goals in Section 3 (`Protein: 170–185g (185g goal) | Carbs: 150–180g (180g goal) | Fats: 50g`).
@@ -155,6 +158,7 @@ Before performing any task, writing any code, or returning any answer, I **must*
 - white rice
 - sweet potatoes
 - potatoes
+- Super low-cal daily veggie snacks (`Fresh Celery Sticks`, `Fresh Bagged Sugar Snap Peas`, `Fresh Whole / Baby Carrots`)
 
 ### 👎 Foods I Don't Like (Never Suggest)
 - **Frank's RedHot / Buffalo Sauce** *(verified removed from inventory)*

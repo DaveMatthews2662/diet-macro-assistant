@@ -802,7 +802,7 @@ def ask_gemini(user_text: str, chat_id: int, image_paths: List[str] = None) -> s
     food_candidates = [
         x["name"]
         for x in shuffled_inv
-        if x.get("calories", 0) >= 20 and "Spices" not in x.get("category", "")
+        if x.get("calories", 0) >= 10 and "Spices" not in x.get("category", "")
     ]
     spotlight_sample = food_candidates[:25]
     spotlight_text = ", ".join(spotlight_sample)
@@ -839,6 +839,7 @@ def ask_gemini(user_text: str, chat_id: int, image_paths: List[str] = None) -> s
         "   - If his current plan is ALREADY high in calories (e.g. ~1,900-2,060 kcal) or if adding a snack would push calories over ~1,950 kcal while leaving protein short, OR whenever Aaron says you can adjust other stuff in his day: DO NOT just dump 5 extra snacks on top! Instead, adjust the gram weights or swap items in his existing planned meals on the screenshot so the whole day lands right on ~1,900 kcal | 175-185g P | 150-180g C | ~50g F.\n"
         "   - OBEY ALL USER LOCKS & NON-DECREASE FLOORS: If Aaron says e.g. 'remove/adjust anything except the steak', 'do not decrease the sourdough amount (126g)', and 'keep yogurt/granola and cereal', treat those as 100% locked constraints! Never lower total daily sourdough below 126g (you can split the 126g across Pre-Workout and Breakfast/Lunch), never change the locked steak amount, and keep his yogurt+granola and cereal bowl. Free up fats/carbs by removing or adjusting UNLOCKED items (like dropping butter or removing/reducing unlocked fruit/extras) so there is room for a real Dinner side with the steak!\n"
         "   - TOP-TIER PRE-WORKOUT MEALS: When Aaron asks for an early-morning Pre-Workout meal, create a `Pre-Workout` slot at the top using fast-digesting carbs + lean protein + minimal fat (e.g., part of his locked Sourdough Toast with Strawberry Jelly/Jam, Banana, or PBfit + Fairlife Milk / Whey / Greek Yogurt).\n"
+        "   - DAILY SUPER LOW-CAL VEGGIE SNACKS (EVERY SINGLE DAY — NEVER SKIP): Aaron wants to incorporate his super low-calorie veggie options as snacks every single day — currently `Fresh Celery Sticks`, `Fresh Bagged Sugar Snap Peas`, and `Fresh Whole / Baby Carrots`. Whenever building a full-day plan, filling in the remaining day from a Cronometer screenshot (unless already logged on the screenshot), or suggesting `Snacks`, ALWAYS include at least one or a combination of `Fresh Celery Sticks`, `Fresh Bagged Sugar Snap Peas`, and `Fresh Whole / Baby Carrots` (in exact grams `Xg`) in his `Snacks` every single day!\n"
         "   - If he has calories/macros open and asks for options to fill a slot/day, make sure EVERY option you give is scaled so that choosing it actually hits his 170-185g P and ~1,900 kcal goals.\n"
         "4. DINNER PAIRING OPTIONS VS. SINGLE SWAP (NEVER REPEAT ASSUMED STEAK IN EVERY OPTION):\n"
         "   - ALWAYS respect Aaron's exact math (e.g., if he says 'I have 446g of steak, I'd like to split that for a meal', half of 446g is 223g pre-cooked / 167g cooked — NEVER make up 300g!).\n"
