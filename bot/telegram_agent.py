@@ -7,6 +7,7 @@ import re
 import tempfile
 import threading
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from typing import Dict, List, Tuple, Any
@@ -490,10 +491,298 @@ def remove_item_from_inventory(item_query: str, chat_id: int = None) -> str:
 
 
 # ==============================================================================
+# RECEIPT & PHOTO-TO-INVENTORY PARSER (FAST VISION EXTRACTION + PERSISTENCE)
+# ==============================================================================
+def is_photo_inventory_request(text: str, has_photos: bool = False) -> bool:
+    if not text:
+        return False
+    s = text.strip().lower()
+    if any(w in s for w in ["receipt", "groceries", "grocery haul"]):
+        return True
+    if "inventory" in s and any(
+        w in s
+        for w in [
+            "add",
+            "update",
+            "put",
+            "save",
+            "new",
+            "not already",
+            "missing",
+            "sync",
+            "import",
+            "from this",
+            "anything",
+            "everything",
+            "these",
+            "this",
+        ]
+    ):
+        return True
+    if has_photos and re.search(r"\b(?:add|put|save|log)\b", s):
+        return True
+    return False
+
+
+def is_generic_photo_reference(text: str) -> bool:
+    """Returns True if an 'add X to inventory' message refers to a photo/receipt rather than a named food."""
+    s = text.strip().lower()
+    generic_phrases = [
+        "anything",
+        "everything",
+        "not already",
+        "whatever",
+        "this",
+        "these",
+        "those",
+        "receipt",
+        "screenshot",
+        "photo",
+        "pic",
+        "picture",
+        "image",
+        "items",
+        "groceries",
+    ]
+    return any(gp in s for gp in generic_phrases)
+
+
+def get_recent_memory_images(chat_id: int) -> List[str]:
+    history = CHAT_MEMORY.get(chat_id, [])
+    for turn in reversed(history[-4:]):
+        if turn.get("role") == "user":
+            b64s = [
+                p["inline_data"]["data"]
+                for p in turn.get("parts", [])
+                if "inline_data" in p and isinstance(p["inline_data"], dict) and p["inline_data"].get("data")
+            ]
+            if b64s:
+                return b64s
+    return []
+
+
+def call_gemini_generate(payload: Dict[str, Any], timeout_sec: int = 75) -> str:
+    key = get_gemini_key()
+    models = ["gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-3.6-flash"]
+    bad_models = set()
+    last_err = None
+
+    for attempt in range(2):
+        for model_name in models:
+            if model_name in bad_models:
+                continue
+            req_payload = json.loads(json.dumps(payload))
+            if attempt == 1 and "thinkingConfig" in req_payload.get("generationConfig", {}):
+                # On retry, drop thinkingConfig so fallback/lite models respond as fast as possible
+                req_payload["generationConfig"].pop("thinkingConfig", None)
+            try:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={key}"
+                req = urllib.request.Request(
+                    url,
+                    data=json.dumps(req_payload).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                )
+                with urllib.request.urlopen(req, timeout=timeout_sec) as resp:
+                    res = json.loads(resp.read().decode("utf-8"))
+                cand_parts = res["candidates"][0]["content"]["parts"]
+                visible_texts = [p["text"] for p in cand_parts if "text" in p and not p.get("thought")]
+                if not visible_texts:
+                    visible_texts = [p["text"] for p in cand_parts if "text" in p]
+                return "\n".join(visible_texts).strip()
+            except urllib.error.HTTPError as he:
+                last_err = he
+                if he.code in (400, 404):
+                    bad_models.add(model_name)
+                    continue
+                time.sleep(1.0)
+            except Exception as e:
+                last_err = e
+                time.sleep(1.0)
+                continue
+    raise RuntimeError(f"Gemini API error: {last_err}")
+
+
+def process_inventory_photo(
+    user_text: str,
+    chat_id: int,
+    image_paths: List[str] = None,
+    image_b64_list: List[str] = None,
+) -> str:
+    _, inv_md, inv_json = load_all_context()
+    ov = load_local_overrides()
+
+    b64_images: List[str] = list(image_b64_list or [])
+    for img_path in (image_paths or []):
+        if img_path and os.path.exists(img_path):
+            with open(img_path, "rb") as f:
+                b64_images.append(base64.b64encode(f.read()).decode("utf-8"))
+
+    if not b64_images:
+        return "⚠️ No receipt or food image found to add to inventory."
+
+    existing_items_lines = [f"- [{x.get('category', '')}] {x.get('name', '')}" for x in inv_json]
+    existing_items_text = "\n".join(existing_items_lines)
+
+    prompt = (
+        "You are reading a grocery receipt or food photo to update Aaron's kitchen inventory.\n"
+        f"User instruction: {user_text or 'Add anything not already in my inventory'}\n\n"
+        "EXISTING INVENTORY ITEMS:\n"
+        f"{existing_items_text}\n\n"
+        "INSTRUCTIONS:\n"
+        "1. Read every food or drink item in the image(s). Decode abbreviated store receipt codes (e.g. H-E-B / Costco codes like "
+        "'FRESH BAGD SGR SNAP PEAS' -> 'Fresh Bagged Sugar Snap Peas', "
+        "'BB ZERO SUGAR ADDED BAKD' -> 'Bush\\'s Zero Sugar Added Baked Beans', "
+        "'HERSHEY SPECIAL DK CHIPS' -> 'Hershey\\'s Special Dark Chocolate Chips', "
+        "'BULK RUSSET POTATOES' -> 'Bulk Russet Potatoes', "
+        "'CELERY STICKS' -> 'Fresh Celery Sticks', "
+        "'EZ TIGER SOURDOUGH ROUND' -> 'Easy Tiger Sourdough Bread', "
+        "'GM CHEERIOS HNY NT PRO FS' -> 'General Mills Cheerios Protein: Honey Nut', "
+        "'OLD EL PASO GREEN ENCHILA' -> 'Green Chile Enchilada Sauce'). Ignore non-food items, taxes, coupons, or totals.\n"
+        "2. Compare each decoded food against EXISTING INVENTORY ITEMS above:\n"
+        "   - If the same product is already in the existing inventory (e.g. 'PREMIUM BANANAS' matches 'Fresh Bananas (Raw)', "
+        "'FAIRLIFE MILK FAT FREE' matches 'Fairlife Fat-Free Ultra-Filtered Lactose-Free Milk', "
+        "'FP CF DT COKE CN' / 'FP SPRITE ZERO CN' match 'Zero-Calorie Diet Soda (A&W Zero Sugar Root Beer, etc.)'), put its clean name in `already_in_inventory`.\n"
+        "   - If it is NOT in the existing inventory (or is a distinct variety with different macros not yet in the list, such as 'Bush\\'s Zero Sugar Added Baked Beans' vs regular 'Bush\\'s Original / Homestyle Baked Beans', or 'Hershey\\'s Special Dark Chocolate Chips' vs 'Semi-Sweet'), include it in `added`.\n"
+        "3. For every item in `added`, provide accurate nutrition facts per standard serving (with `serving_size` starting with exact grams `Xg`, and `carbs_g` as Net Carbs = Total Carbs minus Fiber to match Cronometer).\n"
+        "4. Return ONLY valid JSON (no markdown code fences, no extra commentary) in this exact schema:\n"
+        "{\n"
+        '  "added": [\n'
+        "    {\n"
+        '      "name": "Clean Descriptive Product Name",\n'
+        '      "category": "Produce",\n'
+        '      "tags": "Good Carb Options, Good Fiber Options",\n'
+        '      "serving_size": "100g",\n'
+        '      "calories": 40.0,\n'
+        '      "protein_g": 2.0,\n'
+        '      "fat_g": 0.2,\n'
+        '      "carbs_g": 5.0,\n'
+        '      "fiber_g": 2.0\n'
+        "    }\n"
+        "  ],\n"
+        '  "already_in_inventory": ["Clean Name 1", "Clean Name 2"]\n'
+        "}\n"
+        "Valid categories: Raw Meat (Finite Tracked Stock), Frozen Meat & Seafood, Dairy & Refrigerated, Produce, Bakery & Bread, Pantry & Canned, Frozen, Desserts, Candy & Snacks, Oils & Condiments, Baking & Grains, Drinks, Spices & Seasonings."
+    )
+
+    parts: List[Dict[str, Any]] = [
+        {"inline_data": {"mime_type": "image/jpeg", "data": b64}} for b64 in b64_images
+    ]
+    parts.append({"text": prompt})
+
+    payload = {
+        "contents": [{"role": "user", "parts": parts}],
+        "generationConfig": {
+            "temperature": 0.2,
+            "thinkingConfig": {"thinkingBudget": 512},
+        },
+    }
+
+    raw_reply = call_gemini_generate(payload, timeout_sec=75)
+    cleaned_json = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw_reply.strip(), flags=re.I)
+    m_obj = re.search(r"\{.*\}", cleaned_json, flags=re.S)
+    if m_obj:
+        cleaned_json = m_obj.group(0)
+
+    try:
+        parsed = json.loads(cleaned_json)
+    except Exception:
+        # Fallback if model returned plain text instead of JSON
+        return raw_reply
+
+    new_items = parsed.get("added", []) if isinstance(parsed, dict) else []
+    skipped_items = parsed.get("already_in_inventory", []) if isinstance(parsed, dict) else []
+
+    existing_names_lower = {x.get("name", "").strip().lower() for x in inv_json}
+    added_confirmations: List[str] = []
+
+    for item in new_items:
+        if not isinstance(item, dict):
+            continue
+        nm = str(item.get("name", "")).strip()
+        if not nm:
+            continue
+        if nm.lower() in existing_names_lower:
+            if nm not in skipped_items:
+                skipped_items.append(nm)
+            continue
+
+        cat = str(item.get("category", "Pantry & Canned")).strip() or "Pantry & Canned"
+        serv = str(item.get("serving_size", "100g")).strip() or "100g"
+        tags = str(item.get("tags", "")).strip()
+        try:
+            cal = round(float(item.get("calories", 100.0)), 1)
+            p = round(float(item.get("protein_g", 5.0)), 1)
+            fat = round(float(item.get("fat_g", 2.0)), 1)
+            carbs = round(float(item.get("carbs_g", 15.0)), 1)
+            fib = round(float(item.get("fiber_g", 1.0)), 1)
+        except Exception:
+            macros = lookup_usda_macros(nm)
+            serv = macros["serving_size"]
+            cal = macros["calories"]
+            p = macros["protein_g"]
+            fat = macros["fat_g"]
+            carbs = macros["carbs_g"]
+            fib = macros["fiber_g"]
+
+        # Un-remove if previously in removed list
+        ov["removed"] = [
+            r for r in ov.get("removed", []) if not (item_matches_query(nm, r) or item_matches_query(r, nm))
+        ]
+
+        header = f"# {cat}"
+        if header in inv_md:
+            inv_md = inv_md.replace(header, f"{header}\n- {nm}", 1)
+        else:
+            inv_md = inv_md.rstrip() + f"\n\n{header}\n- {nm}\n"
+
+        new_entry = {
+            "name": nm,
+            "category": cat,
+            "tags": tags or "Receipt Verified",
+            "serving_size": serv,
+            "calories": cal,
+            "protein_g": p,
+            "fat_g": fat,
+            "carbs_g": carbs,
+            "fiber_g": fib,
+        }
+        inv_json.append(new_entry)
+        existing_names_lower.add(nm.lower())
+        ov.setdefault("added", []).append(new_entry)
+        added_confirmations.append(
+            f"- {nm} ({serv}: {int(round(cal))} kcal | {int(round(p))}g P | {int(round(carbs))}g C | {int(round(fat))}g F)"
+        )
+
+    if added_confirmations:
+        with open(INV_MD_FILE, "w", encoding="utf-8") as f:
+            f.write(inv_md)
+        with open(INV_JSON_FILE, "w", encoding="utf-8") as f:
+            json.dump(inv_json, f, indent=2)
+        save_local_overrides(ov)
+        threading.Thread(target=save_overrides_to_telegram_cloud, args=(ov,), daemon=True).start()
+
+    lines_out: List[str] = []
+    if added_confirmations:
+        lines_out.append(f"✅ Added {len(added_confirmations)} new item(s) to inventory:")
+        lines_out.extend(added_confirmations)
+    else:
+        lines_out.append("ℹ️ Everything on this receipt is already in your inventory.")
+
+    if skipped_items:
+        lines_out.append(f"\nAlready in inventory (skipped): {', '.join(str(s) for s in skipped_items)}")
+
+    reply = "\n".join(lines_out).strip()
+    if chat_id not in CHAT_MEMORY:
+        CHAT_MEMORY[chat_id] = []
+    CHAT_MEMORY[chat_id].append({"role": "user", "parts": [{"text": user_text or "[Receipt photo uploaded]"}]})
+    CHAT_MEMORY[chat_id].append({"role": "model", "parts": [{"text": reply}]})
+    return reply
+
+
+# ==============================================================================
 # GEMINI 4 ARGON CONVERSATIONAL AGENT (WITH INVENTORY SHUFFLING & MEMORY)
 # ==============================================================================
 def ask_gemini(user_text: str, chat_id: int, image_paths: List[str] = None) -> str:
-    key = get_gemini_key()
     rules_md, inv_md, inv_json = load_all_context()
     ov = load_local_overrides()
     removed_list = list(ov.get("removed", [])) + list(ov.get("dislikes", []))
@@ -600,11 +889,11 @@ def ask_gemini(user_text: str, chat_id: int, image_paths: List[str] = None) -> s
             parts.append({"inline_data": {"mime_type": "image/jpeg", "data": b64}})
     parts.append({"text": user_text or "Read the screenshot(s) and help me hit my MasterRules.md goals."})
 
-    # Keep inline_data images in the last 6 history entries so follow-up messages always see the Cronometer screenshot!
+    # Keep inline_data images in the last 4 history entries so follow-up messages see the Cronometer screenshot without bloating payload size
     trimmed_history: List[Dict[str, Any]] = []
     recent_slice = list(history[-12:])
     for idx, turn in enumerate(recent_slice):
-        if idx < len(recent_slice) - 6:
+        if idx < len(recent_slice) - 4:
             text_only_parts = [p for p in turn.get("parts", []) if "text" in p]
             if not text_only_parts:
                 text_only_parts = [{"text": "[Earlier Screenshot]"}]
@@ -618,37 +907,14 @@ def ask_gemini(user_text: str, chat_id: int, image_paths: List[str] = None) -> s
         "contents": contents,
         "generationConfig": {
             "temperature": 0.65,
-            "thinkingConfig": {"thinkingBudget": 8192},
+            "thinkingConfig": {"thinkingBudget": 2048},
         },
     }
 
-    last_err = None
-    models = ["gemini-3.6-flash", "gemini-3.5-flash", "gemini-3.5-flash-lite"]
-    for attempt in range(2):
-        for model_name in models:
-            try:
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={key}"
-                req = urllib.request.Request(
-                    url,
-                    data=json.dumps(payload).encode("utf-8"),
-                    headers={"Content-Type": "application/json"},
-                )
-                with urllib.request.urlopen(req, timeout=45) as resp:
-                    res = json.loads(resp.read().decode("utf-8"))
-                cand_parts = res["candidates"][0]["content"]["parts"]
-                visible_texts = [p["text"] for p in cand_parts if "text" in p and not p.get("thought")]
-                if not visible_texts:
-                    visible_texts = [p["text"] for p in cand_parts if "text" in p]
-                reply = "\n".join(visible_texts).strip()
-                history.append({"role": "user", "parts": parts})
-                history.append({"role": "model", "parts": [{"text": reply}]})
-                return reply
-            except Exception as e:
-                last_err = e
-                time.sleep(1.5)
-                continue
-        time.sleep(2.0)
-    raise RuntimeError(f"Gemini API error: {last_err}")
+    reply = call_gemini_generate(payload, timeout_sec=75)
+    history.append({"role": "user", "parts": parts})
+    history.append({"role": "model", "parts": [{"text": reply}]})
+    return reply
 
 
 # ==============================================================================
@@ -709,6 +975,11 @@ def flush_chat_batch(token: str, chat_id: int):
             send_message(token, chat_id, "I need more context.")
             return
 
+        if photos and combined_text and is_photo_inventory_request(combined_text, has_photos=True):
+            reply = process_inventory_photo(combined_text, chat_id, image_paths=photos)
+            send_message(token, chat_id, reply)
+            return
+
         if not photos and combined_text:
             s = combined_text.strip()
             m_dis = re.search(r"^add\s+(.+?)\s+to\s+(?:my\s+)?(?:don'?t\s+like|dislike)\s*(?:list)?[.!]*$", s, re.I)
@@ -722,6 +993,15 @@ def flush_chat_batch(token: str, chat_id: int):
                 return
 
             m_add_inv = re.search(r"^add\s+(.+?)\s+to\s+(?:my\s+)?inventory[.!]*$", s, re.I)
+            if is_photo_inventory_request(s, has_photos=False) and (
+                not m_add_inv or is_generic_photo_reference(m_add_inv.group(1))
+            ):
+                recent_b64s = get_recent_memory_images(chat_id)
+                if recent_b64s:
+                    reply = process_inventory_photo(s, chat_id, image_b64_list=recent_b64s)
+                    send_message(token, chat_id, reply)
+                    return
+
             if m_add_inv:
                 send_message(token, chat_id, add_item_to_inventory(m_add_inv.group(1).strip()))
                 return
