@@ -1,4 +1,5 @@
 import base64
+from datetime import datetime
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 import os
@@ -96,6 +97,7 @@ def load_local_overrides() -> Dict[str, Any]:
         "added": [],
         "likes": [],
         "dislikes": [],
+        "notes": [],
     }
     if os.path.exists(OVERRIDES_FILE):
         try:
@@ -192,6 +194,12 @@ def sync_overrides_from_telegram_cloud() -> Dict[str, Any]:
                                 if not any(item_matches_query(nm, r) for r in local_ov.get("removed", [])):
                                     local_ov.setdefault("added", []).append(item)
                                     existing_added.add(nm.lower())
+                    existing_notes = {json.dumps(x, sort_keys=True) for x in local_ov.get("notes", [])}
+                    for note_item in cloud_ov.get("notes", []):
+                        s_note = json.dumps(note_item, sort_keys=True)
+                        if s_note not in existing_notes:
+                            local_ov.setdefault("notes", []).append(note_item)
+                            existing_notes.add(s_note)
                     save_local_overrides(local_ov)
             # Push merged state back so cloud also has any newly committed repo removals
             save_overrides_to_telegram_cloud(local_ov)
@@ -199,6 +207,15 @@ def sync_overrides_from_telegram_cloud() -> Dict[str, Any]:
         except Exception as e:
             print(f"[overrides] Telegram cloud sync FAILED: {e}", flush=True)
         return local_ov
+
+
+def append_project_note(note_text: str):
+    ts = datetime.now().strftime("%Y-%m-%d %H:%M")
+    ov = sync_overrides_from_telegram_cloud()
+    entry = {"timestamp": ts, "text": note_text.strip()}
+    ov.setdefault("notes", []).append(entry)
+    save_local_overrides(ov)
+    threading.Thread(target=save_overrides_to_telegram_cloud, args=(ov,), daemon=True).start()
 
 
 # ==============================================================================
@@ -523,8 +540,6 @@ def is_photo_inventory_request(text: str, has_photos: bool = False) -> bool:
         ]
     ):
         return True
-    if has_photos and re.search(r"\b(?:add|put|save|log)\b", s):
-        return True
     return False
 
 
@@ -769,8 +784,10 @@ def process_inventory_photo(
     if added_confirmations:
         lines_out.append(f"✅ Added {len(added_confirmations)} new item(s) to inventory:")
         lines_out.extend(added_confirmations)
-    else:
+    elif skipped_items:
         lines_out.append("ℹ️ Everything on this receipt is already in your inventory.")
+    else:
+        return ""
 
     if skipped_items:
         lines_out.append(f"\nAlready in inventory (skipped): {', '.join(str(s) for s in skipped_items)}")
@@ -849,9 +866,10 @@ def ask_gemini(user_text: str, chat_id: int, image_paths: List[str] = None) -> s
         "   - ALWAYS respect Aaron's exact math (e.g., if he says 'I have 446g of steak, I'd like to split that for a meal', half of 446g is 223g pre-cooked / 167g cooked — NEVER make up 300g!).\n"
         "   - IF AARON ASKS TO SWAP A SIDE WHILE TUNING HIS DAY (e.g. 'also I want something else with dinner' without asking for multiple options): DO NOT output 5 Dinner options! Just replace the unwanted side (e.g. carrots) with 1 normal, appetizing side (like White Rice, Potatoes, or Beans) inside the single `Dinner` block and show 1 single `Daily Total:` at the bottom.\n"
         "   - IF AARON EXPLICITLY ASKS FOR 'options for with the steak': The steak is ALREADY ASSUMED — NEVER repeat the steak line inside every option! List the steak ONCE under `Dinner`, and then list ONLY the side dish under `Option 1..5` (with the side's `Total:` and resulting `Daily Total:`).\n"
-        "5. NATURAL CONVERSATIONAL QUESTIONS & REAL-WORLD REASONING:\n"
-        "   - You are a full conversational Gemini AI: Aaron can ask you ANY random question at any time (e.g., 'why did you pick jelly for my pre-workout?', 'how should I cook this?', 'I'm traveling through the airport tonight, help me pick food I can bring', 'what should I get at Chipotle?').\n"
-        "   - Use your natural real-world reasoning for any situation (without needing special hardcoded rules), and when he asks a 'why' or general question, answer it directly in 1–2 ultra-short sentences with zero fluff.\n"
+        "5. NATURAL CONVERSATIONAL QUESTIONS, PROJECT COMMUNICATION & IDEA-DUMP MODE:\n"
+        "   - You are a full conversational Gemini AI AND Aaron's direct bridge to this project (`diet-macro-assistant`): Aaron can ask you ANY random question, send screenshots of chats/apps/issues, discuss project behavior, or give instructions/rules/notes for this project.\n"
+        "   - IDEA-DUMP & SAVE-TO-PROJECT-FILE RULE (CRITICAL): Whenever Aaron is purely dumping ideas, notes, or project requirements for when he gets back to his computer without asking a question, OR whenever he explicitly says he does NOT want the answer returned in the chat message (e.g. 'I don\\'t need this return to me in this message', 'save it as a project file'), reply ONLY `Okay.` (zero other words, never dump a long document in chat when he told you not to!).\n"
+        "   - When he asks a 'why' or general question (including about a screenshot he sent), answer it directly in 1–2 ultra-short sentences with zero fluff.\n"
         "6. WIDE KITCHEN VARIETY & ZERO REPEATS:\n"
         "   - Actively use the full kitchen inventory! Draw from his frozen meats/shrimp/chicken strips/meatballs, rotisserie chicken, canned tuna/chicken, edamame, protein bars, beef sticks, cheeses, breads, bagels, tortillas, beans, rices, pastas, fruits, and snacks.\n"
         "   - Here is a randomized spotlight of items from his inventory to consider rotating in if they fit his macros:\n"
@@ -919,6 +937,14 @@ def ask_gemini(user_text: str, chat_id: int, image_paths: List[str] = None) -> s
     reply = call_gemini_generate(payload, timeout_sec=75)
     history.append({"role": "user", "parts": parts})
     history.append({"role": "model", "parts": [{"text": reply}]})
+
+    s_lower = (user_text or "").strip().lower()
+    if reply.strip() in ("Okay.", "Okay") or any(
+        s_lower.startswith(p) for p in ("note:", "log:", "remember:", "rule:", "add rule", "save note")
+    ):
+        if user_text and user_text.strip():
+            append_project_note(user_text.strip())
+
     return reply
 
 
@@ -982,7 +1008,31 @@ def flush_chat_batch(token: str, chat_id: int):
 
         if photos and combined_text and is_photo_inventory_request(combined_text, has_photos=True):
             reply = process_inventory_photo(combined_text, chat_id, image_paths=photos)
-            send_message(token, chat_id, reply)
+            if reply:
+                send_message(token, chat_id, reply)
+                return
+
+        # Handle idea dumps / save-as-project-file instructions where user explicitly does not want the output in chat
+        s_lower = combined_text.strip().lower()
+        is_why_question = s_lower.startswith(("how come", "why ", "what happened", "can you explain"))
+        if (
+            combined_text
+            and not is_why_question
+            and (
+                any(s_lower.startswith(p) for p in ("note:", "log:", "remember:", "rule:", "add rule", "save note"))
+                or "don't need this return" in s_lower
+                or "dont need this return" in s_lower
+                or "don\u2019t need this return" in s_lower
+                or "save it as a project file" in s_lower
+                or "saved as a project file" in s_lower
+            )
+        ):
+            append_project_note(combined_text.strip())
+            if chat_id not in CHAT_MEMORY:
+                CHAT_MEMORY[chat_id] = []
+            CHAT_MEMORY[chat_id].append({"role": "user", "parts": [{"text": combined_text}]})
+            CHAT_MEMORY[chat_id].append({"role": "model", "parts": [{"text": "Okay."}]})
+            send_message(token, chat_id, "Okay.")
             return
 
         if not photos and combined_text:

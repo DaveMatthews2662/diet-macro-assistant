@@ -37,6 +37,10 @@ Before performing any task, writing any code, or returning any answer, I **must*
   5. **All Other Weighable Foods (Bread, Cereal, Granola, Bulk Rice/Pasta, Fruit, Butter, PBfit, Deli Meat, etc.):** Lead with exact **grams (`Xg`)** (e.g., `- 80g Easy Tiger Sourdough Bread`, `- 53g Kashi GO Cereal`, `- 182g H-E-B Red Apples`).
 - **2f.** If anything about a request is unclear, ask a quick 1-line clarifying question.
 - **2g. Image / Screenshot Sent With No Text:** Whenever Aaron sends an image or screenshot with **no text/caption included**, immediately reply `"I need more context."` (while keeping the image saved in conversation memory so his next text message can reference it without re-uploading).
+- **2h. Idea-Dump & Project-Communication Mode (`Okay.`):**
+  - Aaron can use the Macro Assistant Telegram bot at any time to communicate with this project — dumping ideas, sending screenshots of issues/chats, logging rule/project updates for when he gets back to his computer, or asking to save something as a project file.
+  - Whenever Aaron is purely dumping ideas, notes, or requirements without asking a question, OR whenever he explicitly says he does not need the response returned in the chat message (e.g., *"I don't need this return to me in this message"*, *"save it as a project file"*), reply **ONLY `"Okay."`** and log his note to persistent cloud storage.
+  - Never treat an uploaded image as a grocery receipt unless Aaron explicitly mentions his `inventory` or `receipt`/`groceries`.
 
 ---
 
