@@ -206,6 +206,8 @@ def build_context(gemini_key: str, token: str) -> str:
 
     sections: List[str] = []
     for rel, content in files.items():
+        if rel == "dashboard.html":
+            continue
         sections.append(f"=== {rel} ===\n{content}")
 
     if state.get("rules") or state.get("notes"):
@@ -502,3 +504,33 @@ def register_lifting_webhook(gemini_key: str, external_url: str):
         print(f"[lifting] Webhook registered at {webhook_url}", flush=True)
     except Exception as e:
         print(f"[lifting] Webhook setup failed: {e}", flush=True)
+
+
+def get_dashboard_html(gemini_key: str) -> str:
+    vault = load_vault(gemini_key)
+    files: Dict[str, str] = vault.get("files", {})
+    return files.get("dashboard.html", "<h1>Dashboard not found in vault</h1>")
+
+
+def get_live_workout_json(gemini_key: str) -> str:
+    vault = load_vault(gemini_key)
+    token = get_lifting_token(gemini_key)
+    files: Dict[str, str] = dict(vault.get("files", {}))
+    state = sync_state_from_cloud(token)
+    raw_json = files.get("data/workout_data.json", "{}")
+    try:
+        w_data = json.loads(raw_json)
+        for k, v in state.get("workout_updates", {}).items():
+            w_data.setdefault("current_targets_and_maxes", {})[k] = v
+        for k, v in state.get("machine_updates", {}).items():
+            w_data.setdefault("machine_settings", {})[k] = v
+        existing_logs = {json.dumps(x, sort_keys=True) for x in w_data.get("workout_logs", [])}
+        for log_entry in state.get("workout_logs", []):
+            s_log = json.dumps(log_entry, sort_keys=True)
+            if s_log not in existing_logs:
+                w_data.setdefault("workout_logs", []).append(log_entry)
+                existing_logs.add(s_log)
+        return json.dumps(w_data, indent=2)
+    except Exception:
+        return raw_json
+
