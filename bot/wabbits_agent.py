@@ -2,8 +2,10 @@ import base64
 from datetime import datetime
 import hashlib
 import hmac
+import html
 import json
 import os
+import re
 import ssl
 import tempfile
 import threading
@@ -33,10 +35,8 @@ WABBITS_SEEN_UPDATES = set()
 def _open_url(req, timeout: int = 25):
     try:
         return urllib.request.urlopen(req, timeout=timeout, context=SSL_CTX)
-    except urllib.error.URLError as e:
-        if "CERTIFICATE_VERIFY_FAILED" in str(e):
-            return urllib.request.urlopen(req, timeout=timeout, context=SSL_UNVERIFIED_CTX)
-        raise
+    except Exception:
+        return urllib.request.urlopen(req, timeout=timeout, context=SSL_UNVERIFIED_CTX)
 
 
 def _keystream(key: bytes, nonce: bytes, length: int) -> bytes:
@@ -49,29 +49,49 @@ def _keystream(key: bytes, nonce: bytes, length: int) -> bytes:
     return bytes(out[:length])
 
 
-def load_vault(gemini_key: str) -> Dict[str, Any]:
-    global WABBITS_VAULT_CACHE
-    if WABBITS_VAULT_CACHE:
-        return WABBITS_VAULT_CACHE
-    if not gemini_key or not os.path.exists(VAULT_FILE):
+def _try_decrypt_block(enc: Dict[str, Any], secret: str) -> Dict[str, Any]:
+    if not secret or not isinstance(enc, dict) or "salt" not in enc:
         return {}
     try:
-        with open(VAULT_FILE, "r", encoding="utf-8") as f:
-            enc = json.load(f)
         salt = base64.b64decode(enc["salt"])
         nonce = base64.b64decode(enc["nonce"])
         ct = base64.b64decode(enc["ct"])
         tag = base64.b64decode(enc["tag"])
-        derived = hashlib.pbkdf2_hmac("sha256", gemini_key.encode("utf-8"), salt, 100000, dklen=64)
+        derived = hashlib.pbkdf2_hmac("sha256", secret.encode("utf-8"), salt, 100000, dklen=64)
         enc_key, mac_key = derived[:32], derived[32:]
         expected_tag = hmac.new(mac_key, salt + nonce + ct, hashlib.sha256).digest()
         if not hmac.compare_digest(tag, expected_tag):
-            print("[wabbits] Vault HMAC mismatch!", flush=True)
             return {}
         stream = _keystream(enc_key, nonce, len(ct))
         pt = bytes(a ^ b for a, b in zip(ct, stream))
-        WABBITS_VAULT_CACHE = json.loads(pt.decode("utf-8"))
+        return json.loads(pt.decode("utf-8"))
+    except Exception:
+        return {}
+
+
+def load_vault(gemini_key: str) -> Dict[str, Any]:
+    global WABBITS_VAULT_CACHE
+    if WABBITS_VAULT_CACHE:
         return WABBITS_VAULT_CACHE
+    if not os.path.exists(VAULT_FILE):
+        return {}
+    try:
+        with open(VAULT_FILE, "r", encoding="utf-8") as f:
+            enc = json.load(f)
+        res = _try_decrypt_block(enc, gemini_key)
+        if not res and "by_macro_token" in enc:
+            macro_tok = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
+            if not macro_tok:
+                tok_file = os.path.join(BOT_DIR, ".telegram_token")
+                if os.path.exists(tok_file):
+                    with open(tok_file, "r", encoding="utf-8") as tf:
+                        macro_tok = tf.read().strip()
+            res = _try_decrypt_block(enc["by_macro_token"], macro_tok)
+        if res:
+            WABBITS_VAULT_CACHE = res
+            return WABBITS_VAULT_CACHE
+        print("[wabbits] Vault HMAC mismatch across all keys!", flush=True)
+        return {}
     except Exception as e:
         print(f"[wabbits] Vault load failed: {e}", flush=True)
         return {}
@@ -83,6 +103,12 @@ def get_wabbits_token(gemini_key: str) -> str:
         return env_tok
     vault = load_vault(gemini_key)
     return str(vault.get("token", "")).strip()
+
+
+def get_effective_gemini_key(gemini_key: str) -> str:
+    vault = load_vault(gemini_key)
+    vk = str(vault.get("gemini_key", "")).strip()
+    return gemini_key or vk
 
 
 def tg_api(token: str, method: str, payload: Dict[str, Any]) -> Dict[str, Any]:
@@ -109,6 +135,91 @@ def download_file(token: str, file_id: str, suffix: str = ".dat") -> str:
     with _open_url(req, timeout=30) as resp, open(local_path, "wb") as out_f:
         out_f.write(resp.read())
     return local_path
+
+
+# ==============================================================================
+# LIVE JOB POSTING & URL SCRAPER
+# ==============================================================================
+def scrape_url_content(raw_url: str) -> Tuple[str, str]:
+    """Fetch a URL (handling trailing typo chars like 12111936I and iCIMS iframes) and extract clean text + links."""
+    url = raw_url.strip().rstrip(".,;!)>\"'")
+    candidates = [url]
+    # If URL ends with digits followed immediately by letters (e.g. /12111936I from typing 'I also' without space)
+    m_typo = re.match(r"^(https?://.*/\d{4,})[A-Za-z]+$", url)
+    if m_typo:
+        candidates.insert(0, m_typo.group(1))
+
+    html_raw = ""
+    final_url = url
+    headers = {"User-Agent": "Mozilla/5.0"}
+
+    for cand in candidates:
+        try:
+            fetch_target = cand
+            if "icims.com" in fetch_target and "in_iframe=1" not in fetch_target:
+                fetch_target = fetch_target + ("&" if "?" in fetch_target else "?") + "in_iframe=1"
+            req = urllib.request.Request(fetch_target, headers=headers)
+            with _open_url(req, timeout=15) as resp:
+                html_raw = resp.read().decode("utf-8", errors="replace")
+                final_url = cand
+                break
+        except Exception:
+            continue
+
+    if not html_raw:
+        return final_url, ""
+
+    out_parts: List[str] = [f"Fetched URL: {final_url}"]
+
+    # Extract <title>
+    m_title = re.search(r"<title[^>]*>(.*?)</title>", html_raw, flags=re.S | re.I)
+    if m_title:
+        out_parts.append("Page Title: " + html.unescape(re.sub(r"\s+", " ", m_title.group(1))).strip())
+
+    # Extract JSON-LD JobPosting blocks if present
+    for m_ld in re.finditer(r'<script[^>]*type=["\']application/ld\+json["\'][^>]*>(.*?)</script>', html_raw, flags=re.S | re.I):
+        ld_txt = m_ld.group(1).strip()
+        if "JobPosting" in ld_txt:
+            cleaned_ld = html.unescape(re.sub(r"<[^>]+>", " ", ld_txt))
+            cleaned_ld = re.sub(r"\s+", " ", cleaned_ld).strip()
+            out_parts.append("Structured JobPosting Data: " + cleaned_ld[:6000])
+
+    # Extract external ATS / apply links (Greenhouse, Lever, Ashby, Workday, iCIMS, external company links)
+    apply_links = []
+    for m_href in re.finditer(r'href=["\'](https?://[^"\'>\s]+)["\']', html_raw, flags=re.I):
+        href = html.unescape(m_href.group(1))
+        if any(
+            k in href.lower()
+            for k in ("greenhouse.io", "lever.co", "ashbyhq.com", "myworkdayjobs.com", "icims.com", "apply", "careers", "jobs")
+        ) and not any(x in href.lower() for x in ("builtinaustin.com", "builtin.com", "linkedin.com", "facebook.com", "twitter.com")):
+            if href not in apply_links:
+                apply_links.append(href)
+    if apply_links:
+        out_parts.append("Detected Direct/Company Apply Links: " + ", ".join(apply_links[:8]))
+
+    # Strip scripts/styles and extract visible page text
+    cleaned = re.sub(r"<script[^>]*>.*?</script>", " ", html_raw, flags=re.S | re.I)
+    cleaned = re.sub(r"<style[^>]*>.*?</style>", " ", cleaned, flags=re.S | re.I)
+    text = html.unescape(re.sub(r"<[^>]+>", " ", cleaned))
+    text = re.sub(r"\s+", " ", text).strip()
+    if text:
+        out_parts.append("Page Text:\n" + text[:10000])
+
+    return final_url, "\n".join(out_parts)
+
+
+def extract_and_scrape_urls(user_text: str) -> List[Tuple[str, str]]:
+    if not user_text:
+        return []
+    raw_urls = re.findall(r"https?://[^\s<>\"']+", user_text)
+    results: List[Tuple[str, str]] = []
+    seen = set()
+    for u in raw_urls[:4]:
+        clean_u, content = scrape_url_content(u)
+        if clean_u not in seen and content:
+            seen.add(clean_u)
+            results.append((clean_u, content))
+    return results
 
 
 def save_notes_to_cloud(token: str, data: Dict[str, Any]):
@@ -190,13 +301,14 @@ def build_context(gemini_key: str, token: str, user_text: str = "") -> str:
         sections.append(f"=== {rel} ===\n{content}")
 
     if notes_data.get("rules") or notes_data.get("notes"):
-        sections.append("=== Persistent Telegram Notes & Rule Additions ===\n" + json.dumps(notes_data, indent=2))
+        sections.append("=== Persistent Telegram Notes & Saved Job Links ===\n" + json.dumps(notes_data, indent=2))
 
     return "\n\n".join(sections)
 
 
 def call_gemini(gemini_key: str, payload: Dict[str, Any], timeout_sec: int = 75) -> str:
-    models = ["gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-3.6-flash", "gemini-2.5-flash"]
+    eff_key = get_effective_gemini_key(gemini_key)
+    models = ["gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-3.6-flash"]
     bad_models = set()
     last_err = None
     for attempt in range(2):
@@ -207,7 +319,7 @@ def call_gemini(gemini_key: str, payload: Dict[str, Any], timeout_sec: int = 75)
             if attempt == 1 and "thinkingConfig" in req_payload.get("generationConfig", {}):
                 req_payload["generationConfig"].pop("thinkingConfig", None)
             try:
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={eff_key}"
                 req = urllib.request.Request(
                     url,
                     data=json.dumps(req_payload).encode("utf-8"),
@@ -242,19 +354,28 @@ def ask_wabbits(
     audio_items: List[Tuple[str, str]] = None,
 ) -> str:
     ctx = build_context(gemini_key, token, user_text)
+    scraped_urls = extract_and_scrape_urls(user_text)
+
     if chat_id not in WABBITS_MEMORY:
         WABBITS_MEMORY[chat_id] = []
     history = WABBITS_MEMORY[chat_id]
 
+    scraped_block = ""
+    if scraped_urls:
+        scraped_block = "\n\n=== LIVE SCRAPED WEB / JOB POSTING CONTENT FROM USER MESSAGE ===\n" + "\n\n---\n\n".join(
+            c for _, c in scraped_urls
+        )
+
     system_prompt = (
         "You are Aaron Millard's personal Hunting Wabbits Assistant on Telegram.\n"
-        "You have full access to his entire Hunting Wabbits repository (`rules/MasterRules.md`, `memory/ProjectMemory.md`, `memory/DecisionLog.md`, `profile/resume.md`, company profiles, job postings, interview prep questions, and feedback).\n\n"
+        "You have full access to his entire Hunting Wabbits repository (`rules/MasterRules.md`, `memory/ProjectMemory.md`, `memory/DecisionLog.md`, `memory/FullExperience.md`, `profile/resume.md`, company profiles, job postings, interview prep questions, and feedback).\n\n"
         "CRITICAL RULES (FOLLOW AT ALL TIMES):\n"
-        "1. RULE #1 (SHORT AS HUMANLY POSSIBLE): Every response must be as short, direct, and scannable as humanly possible. Use tight bullet points, zero fluff, no long intros, no recaps unless explicitly asked.\n"
-        "2. IDEA-DUMP MODE RULE: When Aaron is purely dumping ideas, notes, or requirements without asking a question, reply ONLY `Okay.` (the bot automatically logs his note).\n"
-        "3. INTERVIEW PREP VOICE: Default to Aaron's 'Casual & Direct' voice. When giving feedback on voice memos or practice answers, be candid, specific, and constructive—flag wandering, weak structure, filler, unclear ownership/impact, and give the #1 priority fix.\n"
-        "4. ACCURATE GROUNDING: Never invent experience, tools, or company facts not in the project files. Distinguish verified facts from unknowns.\n\n"
-        f"{ctx}"
+        "1. RULE #1 (SHORT AS HUMANLY POSSIBLE): Every response must be as short, direct, and scannable as humanly possible. Use clean plain-text headers and dashes (`-`), NO markdown asterisks (`*` or `**`), zero fluff, no long intros.\n"
+        "2. IDEA-DUMP & SILENT FILE-SAVE RULE: When Aaron is purely dumping ideas, notes, or requirements without asking a question, OR when he explicitly says he does NOT want the output returned in the message (e.g. 'I don\\'t need this return to me in this message', 'save it as a project file'), reply ONLY `Okay.` (the bot automatically logs his note).\n"
+        "3. JOB LINK EVALUATION & TUESDAY/WEDNESDAY QUEUE: When Aaron sends a job posting link (scraped content provided below), evaluate fit candidly against his 9+ yrs SQL, Power BI/Tableau, GTM/Marketing/BI/Analytics Engineering background and $120k-$140k+ target. State clearly if it is a strong fit or a skip/weak fit and why, note the company + direct apply link if available, and confirm whether it is queued for his Tuesday/Wednesday 8-12 AM rapid-fire application batch.\n"
+        "4. INTERVIEW PREP VOICE: Default to Aaron's 'Casual & Direct' voice. When giving feedback on voice memos or practice answers, be candid, specific, and constructive—flag wandering, weak structure, filler, unclear ownership/impact, and give the #1 priority fix.\n"
+        "5. ACCURATE GROUNDING: Never invent experience, tools, or company facts not in the project files. Distinguish verified facts from unknowns.\n\n"
+        f"{ctx}{scraped_block}"
     )
 
     parts: List[Dict[str, Any]] = []
@@ -299,12 +420,16 @@ def ask_wabbits(
     }
 
     reply = call_gemini(gemini_key, payload, timeout_sec=75)
+    # Strip any accidental markdown asterisks per Aaron's formatting rule
+    reply = reply.replace("**", "")
     history.append({"role": "user", "parts": parts})
     history.append({"role": "model", "parts": [{"text": reply}]})
 
     s_lower = (user_text or "").strip().lower()
-    if reply.strip() in ("Okay.", "Okay") or any(
-        s_lower.startswith(p) for p in ("note:", "log:", "remember:", "rule:", "add rule", "save note")
+    if (
+        reply.strip() in ("Okay.", "Okay")
+        or scraped_urls
+        or any(s_lower.startswith(p) for p in ("note:", "log:", "remember:", "rule:", "add rule", "save note"))
     ):
         if user_text and user_text.strip():
             cat = "rule" if "rule" in s_lower[:15] else "note"
@@ -333,12 +458,39 @@ def _flush_wabbits_batch(gemini_key: str, token: str, chat_id: int):
             send_message(
                 token,
                 chat_id,
-                "Hunting Wabbits Bot online (24/7 Render cloud). Ask anything about your interviews, companies, prep questions, rules, or send a voice memo / idea dump.",
+                "Hunting Wabbits Bot online (24/7 Render cloud). Ask anything about your interviews, companies, prep questions, rules, or send a job link / voice memo / idea dump.",
             )
             return
         if combined_text.strip().lower() in ("/clear", "clear memory", "reset chat"):
             WABBITS_MEMORY.pop(chat_id, None)
             send_message(token, chat_id, "Chat history cleared.")
+            return
+
+        s_lower = combined_text.strip().lower()
+        is_why_question = s_lower.startswith(("how come", "why ", "what happened", "can you explain"))
+        if (
+            combined_text
+            and not photos
+            and not audios
+            and not is_why_question
+            and (
+                any(s_lower.startswith(p) for p in ("note:", "log:", "remember:", "rule:", "add rule", "save note"))
+                or "don't need this return" in s_lower
+                or "dont need this return" in s_lower
+                or "don\u2019t need this return" in s_lower
+                or "save it as a project file" in s_lower
+                or "saved as a project file" in s_lower
+            )
+        ):
+            ts = datetime.now().strftime("%Y-%m-%d %H:%M")
+            notes_data = sync_notes_from_cloud(token)
+            notes_data.setdefault("notes", []).append({"timestamp": ts, "text": combined_text.strip()})
+            threading.Thread(target=save_notes_to_cloud, args=(token, notes_data), daemon=True).start()
+            if chat_id not in WABBITS_MEMORY:
+                WABBITS_MEMORY[chat_id] = []
+            WABBITS_MEMORY[chat_id].append({"role": "user", "parts": [{"text": combined_text}]})
+            WABBITS_MEMORY[chat_id].append({"role": "model", "parts": [{"text": "Okay."}]})
+            send_message(token, chat_id, "Okay.")
             return
 
         reply = ask_wabbits(gemini_key, token, combined_text, chat_id, image_paths=photos, audio_items=audios)
