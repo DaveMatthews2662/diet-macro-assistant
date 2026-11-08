@@ -16,6 +16,10 @@ try:
     from bot import wabbits_agent
 except Exception:
     import wabbits_agent
+try:
+    from bot import lifting_agent
+except Exception:
+    import lifting_agent
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -1147,6 +1151,13 @@ class BotHTTPHandler(BaseHTTPRequestHandler):
                 daemon=True,
             ).start()
             return
+        if self.path.startswith("/lifting-webhook"):
+            threading.Thread(
+                target=lifting_agent.process_lifting_webhook,
+                args=(get_gemini_key(), body),
+                daemon=True,
+            ).start()
+            return
         try:
             upd = json.loads(body.decode("utf-8"))
             uid = upd.get("update_id")
@@ -1204,6 +1215,10 @@ def run_bot():
             wabbits_agent.register_wabbits_webhook(get_gemini_key(), external_url)
         except Exception as e:
             print(f"Wabbits webhook setup failed ({e})")
+        try:
+            lifting_agent.register_lifting_webhook(get_gemini_key(), external_url)
+        except Exception as e:
+            print(f"Lifting webhook setup failed ({e})")
 
     if external_url:
         threading.Thread(target=keep_alive_loop, args=(external_url,), daemon=True).start()
