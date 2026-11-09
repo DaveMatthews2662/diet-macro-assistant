@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: diet-macro-telegram-agent
+    name: diet-macro-assistant
     env: python
     plan: free
     buildCommand: "pip install -r requirements.txt"
@@ -10,4 +10,3 @@ services:
         sync: false
       - key: GEMINI_API_KEY
         sync: false
-
