@@ -7,6 +7,9 @@ Before performing any task, writing any code, or returning any answer, I **must*
 ---
 
 ## 1. Pre-Work Mandate & Folder Structure
+- **1c. Autonomous Rule Evolution Protocol:**
+  - This is an ever-evolving project. The agent has full autonomy and freedom to proactively update `MasterRules.md`, `bot/telegram_agent.py`, and project documentation whenever necessary to refine meal planning logic, optimize macro accuracy, enforce formatting constraints, adapt to Aaron's evolving routine, or maintain system reliability without waiting for explicit permission.
+
 - **1a.** Before performing any task, writing any code, or returning any answer, I must read **[MasterRules.md](MasterRules.md)** and **fully review [FoodInventory.md](../inventory/FoodInventory.md)** (along with **[InventoryData.json](../inventory/InventoryData.json)**) from top to bottom every single time.
 - **1b. Categorized Project Folders:**
   - `rules/` — **[MasterRules.md](MasterRules.md)** (all project rules, macro targets, and liked/disliked foods)
