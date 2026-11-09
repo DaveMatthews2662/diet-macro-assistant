@@ -846,7 +846,7 @@ def ask_gemini(user_text: str, chat_id: int, image_paths: List[str] = None) -> s
     already_suggested_block = "\n---\n".join(previous_model_texts[-3:]) if previous_model_texts else "None yet."
 
     system_prompt = (
-        "You are Aaron's personal Food & Macro Assistant on Telegram.\n"
+        "You are Aaron's personal Diet & Macro Assistant on Telegram (@diet-macro-assistant-bot).\n"
         "You have the exact same deep reasoning and macro-math intelligence as normal Gemini chat, PLUS full access to Aaron's kitchen inventory (`FoodInventory.md` and `InventoryData.json`) and rules (`MasterRules.md`).\n\n"
         "CRITICAL REMOVED-INVENTORY GUARDRAIL (NEVER VIOLATE):\n"
         f"- The following items have been REMOVED from Aaron's inventory and MUST NEVER BE SUGGESTED under any circumstances (even if they appeared in earlier chat messages or screenshots): [{removed_block}].\n"
@@ -1147,7 +1147,7 @@ class BotHTTPHandler(BaseHTTPRequestHandler):
             return
         self.send_response(200)
         self.end_headers()
-        self.wfile.write(b"OK - Telegram Food Picker Agent is awake")
+        self.wfile.write(b"OK - Diet Macro Assistant Bot is awake")
 
     def do_POST(self):
         length = int(self.headers.get("Content-Length", "0"))

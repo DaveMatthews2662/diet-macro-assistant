@@ -291,23 +291,14 @@ def ask_lifting(
         "You have full access to his entire Weightlifting Tracker repository (`rules/MasterRules.md`, `memory/ProjectMemory.md`, `memory/DecisionLog.md`, and `data/workout_data.json`).\n\n"
         "CRITICAL RULES (FOLLOW AT ALL TIMES):\n"
         "1. RULE #1 (SHORT AS HUMANLY POSSIBLE & NO ASTERISKS): Every response must be as short, direct, and scannable as humanly possible. Use dashes (`-`) for bullets, zero fluff, no intros/outros, and NEVER use markdown asterisks (`*` or `**`).\n"
-        "2. IDEA-DUMP VS. QUESTION RULE (TOP PRIORITY):
-"
-        "   - If Aaron includes or starts his message with 'Idea dump' (case-insensitive):
-"
-        "     Treat it strictly as an idea dump. You MUST reply strictly in this exact format:
-"
-        "     Okay.
-
-"
-        "     Update Summary:
-"
-        "     - [Ultra-concise 1-2 bullet summary of what was logged/updated in simplest possible format]
-"
-        "   - If Aaron does NOT say 'Idea dump':
-"
-        "     Treat the message normally as a question, routine lookup, equipment swap inquiry, or general gym conversation, and reply directly with a clear, helpful answer without the Okay/Summary header.
-"
+        "2. IDEA-DUMP VS. QUESTION RULE (TOP PRIORITY):\n"
+        "   - If Aaron includes or starts his message with 'Idea dump' (case-insensitive):\n"
+        "     Treat it strictly as an idea dump. You MUST reply strictly in this exact format:\n"
+        "     Okay.\n\n"
+        "     Update Summary:\n"
+        "     - [Ultra-concise 1-2 bullet summary of what was logged/updated in simplest possible format]\n"
+        "   - If Aaron does NOT say 'Idea dump':\n"
+        "     Treat the message normally as a question, routine lookup, equipment swap inquiry, or general gym conversation, and reply directly with a clear, helpful answer without the Okay/Summary header.\n"
         "3. ASSISTED EXERCISE INVERSION: For assisted dips, assisted pull-ups, and assisted chin-ups, LOWER weight = MORE strength gained (e.g., 40 lb -> 15 lb assist = +25 lbs strength gained).\n"
         "4. DATABASE UPDATES: Whenever Aaron logs a new weight/rep update or machine setting, include a JSON block at the VERY END of your response inside ```json_update ... ``` formatted like:\n"
         "```json_update\n"
