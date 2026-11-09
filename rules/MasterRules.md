@@ -40,15 +40,16 @@ Before performing any task, writing any code, or returning any answer, I **must*
   5. **All Other Weighable Foods (Bread, Cereal, Granola, Bulk Rice/Pasta, Fruit, Butter, PBfit, Deli Meat, etc.):** Lead with exact **grams (`Xg`)** (e.g., `- 80g Easy Tiger Sourdough Bread`, `- 53g Kashi GO Cereal`, `- 182g H-E-B Red Apples`).
 - **2f.** If anything about a request is unclear, ask a quick 1-line clarifying question.
 - **2g. Image / Screenshot Sent With No Text:** Whenever Aaron sends an image or screenshot with **no text/caption included**, immediately reply `"I need more context."` (while keeping the image saved in conversation memory so his next text message can reference it without re-uploading).
-- **2h. Idea-Dump & Telegram Updates Rule (`Okay.` + Update Summary):**
-  - Aaron can use the Macro Assistant Telegram bot at any time to communicate with this project — dumping ideas, sending screenshots of issues/chats, or logging rule/project updates for when he gets back to his computer.
-  - Whenever Aaron sends an idea dump or note via Telegram, the bot must reply in this exact format:
+- **2h. Idea-Dump Protocol (Explicit 'Idea dump' Trigger):**
+  - When Aaron wants to log a note, rule update, or instruction for when he gets back to his computer, he will explicitly include **"Idea dump"** in the message.
+  - When "Idea dump" is present, the bot logs the note to persistent cloud storage and replies strictly in this format:
     ```text
     Okay.
 
     Update Summary:
-    [Simplest possible 1-2 line summary of what was logged/updated]
+    [Simplest possible 1-line summary of what was logged/updated]
     ```
+  - If Aaron does NOT say "Idea dump", the bot treats the message as a regular question, conversation, or macro request and responds naturally.
   - Never treat an uploaded image as a grocery receipt unless Aaron explicitly mentions his `inventory` or `receipt`/`groceries`.
   - **Strict Project Isolation Guardrail:** When working in `diet-macro-assistant`, NEVER query or apply notes/rules from other project bots (such as `hunting-wabbits` or `weightlifting-tracker`).
 - **2i. Zero Shorthand Rule (`0` = Check Telegram Updates for Diet & Macro Assistant):**

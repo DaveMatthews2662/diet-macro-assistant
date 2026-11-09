@@ -1016,27 +1016,23 @@ def flush_chat_batch(token: str, chat_id: int):
                 send_message(token, chat_id, reply)
                 return
 
-        # Handle idea dumps / save-as-project-file instructions where user explicitly does not want the output in chat
+        # Explicit 'Idea dump' Trigger: When Aaron says 'Idea dump', log to cloud and reply with Okay + Update Summary
         s_lower = combined_text.strip().lower()
-        is_why_question = s_lower.startswith(("how come", "why ", "what happened", "can you explain"))
-        if (
-            combined_text
-            and not is_why_question
-            and (
-                any(s_lower.startswith(p) for p in ("note:", "log:", "remember:", "rule:", "add rule", "save note"))
-                or "don't need this return" in s_lower
-                or "dont need this return" in s_lower
-                or "don\u2019t need this return" in s_lower
-                or "save it as a project file" in s_lower
-                or "saved as a project file" in s_lower
-            )
-        ):
+        if combined_text and 'idea dump' in s_lower:
             append_project_note(combined_text.strip())
+            try:
+                clean_content = re.sub(r'(?i)^idea\s*dump[:\s-]*', '', combined_text.strip()).strip()
+                summary_prompt = f'Summarize this update in 1 simple sentence with zero fluff:\n{clean_content}'
+                p_payload = {'contents': [{'role': 'user', 'parts': [{'text': summary_prompt}]}], 'generationConfig': {'temperature': 0.2, 'maxOutputTokens': 80}}
+                brief_sum = call_gemini_generate(p_payload, timeout_sec=15).strip()
+            except Exception:
+                brief_sum = 'Logged idea dump to persistent project notes.'
+            reply_text = f'Okay.\n\nUpdate Summary:\n{brief_sum}'
             if chat_id not in CHAT_MEMORY:
                 CHAT_MEMORY[chat_id] = []
-            CHAT_MEMORY[chat_id].append({"role": "user", "parts": [{"text": combined_text}]})
-            CHAT_MEMORY[chat_id].append({"role": "model", "parts": [{"text": "Okay."}]})
-            send_message(token, chat_id, "Okay.")
+            CHAT_MEMORY[chat_id].append({'role': 'user', 'parts': [{'text': combined_text}]})
+            CHAT_MEMORY[chat_id].append({'role': 'model', 'parts': [{'text': reply_text}]})
+            send_message(token, chat_id, reply_text)
             return
 
         if not photos and combined_text:
