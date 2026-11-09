@@ -1130,7 +1130,7 @@ SEEN_UPDATES = set()
 
 class BotHTTPHandler(BaseHTTPRequestHandler):
     def do_GET(self):
-        if self.path.startswith("/lifting-data.json"):
+        if self.path.startswith("/weightlifting-tracker-data.json") or self.path.startswith("/lifting-data.json"):
             body = lifting_agent.get_live_workout_json(get_gemini_key()).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
@@ -1138,7 +1138,7 @@ class BotHTTPHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
             return
-        if self.path.startswith("/lifting"):
+        if self.path.startswith("/weightlifting-tracker") or self.path.startswith("/lifting"):
             body = lifting_agent.get_dashboard_html(get_gemini_key()).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -1162,7 +1162,7 @@ class BotHTTPHandler(BaseHTTPRequestHandler):
                 daemon=True,
             ).start()
             return
-        if self.path.startswith("/lifting-webhook"):
+        if self.path.startswith("/weightlifting-tracker-webhook") or self.path.startswith("/lifting-webhook"):
             threading.Thread(
                 target=lifting_agent.process_lifting_webhook,
                 args=(get_gemini_key(), body),
