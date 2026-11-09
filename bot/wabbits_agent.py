@@ -472,19 +472,24 @@ def _flush_wabbits_batch(gemini_key: str, token: str, chat_id: int):
 
         s_lower = combined_text.strip().lower()
         is_why_question = s_lower.startswith(("how come", "why ", "what happened", "can you explain"))
+        is_explicit_idea_dump = (
+            "idea dump" in s_lower
+            or "this is an idea dump" in s_lower
+            or s_lower.startswith(("note:", "log:", "remember:", "rule:", "add rule", "save note", "idea:"))
+            or "don't need this return" in s_lower
+            or "dont need this return" in s_lower
+            or "don’t need this return" in s_lower
+            or "save it as a project file" in s_lower
+            or "saved as a project file" in s_lower
+            or "when i get to my computer" in s_lower
+            or "when i get back to my computer" in s_lower
+            or "for when i get home" in s_lower
+        )
         if (
             combined_text
             and not photos
             and not audios
-            and not is_why_question
-            and (
-                any(s_lower.startswith(p) for p in ("note:", "log:", "remember:", "rule:", "add rule", "save note"))
-                or "don't need this return" in s_lower
-                or "dont need this return" in s_lower
-                or "don\u2019t need this return" in s_lower
-                or "save it as a project file" in s_lower
-                or "saved as a project file" in s_lower
-            )
+            and (is_explicit_idea_dump or (not is_why_question and s_lower.startswith(("note", "rule", "idea"))))
         ):
             ts = datetime.now().strftime("%Y-%m-%d %H:%M")
             notes_data = sync_notes_from_cloud(token)
