@@ -3,9 +3,100 @@
     "H-E-B Cage-Free 100% Liquid Egg Whites",
     "H-E-B Low-Fat Small Curd Cottage Cheese",
     "egg whites",
-    "cottage cheese"
+    "cottage cheese",
+    "Ben\u2019s jasmine rice",
+    "Ben's Original Ready Rice: Jasmine Rice",
+    "rotisserie chicken",
+    "Costco Hand Pulled Rotisserie Chicken Breast Meat",
+    "cashews",
+    "Hershey kisses",
+    "Raw / Roasted Cashews",
+    "Hershey's Milk Chocolate Kisses",
+    "fair life milk",
+    "Fairlife Fat-Free Ultra-Filtered Lactose-Free Milk"
   ],
-  "added": [],
+  "added": [
+    {
+      "name": "Fresh Celery Sticks",
+      "category": "Produce",
+      "tags": "Good Fiber Options, Low Calorie",
+      "serving_size": "85g (approx. 2 medium stalks)",
+      "calories": 14.0,
+      "protein_g": 0.6,
+      "fat_g": 0.1,
+      "carbs_g": 1.4,
+      "fiber_g": 1.4
+    },
+    {
+      "name": "Fresh Bagged Sugar Snap Peas",
+      "category": "Produce",
+      "tags": "Good Carb Options, Good Fiber Options",
+      "serving_size": "85g (approx. 1 cup)",
+      "calories": 35.0,
+      "protein_g": 2.0,
+      "fat_g": 0.2,
+      "carbs_g": 4.0,
+      "fiber_g": 2.0
+    },
+    {
+      "name": "Hershey's Special Dark Chocolate Chips",
+      "category": "Desserts, Candy & Snacks",
+      "tags": "Sweets",
+      "serving_size": "15g (1 tbsp)",
+      "calories": 80.0,
+      "protein_g": 1.0,
+      "fat_g": 5.0,
+      "carbs_g": 8.0,
+      "fiber_g": 1.0
+    },
+    {
+      "name": "Bush's Zero Sugar Added Baked Beans",
+      "category": "Pantry & Canned",
+      "tags": "Good Fiber Options, Good Protein Options",
+      "serving_size": "130g (1/2 cup)",
+      "calories": 110.0,
+      "protein_g": 7.0,
+      "fat_g": 0.5,
+      "carbs_g": 14.0,
+      "fiber_g": 6.0
+    },
+    {
+      "name": "Bulk Russet Potatoes",
+      "category": "Produce",
+      "tags": "Good Carb Options",
+      "serving_size": "150g (1 medium potato)",
+      "calories": 110.0,
+      "protein_g": 3.0,
+      "fat_g": 0.1,
+      "carbs_g": 23.0,
+      "fiber_g": 2.0
+    },
+    {
+      "name": "H-E-B Hill Country Fare Hamburger Buns 8ct",
+      "category": "Bakery & Bread",
+      "tags": "Bakery, Buns",
+      "serving_size": "50g (1 bun)",
+      "calories": 140.0,
+      "protein_g": 4.0,
+      "fat_g": 2.0,
+      "carbs_g": 26.0,
+      "fiber_g": 1.0
+    }
+  ],
   "likes": [],
-  "dislikes": []
+  "dislikes": [],
+  "notes": [
+    {
+      "timestamp": "2026-11-09 13:08",
+      "text": "I also wanna create a rule where if I enter, just zero you search and check if there\u2019s any updates we made specifically talking about from my Telegram box so the idea is if I\u2019m out and about send something via telegram to the project when I get home so my computer press zero and you check for any changes immediately those updates"
+    },
+    {
+      "timestamp": "2026-11-09 13:10",
+      "text": "Enter 0 I meant*\n\nAlso make a rule when I send \u201cidea dumps\u201d in telegram, I just need you to reply \u201cOkay\u201d."
+    },
+    {
+      "timestamp": "2026-11-09 13:11",
+      "text": "Actually. I said reply okay. When I send \u201cidea dumps\u201d from telegram. I want you to reply \u201cOkay\n\nUpdate Summary:\nThen explain the update in SIMPLEST POSSIBLE FORMAT\u201d."
+    }
+  ]
 }
