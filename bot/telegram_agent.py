@@ -872,7 +872,7 @@ def ask_gemini(user_text: str, chat_id: int, image_paths: List[str] = None) -> s
         "   - IF AARON EXPLICITLY ASKS FOR 'options for with the steak': The steak is ALREADY ASSUMED — NEVER repeat the steak line inside every option! List the steak ONCE under `Dinner`, and then list ONLY the side dish under `Option 1..5` (with the side's `Total:` and resulting `Daily Total:`).\n"
         "5. NATURAL CONVERSATIONAL QUESTIONS, PROJECT COMMUNICATION & IDEA-DUMP MODE:\n"
         "   - You are a full conversational Gemini AI AND Aaron's direct bridge to this project (`diet-macro-assistant`): Aaron can ask you ANY random question, send screenshots of chats/apps/issues, discuss project behavior, or give instructions/rules/notes for this project.\n"
-        "   - IDEA-DUMP & SAVE-TO-PROJECT-FILE RULE (CRITICAL): Whenever Aaron is purely dumping ideas, notes, or project requirements for when he gets back to his computer without asking a question, OR whenever he explicitly says he does NOT want the answer returned in the chat message (e.g. 'I don\\'t need this return to me in this message', 'save it as a project file'), reply ONLY `Okay.` (zero other words, never dump a long document in chat when he told you not to!).\n"
+        "   - IDEA-DUMP & SAVE-TO-PROJECT-FILE RULE (CRITICAL): Whenever Aaron is purely dumping ideas, notes, or project requirements for when he gets back to his computer without asking a question, OR whenever he explicitly says he does NOT want the answer returned in the chat message (e.g. 'I don\\'t need this return to me in this message', 'save it as a project file'), reply ONLY `Roger Roger` (zero other words, never dump a long document in chat when he told you not to!).\n"
         "   - When he asks a 'why' or general question (including about a screenshot he sent), answer it directly in 1–2 ultra-short sentences with zero fluff.\n"
         "6. WIDE KITCHEN VARIETY & ZERO REPEATS:\n"
         "   - Actively use the full kitchen inventory! Draw from his frozen meats/shrimp/chicken strips/meatballs, rotisserie chicken, canned tuna/chicken, edamame, protein bars, beef sticks, cheeses, breads, bagels, tortillas, beans, rices, pastas, fruits, and snacks.\n"
@@ -943,7 +943,7 @@ def ask_gemini(user_text: str, chat_id: int, image_paths: List[str] = None) -> s
     history.append({"role": "model", "parts": [{"text": reply}]})
 
     s_lower = (user_text or "").strip().lower()
-    if reply.strip() in ("Okay.", "Okay") or any(
+    if reply.strip() in ("Roger Roger.", "Roger Roger", "Okay.", "Okay") or any(
         s_lower.startswith(p) for p in ("note:", "log:", "remember:", "rule:", "add rule", "save note")
     ):
         if user_text and user_text.strip():
@@ -1027,7 +1027,7 @@ def flush_chat_batch(token: str, chat_id: int):
                 brief_sum = call_gemini_generate(p_payload, timeout_sec=15).strip()
             except Exception:
                 brief_sum = 'Logged idea dump to persistent project notes.'
-            reply_text = f'Okay.\n\nUpdate Summary:\n{brief_sum}'
+            reply_text = f'Roger Roger.\n\nUpdate Summary:\n{brief_sum}'
             if chat_id not in CHAT_MEMORY:
                 CHAT_MEMORY[chat_id] = []
             CHAT_MEMORY[chat_id].append({'role': 'user', 'parts': [{'text': combined_text}]})

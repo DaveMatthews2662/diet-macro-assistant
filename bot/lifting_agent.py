@@ -294,7 +294,7 @@ def ask_lifting(
         "2. IDEA-DUMP VS. QUESTION RULE (TOP PRIORITY):\n"
         "   - If Aaron includes or starts his message with 'Idea dump' (case-insensitive):\n"
         "     Treat it strictly as an idea dump. You MUST reply strictly in this exact format:\n"
-        "     Okay.\n\n"
+        "     Roger Roger.\n\n"
         "     Update Summary:\n"
         "     - [Ultra-concise 1-2 bullet summary of what was logged/updated in simplest possible format]\n"
         "   - If Aaron does NOT say 'Idea dump':\n"

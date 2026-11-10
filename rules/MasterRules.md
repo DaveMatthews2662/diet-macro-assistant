@@ -44,7 +44,7 @@ Before performing any task, writing any code, or returning any answer, I **must*
   - When Aaron wants to log a note, rule update, or instruction for when he gets back to his computer, he will explicitly include **"Idea dump"** in the message.
   - When "Idea dump" is present, the bot logs the note to persistent cloud storage and replies strictly in this format:
     ```text
-    Okay.
+    Roger Roger.
 
     Update Summary:
     [Simplest possible 1-line summary of what was logged/updated]
@@ -54,6 +54,8 @@ Before performing any task, writing any code, or returning any answer, I **must*
   - **Strict Project Isolation Guardrail:** When working in `diet-macro-assistant`, NEVER query or apply notes/rules from other project bots (such as `hunting-wabbits` or `weightlifting-tracker`).
 - **2i. Zero Shorthand Rule (`0` = Check Telegram Updates for Diet & Macro Assistant):**
   - Whenever Aaron types `0` in this project chat, immediately fetch `diet-macro-assistant` Telegram cloud storage for pending updates/notes sent from mobile, sync them locally to `persistent_overrides.json`, and apply them to this project only.
+- **2j. "Roger Roger" Protocol (Replaces "Okay" / "Ok"):**
+  - Whenever Aaron asks to reply just "ok" or "okay" (for idea dumps, confirmations, silent logging, or simple acknowledgments), ALWAYS respond with `"Roger Roger"` (or `"Roger Roger."`) instead of `"Okay"`.
 ---
 
 ## 3. Daily Macro Goals (MasterRules Override Cronometer Targets)

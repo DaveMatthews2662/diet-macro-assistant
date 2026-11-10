@@ -372,7 +372,7 @@ def ask_wabbits(
         "CRITICAL RULES (FOLLOW AT ALL TIMES):\n"
         "1. RULE #1 (SHORT AS HUMANLY POSSIBLE): Every response must be as short, direct, and scannable as humanly possible. Use clean plain-text headers and dashes (`-`), NO markdown asterisks (`*` or `**`), zero fluff, no long intros.\n"
         "2. IDEA-DUMP & SILENT FILE-SAVE RULE: When Aaron is purely dumping ideas, notes, or requirements without asking a question, OR when he explicitly says he does NOT want the output returned in the message (e.g. 'I don\\'t need this return to me in this message', 'save it as a project file'), reply in this EXACT format:\n"
-        "   Okay.\n\n"
+        "   Roger Roger.\n\n"
         "   Update Summary:\n"
         "   [Explain what was logged in 1–2 simplest possible lines]\n"
         "   (the bot automatically logs his note).\n"
@@ -498,8 +498,8 @@ def _flush_wabbits_batch(gemini_key: str, token: str, chat_id: int):
             if chat_id not in WABBITS_MEMORY:
                 WABBITS_MEMORY[chat_id] = []
             WABBITS_MEMORY[chat_id].append({"role": "user", "parts": [{"text": combined_text}]})
-            WABBITS_MEMORY[chat_id].append({"role": "model", "parts": [{"text": "Okay."}]})
-            send_message(token, chat_id, "Okay.")
+            WABBITS_MEMORY[chat_id].append({"role": "model", "parts": [{"text": "Roger Roger."}]})
+            send_message(token, chat_id, "Roger Roger.")
             return
 
         reply = ask_wabbits(gemini_key, token, combined_text, chat_id, image_paths=photos, audio_items=audios)

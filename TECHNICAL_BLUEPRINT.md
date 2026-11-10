@@ -56,9 +56,9 @@ project-root/
 - Sending multiple screenshots or a screenshot followed by text produces one unified reply instead of overlapping responses.
 - Telegram `update_id` values are deduplicated in memory (`SEEN_UPDATES`).
 
-### C. Idea-Dump & Project-Communication Mode (`Okay.`)
+### C. Idea-Dump & Project-Communication Mode (`Roger Roger.`)
 - The Telegram bot serves as both the domain assistant and a mobile bridge to the project while away from the PC.
-- When Aaron sends an idea dump, a note/rule for when he gets back to his computer, or asks to save something as a project file without returning it in the chat message, the bot replies only `Okay.` and persists the note to Telegram cloud storage and local project memory.
+- When Aaron sends an idea dump, a note/rule for when he gets back to his computer, or asks to save something as a project file without returning it in the chat message, the bot replies only `Roger Roger.` and persists the note to Telegram cloud storage and local project memory.
 
 ### D. Ephemeral Disk Survival via Telegram Cloud Storage
 - Because Render's free tier wipes local disk on redeploy/restart, runtime state (inventory additions/removals, likes/dislikes, project notes, and rules) is JSON-serialized, base64-encoded into 240-char chunks, and stored in Telegram's cloud via `setMyCommands` / `getMyCommands` under a hidden scope (`all_chat_administrators`, `language_code: "eo"`).
@@ -79,5 +79,5 @@ project-root/
 1. Create the project folder under `c:\Users\aaron\OneDrive\Desktop\My Projects\<project-name>` with `rules/MasterRules.md`, `memory/`, and `bot/telegram_agent.py`.
 2. Create a Telegram bot via `@BotFather` and save the token to `bot/.telegram_token` (gitignored).
 3. Copy `bot/.gemini_key` (gitignored) from an existing project.
-4. Define the project's domain rules, communication style (ultra-short, zero fluff, no markdown asterisk clutter), and `Okay.` Idea-Dump Mode in `rules/MasterRules.md`.
+4. Define the project's domain rules, communication style (ultra-short, zero fluff, no markdown asterisk clutter), and `Roger Roger.` Idea-Dump Mode in `rules/MasterRules.md`.
 5. Either deploy as a new Render web service (`bot/render.yaml`) or add a webhook route (`/newproject-webhook`) to the existing Render server for instant 24/7 hosting.
