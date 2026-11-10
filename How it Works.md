@@ -29,7 +29,7 @@ I built a personal AI nutritionist that lives in Telegram. I text it (or send a 
 | AI (text + vision) | **Google Gemini API** (`gemini-3.6-flash`, with `gemini-3.5-flash` and `gemini-3.5-flash-lite` fallbacks) |
 | Language | **Python 3**, standard library only (`http.server`, `urllib`, `json`, `threading`, `re`) |
 | 24/7 hosting | **Render.com** (free web service, `bot/render.yaml`) |
-| Code backup and deploy trigger | **Git + GitHub** (`DaveMatthews2662/diet-macro-assistant`) |
+| Code backup and deploy trigger | **Git + GitHub** (`aaron-millard/diet-macro-assistant`) |
 | Daily food logging | **Cronometer** (external; I send screenshots) |
 | Macros for newly added items | **USDA FoodData Central API** |
 | Build environment | **Antigravity IDE** with an AI coding agent |

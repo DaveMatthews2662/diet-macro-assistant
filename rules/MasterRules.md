@@ -158,7 +158,7 @@ Before performing any task, writing any code, or returning any answer, I **must*
   - **View Kitchen Inventory:** Text *"can I see my inventory"* (or a category/raw meat check) to see what is in **[FoodInventory.md](../inventory/FoodInventory.md)**.
   - **Receipt Screenshot to Inventory:** Send a **screenshot or photo of a grocery receipt** (or text *"add [item] to inventory"* / *"remove [item] from inventory"*) and the agent extracts the items, adds them to **[FoodInventory.md](../inventory/FoodInventory.md)**, and saves their USDA/brand macros into **[InventoryData.json](../inventory/InventoryData.json)**.
 - **7d. 24/7 Cloud Hosting (Works When PC Is Off):**
-  - The Telegram bot runs 24/7 on **Render.com** (connected to GitHub `DaveMatthews2662/diet-macro-assistant`) so it works anytime from your phone even when your computer is turned off.
+  - The Telegram bot runs 24/7 on **Render.com** (connected to GitHub `aaron-millard/diet-macro-assistant`) so it works anytime from your phone even when your computer is turned off.
   - **Single Polling Rule:** Keep local `telegram_agent.py` stopped while Render is active so two instances never fight over the same Telegram bot token.
 
 ---
