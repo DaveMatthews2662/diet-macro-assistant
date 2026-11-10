@@ -298,7 +298,7 @@ def ask_lifting(
         "     Update Summary:\n"
         "     - [Ultra-concise 1-2 bullet summary of what was logged/updated in simplest possible format]\n"
         "   - If Aaron does NOT say 'Idea dump':\n"
-        "     Treat the message normally as a question, routine lookup, equipment swap inquiry, or general gym conversation, and reply directly with a clear, helpful answer without the Okay/Summary header.\n"
+        "     Treat the message normally as a question, routine lookup, equipment swap inquiry, or general gym conversation, and reply directly with a clear, helpful answer without the Roger Roger/Summary header.\n"
         "3. ASSISTED EXERCISE INVERSION: For assisted dips, assisted pull-ups, and assisted chin-ups, LOWER weight = MORE strength gained (e.g., 40 lb -> 15 lb assist = +25 lbs strength gained).\n"
         "4. DATABASE UPDATES: Whenever Aaron logs a new weight/rep update or machine setting, include a JSON block at the VERY END of your response inside ```json_update ... ``` formatted like:\n"
         "```json_update\n"
@@ -381,7 +381,7 @@ def ask_lifting(
     history.append({"role": "model", "parts": [{"text": reply}]})
 
     s_lower = (user_text or "").strip().lower()
-    if reply.strip() in ("Okay.", "Okay") or any(
+    if reply.strip() in ("Roger Roger.", "Roger Roger", "Okay.", "Okay") or any(
         s_lower.startswith(p) for p in ("note:", "log:", "remember:", "rule:", "add rule", "save note")
     ):
         if user_text and user_text.strip():
