@@ -20,6 +20,10 @@ try:
     from bot import lifting_agent
 except Exception:
     import lifting_agent
+try:
+    from bot import sleep_agent
+except Exception:
+    import sleep_agent
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -1145,6 +1149,21 @@ class BotHTTPHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
             return
+        if self.path.startswith("/sleep-tracker-data.json") or self.path.startswith("/sleep-data.json"):
+            body = sleep_agent.get_live_sleep_json(get_gemini_key()).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        if self.path.startswith("/sleep-tracker") or self.path.startswith("/sleep"):
+            body = sleep_agent.get_dashboard_html(get_gemini_key()).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(body)
+            return
         self.send_response(200)
         self.end_headers()
         self.wfile.write(b"OK - Diet Macro Assistant Bot is awake")
@@ -1165,6 +1184,13 @@ class BotHTTPHandler(BaseHTTPRequestHandler):
         if self.path.startswith("/weightlifting-tracker-webhook") or self.path.startswith("/lifting-webhook"):
             threading.Thread(
                 target=lifting_agent.process_lifting_webhook,
+                args=(get_gemini_key(), body),
+                daemon=True,
+            ).start()
+            return
+        if self.path.startswith("/sleep-tracker-webhook") or self.path.startswith("/sleep-webhook"):
+            threading.Thread(
+                target=sleep_agent.process_sleep_webhook,
                 args=(get_gemini_key(), body),
                 daemon=True,
             ).start()
@@ -1230,6 +1256,10 @@ def run_bot():
             lifting_agent.register_lifting_webhook(get_gemini_key(), external_url)
         except Exception as e:
             print(f"Lifting webhook setup failed ({e})")
+        try:
+            sleep_agent.register_sleep_webhook(get_gemini_key(), external_url)
+        except Exception as e:
+            print(f"Sleep webhook setup failed ({e})")
 
     if external_url:
         threading.Thread(target=keep_alive_loop, args=(external_url,), daemon=True).start()
