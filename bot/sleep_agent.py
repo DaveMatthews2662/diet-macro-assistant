@@ -335,6 +335,24 @@ def _handle_sleep_batch(gemini_key: str, token: str, chat_id: int):
         send_message(token, chat_id, "Roger Roger.\n\nUpdate Summary:\n- Logged idea dump note to cloud memory.")
         return
 
+    if "hunger" in text_lower:
+        level = "None"
+        if "high" in text_lower:
+            level = "High"
+        elif "med" in text_lower:
+            level = "Medium"
+        elif "low" in text_lower:
+            level = "Low"
+        elif "none" in text_lower or "non" in text_lower or "zero" in text_lower or "no hunger" in text_lower:
+            level = "None"
+
+        state = sync_state_from_cloud(token)
+        today_key = datetime.now().strftime("%Y-%m-%d")
+        state.setdefault("hunger_logs", {})[today_key] = level
+        save_state_to_cloud(token, state)
+        send_message(token, chat_id, f"Roger Roger.\n\nLogged Night Hunger: {level}")
+        return
+
     # Question or conversation turn
     system_inst = (
         "You are Aaron's personal Sleep Tracker AI Assistant. "
@@ -402,8 +420,15 @@ def register_sleep_webhook(gemini_key: str, external_url: str):
 
 def get_dashboard_html(gemini_key: str) -> str:
     vault = load_vault(gemini_key)
+    token = get_sleep_token(gemini_key)
+    state = sync_state_from_cloud(token)
     files: Dict[str, str] = vault.get("files", {})
-    return files.get("dashboard.html", "<h1>Sleep Dashboard not found in vault</h1>")
+    html = files.get("dashboard.html", "<h1>Sleep Dashboard not found in vault</h1>")
+    hunger_map = state.get("hunger_logs", {})
+    if hunger_map:
+        inject_js = f"<script>const CLOUD_HUNGER = {json.dumps(hunger_map)};</script>"
+        html = html.replace("<script>", f"{inject_js}\n  <script>", 1)
+    return html
 
 
 def get_live_sleep_json(gemini_key: str) -> str:
