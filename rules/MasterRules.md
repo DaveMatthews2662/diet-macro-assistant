@@ -7,12 +7,19 @@ Before performing any task, writing any code, or returning any answer, I **must*
 ---
 
 ## 1. Pre-Work Mandate & Folder Structure
-- **1c. Autonomous Rule Evolution Protocol:**
-  - This is an ever-evolving project. The agent has full autonomy and freedom to proactively update `MasterRules.md`, `bot/telegram_agent.py`, and project documentation whenever necessary to refine meal planning logic, optimize macro accuracy, enforce formatting constraints, adapt to Aaron's evolving routine, or maintain system reliability without waiting for explicit permission.
+- **1c. Mandatory Approval Rule:**
+  - **Never assume Aaron wants something changed.**
+  - **Never modify files, code, configs, or system settings until Aaron explicitly says "go" or "execute".**
+  - **When Aaron says "go" or "execute", do all the heavy lifting directly.** Outline the proposed design, stage the changes, and ask first.
+
+- **1d. Two Distinct Tracking Lists (Managed in `memory/ProjectMemory.md`):**
+  - **Backlog:** Future ideas, feature brainstorms, and Telegram idea dumps. Items here are exploratory and not scheduled for immediate work.
+  - **Staging:** Concrete pending changes that are planned, designed, and ready to implement, but strictly paused waiting for Aaron's "go" or "execute".
 
 - **1a.** Before performing any task, writing any code, or returning any answer, I must read **[MasterRules.md](MasterRules.md)** and **fully review [FoodInventory.md](../inventory/FoodInventory.md)** (along with **[InventoryData.json](../inventory/InventoryData.json)**) from top to bottom every single time.
 - **1b. Categorized Project Folders:**
   - `rules/` — **[MasterRules.md](MasterRules.md)** (all project rules, macro targets, and liked/disliked foods)
+  - `memory/` — **[ProjectMemory.md](../memory/ProjectMemory.md)** (governance, Backlog of future ideas, and Staging list of paused changes)
   - `inventory/` — **[FoodInventory.md](../inventory/FoodInventory.md)** (human-readable kitchen inventory) and **[InventoryData.json](../inventory/InventoryData.json)** (verified USDA/brand macro database)
   - `bot/` — **[telegram_agent.py](../bot/telegram_agent.py)**, **[render.yaml](../bot/render.yaml)**, **[requirements.txt](../bot/requirements.txt)**, and local gitignored key files (`.telegram_token`, `.gemini_key`)
 
