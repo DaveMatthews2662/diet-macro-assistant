@@ -1,6 +1,6 @@
 # Technical Blueprint & Architecture Summary (Reusable Project Template)
 
-This document captures the full stack, architecture, and design patterns used in Diet & Macro Assistant and Hunting Wabbits so any new project can be spun up using the exact same methodology.
+This document captures the full stack, architecture, governance rules, and design patterns used across projects so any new project can be spun up using the exact same methodology.
 
 ---
 
@@ -20,7 +20,7 @@ This document captures the full stack, architecture, and design patterns used in
 
 ---
 
-## 2. Repository Layout Pattern
+## 2. Standardized Repository Layout
 
 Every project follows a clean, categorized folder structure:
 
@@ -28,27 +28,57 @@ Every project follows a clean, categorized folder structure:
 project-root/
 ├── rules/
 │   └── MasterRules.md             # Single source of truth for behavior, formatting, and domain rules
-├── memory/ (or inventory/)
-│   ├── ProjectMemory.md           # Structured human-readable state / inventory / knowledge base
-│   ├── DecisionLog.md             # Chronological log of updates and decisions
+├── memory/
+│   ├── ProjectMemory.md           # Governance, Action Commands, Backlog, and Staging lists
+│   ├── ErrorLog.md                # Permanent error log, mistake registry, and sprawl inventory
 │   └── persistent_overrides.json  # Runtime additions, removals, and Telegram notes synced to cloud
+├── inventory/
+│   ├── FoodInventory.md           # Human-readable categorized inventory
+│   └── InventoryData.json         # Exact macro database with verified decimal values
 ├── bot/
-│   ├── telegram_agent.py          # Webhook + local polling server, batching, Gemini caller, cloud sync
-│   ├── render.yaml                # Render blueprint
-│   ├── requirements.txt           # Stdlib-only note
+│   ├── telegram_agent.py          # Webhook server, message batching, Gemini caller, cloud sync
+│   ├── render.yaml                # Render service blueprint
 │   ├── .telegram_token            # Local gitignored bot token
 │   └── .gemini_key                # Local gitignored Gemini API key
+├── archive/                       # Superseded documents, duplicate configs, and deprecated files
+├── .agents/rules/                 # Pinned IDE rules (workspace.md, mandatory_approval.md, roger_roger.md)
+├── requirements.txt               # Single root requirements file (stdlib only)
 ├── telegram_agent.py              # Root shim: from bot.telegram_agent import run_bot
-├── PROJECT_SUMMARY.md             # Context overview for AI coding agents
 └── TECHNICAL_BLUEPRINT.md         # This reusable architecture blueprint
 ```
 
 ---
 
-## 3. Key Methodologies & Design Patterns
+## 3. Core Governance & Action Commands
+
+### A. Two-Beat Confirmation Rule
+- Never modify files, code, configs, or system settings during diagnosis or explanation.
+- Always stage proposed changes in Staging, explain what will be done, and ask: "Ready to execute?".
+- Only execute when Aaron explicitly replies "go", "execute", or "3".
+
+### B. Numbered Action Command System
+Typing the number (1-7) or trigger phrase runs the action immediately:
+- [1] pull backlog (or 1): Displays current exploratory ideas and Telegram dumps from memory/ProjectMemory.md.
+- [2] pull staging (or 2): Displays concrete pending changes that are planned, designed, and strictly paused waiting for approval.
+- [3] execute staging (or 3): The official green light. Applies all staged changes across files and configs.
+- [4] sync all (or 4): Multi-level full sync across local files, GitHub, Telegram cloud, and Render.
+- [5] pull error log (or 5): Displays the top recurring mistakes and guardrails from memory/ErrorLog.md.
+- [6] status (or 6): Quick 3-bullet summary of project health, active files, and last sync timestamp.
+- [7] list actions (or 7): Displays this numbered menu anytime.
+
+### C. Continuous Error Logging
+- Whenever Aaron corrects the agent or flags an issue, append it immediately to `memory/ErrorLog.md` before replying.
+
+### D. No Asterisk Clutter & Readability
+- Never use asterisks (* or **) in chat responses. Use clean dashes (-), numbers (1-7), and plain headers.
+- Always format all lists and questions with explicit double line breaks so they never collapse into walls of text in the chat UI.
+
+---
+
+## 4. Key Methodologies & Design Patterns
 
 ### A. File-Backed Context Injection (No Vector DB Overhead)
-- Instead of maintaining an external SQL/vector database for personal-scale data, every turn loads `rules/MasterRules.md` and the structured Markdown/JSON data files directly into Gemini's `system_instruction`.
+- Every turn loads `rules/MasterRules.md` and structured JSON/Markdown data files directly into Gemini's `system_instruction`.
 - Keeps retrieval 100% accurate with zero latency or synchronization bugs.
 
 ### B. 2-Second Per-Chat Message & Media Batching
@@ -56,28 +86,17 @@ project-root/
 - Sending multiple screenshots or a screenshot followed by text produces one unified reply instead of overlapping responses.
 - Telegram `update_id` values are deduplicated in memory (`SEEN_UPDATES`).
 
-### C. Idea-Dump & Project-Communication Mode (`Roger Roger.`)
-- The Telegram bot serves as both the domain assistant and a mobile bridge to the project while away from the PC.
-- When Aaron sends an idea dump, a note/rule for when he gets back to his computer, or asks to save something as a project file without returning it in the chat message, the bot replies only `Roger Roger.` and persists the note to Telegram cloud storage and local project memory.
+### C. Idea-Dump Protocol (`Roger Roger.`)
+- When Aaron sends an idea dump or asks to silently save a note without returning it in chat, the bot replies strictly `Roger Roger.` plus a 1-line update summary and persists the note to Telegram cloud storage.
 
 ### D. Ephemeral Disk Survival via Telegram Cloud Storage
-- Because Render's free tier wipes local disk on redeploy/restart, runtime state (inventory additions/removals, likes/dislikes, project notes, and rules) is JSON-serialized, base64-encoded into 240-char chunks, and stored in Telegram's cloud via `setMyCommands` / `getMyCommands` under a hidden scope (`all_chat_administrators`, `language_code: "eo"`).
+- State is JSON-serialized, base64-encoded into 240-char chunks, and stored in Telegram's cloud via `setMyCommands` / `getMyCommands` under a hidden scope (`all_chat_administrators`, `language_code: "eo"`).
 - On container startup, the bot restores and merges cloud state automatically.
 
-### E. Multi-Bot Hosting + Encrypted Vault Pattern (For Private Projects)
-- Multiple Telegram bots can share one Render web service by routing webhook paths (`/webhook`, `/wabbits-webhook`, etc.) in `BotHTTPHandler.do_POST`.
-- If a secondary project lives in a separate local repository, a local sync script (`bot/sync_to_render.py`) bundles and encrypts its context files using PBKDF2-HMAC-SHA256 keyed by `GEMINI_API_KEY` into a vault file (`wabbits_vault.json`) inside the Render-deployed repo.
+### E. Multi-Bot Hosting + Encrypted Vault Pattern
+- Multiple Telegram bots share one Render web service by routing webhook paths (`/webhook`, `/wabbits-webhook`, etc.) in `BotHTTPHandler.do_POST`.
+- Secondary project context files are encrypted using PBKDF2-HMAC-SHA256 into vault files (`wabbits_vault.json`, `lifting_vault.json`) inside the Render repo.
 
 ### F. Rolling Multimodal Conversation Memory
 - The last 12 turns per `chat_id` are kept in `CHAT_MEMORY`.
-- Base64 images and audio are retained for the last 4 entries (so follow-up questions still see the screenshot or voice memo) and stripped from older turns (`[Earlier Screenshot]`) to keep requests fast and prevent timeouts.
-
----
-
-## 4. Checklist for Starting a New Project With This Blueprint
-
-1. Create the project folder under `c:\Users\aaron\OneDrive\Desktop\My Projects\<project-name>` with `rules/MasterRules.md`, `memory/`, and `bot/telegram_agent.py`.
-2. Create a Telegram bot via `@BotFather` and save the token to `bot/.telegram_token` (gitignored).
-3. Copy `bot/.gemini_key` (gitignored) from an existing project.
-4. Define the project's domain rules, communication style (ultra-short, zero fluff, no markdown asterisk clutter), and `Roger Roger.` Idea-Dump Mode in `rules/MasterRules.md`.
-5. Either deploy as a new Render web service (`bot/render.yaml`) or add a webhook route (`/newproject-webhook`) to the existing Render server for instant 24/7 hosting.
+- Base64 images and audio are retained for the last 4 entries and stripped from older turns (`[Earlier Screenshot]`) to keep requests fast and prevent timeouts.

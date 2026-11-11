@@ -7,21 +7,34 @@ Before performing any task, writing any code, or returning any answer, I **must*
 ---
 
 ## 1. Pre-Work Mandate & Folder Structure
-- **1c. Mandatory Approval Rule:**
+- **1c. Two-Beat Confirmation Rule & Heavy Lifting:**
   - **Never assume Aaron wants something changed.**
-  - **Never modify files, code, configs, or system settings until Aaron explicitly says "go" or "execute".**
-  - **When Aaron says "go" or "execute", do all the heavy lifting directly.** Outline the proposed design, stage the changes, and ask first.
+  - **Never modify files, code, configs, or system settings during a diagnosis or explanation.**
+  - Always stage proposed changes in Staging (`memory/ProjectMemory.md`), explain what will be done, and ask: "Ready to execute?".
+  - Only execute when Aaron explicitly replies "go", "execute", or "3".
+  - **When Aaron says "go", "execute", or "3", do all the heavy lifting directly.**
 
 - **1d. Two Distinct Tracking Lists (Managed in `memory/ProjectMemory.md`):**
   - **Backlog:** Future ideas, feature brainstorms, and Telegram idea dumps. Items here are exploratory and not scheduled for immediate work.
-  - **Staging:** Concrete pending changes that are planned, designed, and ready to implement, but strictly paused waiting for Aaron's "go" or "execute".
+  - **Staging:** Concrete pending changes that are planned, designed, and ready to implement, but strictly paused waiting for Aaron's "go", "execute", or "3".
+
+- **1e. Numbered Action Command System:**
+  - Typing the number (1-7) or trigger phrase triggers the action immediately:
+    - [1] pull backlog (or 1): Displays current exploratory ideas and Telegram dumps.
+    - [2] pull staging (or 2): Displays concrete pending changes paused for approval.
+    - [3] execute staging (or 3): The official green light. Applies all staged changes.
+    - [4] sync all (or 4): Multi-level full sync across local, GitHub, Telegram cloud, and Render.
+    - [5] pull error log (or 5): Displays top recurring mistakes and guardrails.
+    - [6] status (or 6): Quick 3-bullet summary of project health, active files, and last sync.
+    - [7] list actions (or 7): Displays this numbered menu anytime.
 
 - **1a.** Before performing any task, writing any code, or returning any answer, I must read **[MasterRules.md](MasterRules.md)** and **fully review [FoodInventory.md](../inventory/FoodInventory.md)** (along with **[InventoryData.json](../inventory/InventoryData.json)**) from top to bottom every single time.
 - **1b. Categorized Project Folders:**
   - `rules/` — **[MasterRules.md](MasterRules.md)** (all project rules, macro targets, and liked/disliked foods)
-  - `memory/` — **[ProjectMemory.md](../memory/ProjectMemory.md)** (governance, Backlog of future ideas, and Staging list of paused changes)
+  - `memory/` — **[ProjectMemory.md](../memory/ProjectMemory.md)** (governance, Backlog, Staging) and **[ErrorLog.md](../memory/ErrorLog.md)** (error log & sprawl inventory)
   - `inventory/` — **[FoodInventory.md](../inventory/FoodInventory.md)** (human-readable kitchen inventory) and **[InventoryData.json](../inventory/InventoryData.json)** (verified USDA/brand macro database)
-  - `bot/` — **[telegram_agent.py](../bot/telegram_agent.py)**, **[render.yaml](../bot/render.yaml)**, **[requirements.txt](../bot/requirements.txt)**, and local gitignored key files (`.telegram_token`, `.gemini_key`)
+  - `bot/` — **[telegram_agent.py](../bot/telegram_agent.py)**, **[render.yaml](../bot/render.yaml)**, and local gitignored key files (`.telegram_token`, `.gemini_key`)
+  - `archive/` — Superseded documents (`How it Works.md`) and dead configs (`bot_requirements.txt`)
 
 ---
 
