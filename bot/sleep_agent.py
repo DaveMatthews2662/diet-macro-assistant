@@ -557,13 +557,12 @@ def _handle_sleep_batch(gemini_key: str, token: str, chat_id: int):
 
         state = sync_state_from_cloud(token)
         now = now_cst()
-        today_key = now.strftime("%Y-%m-%d")
-        night_of_key = (now - timedelta(days=1)).strftime("%Y-%m-%d") if now.hour < 14 else today_key
-        target_date_key = today_key if now.hour < 14 else (now + timedelta(days=1)).strftime("%Y-%m-%d")
+        # Hunger is evaluated after waking from a sleep session.
+        # If logged before 2pm, it belongs strictly to last night's sleep (night_of).
+        # If logged after 2pm, it belongs to tonight.
+        night_of_key = (now - timedelta(days=1)).strftime("%Y-%m-%d") if now.hour < 14 else now.strftime("%Y-%m-%d")
 
-        state.setdefault("hunger_logs", {})[today_key] = level
-        state["hunger_logs"][night_of_key] = level
-        state["hunger_logs"][target_date_key] = level
+        state.setdefault("hunger_logs", {})[night_of_key] = level
         save_state_to_cloud(token, state)
         send_message(token, chat_id, f"Roger Roger.\n\nLogged Night Hunger: {level}")
         return
