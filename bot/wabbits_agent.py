@@ -472,6 +472,28 @@ def _flush_wabbits_batch(gemini_key: str, token: str, chat_id: int):
 
         s_lower = combined_text.strip().lower()
         is_why_question = s_lower.startswith(("how come", "why ", "what happened", "can you explain"))
+        is_error_log = (
+            "error log" in s_lower
+            or "add to error log" in s_lower
+            or s_lower.startswith(("error", "mistake", "flag error"))
+        )
+
+        if is_error_log:
+            ts = datetime.now().strftime("%Y-%m-%d %H:%M")
+            err_text = f"[Error Logged from Telegram] {combined_text.strip()}"
+            if photos:
+                err_text += " [Screenshot attached]"
+            notes_data = sync_notes_from_cloud(token)
+            notes_data.setdefault("notes", []).append({"timestamp": ts, "text": err_text})
+            threading.Thread(target=save_notes_to_cloud, args=(token, notes_data), daemon=True).start()
+            if chat_id not in WABBITS_MEMORY:
+                WABBITS_MEMORY[chat_id] = []
+            reply_text = "Roger Roger. Logged to Error Log."
+            WABBITS_MEMORY[chat_id].append({"role": "user", "parts": [{"text": combined_text}]})
+            WABBITS_MEMORY[chat_id].append({"role": "model", "parts": [{"text": reply_text}]})
+            send_message(token, chat_id, reply_text)
+            return
+
         is_explicit_idea_dump = (
             "idea dump" in s_lower
             or "this is an idea dump" in s_lower
