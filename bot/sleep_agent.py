@@ -1,5 +1,5 @@
 import base64
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import hashlib
 import hmac
 import json
@@ -10,6 +10,7 @@ import tempfile
 import threading
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from typing import Dict, List, Any, Optional
 
@@ -18,6 +19,8 @@ VAULT_FILE = os.path.join(BOT_DIR, "sleep_vault.json")
 
 SSL_CTX = ssl.create_default_context()
 SSL_UNVERIFIED_CTX = ssl._create_unverified_context()
+
+CST = timezone(timedelta(hours=-6))
 
 SLEEP_MEMORY: Dict[int, List[Dict[str, Any]]] = {}
 SLEEP_BATCH_LOCK = threading.Lock()
@@ -29,10 +32,24 @@ SLEEP_CLOUD_LOCK = threading.Lock()
 SLEEP_STATE_CACHE: Dict[str, Any] = {
     "medication_logs": [],
     "notes": [],
-    "rules": []
+    "rules": [],
+    "hunger_logs": {},
+    "oura_tokens": {},
+    "oura_cache": {},
 }
 SLEEP_VAULT_CACHE: Dict[str, Any] = {}
 SLEEP_SEEN_UPDATES = set()
+OURA_SYNC_RUNNING = False
+
+
+def now_cst() -> datetime:
+    return datetime.now(timezone.utc).astimezone(CST)
+
+
+def format_seconds(seconds: int) -> str:
+    h = seconds // 3600
+    m = (seconds % 3600) // 60
+    return f"{h}h {m:02d}m"
 
 
 def _open_url(req, timeout: int = 25):
@@ -158,6 +175,9 @@ def sync_state_from_cloud(token: str) -> Dict[str, Any]:
                             "medication_logs": list(cloud_data.get("medication_logs", [])),
                             "notes": list(cloud_data.get("notes", [])),
                             "rules": list(cloud_data.get("rules", [])),
+                            "hunger_logs": dict(cloud_data.get("hunger_logs", {})),
+                            "oura_tokens": dict(cloud_data.get("oura_tokens", {})),
+                            "oura_cache": dict(cloud_data.get("oura_cache", {})),
                         }
         except Exception as e:
             print(f"[sleep] Cloud sync warning: {e}", flush=True)
@@ -201,7 +221,7 @@ def parse_and_record_dose(text: str, gemini_key: str, token: str) -> Optional[st
         files = vault.get("files", {})
         all_logs = []
         try:
-            base_logs = json.loads(files.get("data/medication_logs.json", "[]"))
+            base_logs = json.loads(files.get("data/medication_logs.json", "{}")).get("logs", [])
             all_logs.extend(base_logs)
         except Exception:
             pass
@@ -209,10 +229,10 @@ def parse_and_record_dose(text: str, gemini_key: str, token: str) -> Optional[st
         if all_logs:
             last = all_logs[-1]
             traz_mg = last.get("trazodone_mg", 100)
-            quet_mg = last.get("quetiapine_mg", 50)
+            quet_mg = last.get("quetiapine_mg", 100)
         else:
             traz_mg = 100
-            quet_mg = 50
+            quet_mg = 100
 
     if traz_mg is None:
         t_m = re.search(r"(\d+(?:\.\d+)?)\s*(?:mg)?\s*(?:traz|trazodone|t\b)", text_lower)
@@ -225,7 +245,6 @@ def parse_and_record_dose(text: str, gemini_key: str, token: str) -> Optional[st
             quet_mg = int(float(q_m.group(1)))
 
     if traz_mg is None and quet_mg is None:
-        # Check standard format e.g. 100 / 50 or 100 / 100
         split_m = re.search(r"\b(\d{2,3})\s*/\s*(\d{2,3})\b", text_lower)
         if split_m:
             traz_mg = int(split_m.group(1))
@@ -237,14 +256,15 @@ def parse_and_record_dose(text: str, gemini_key: str, token: str) -> Optional[st
     traz_val = f"{traz_mg}mg" if traz_mg is not None else "0mg"
     quet_val = f"{quet_mg}mg" if quet_mg is not None else "0mg"
 
-    today_dt = datetime.now()
-    date_str = today_dt.strftime("%Y-%m-%d")
+    now = now_cst()
+    # Dose logged at night belongs to tonight (night_of = now, date = next morning)
+    night_of_str = now.strftime("%Y-%m-%d")
+    date_str = (now + timedelta(days=1)).strftime("%Y-%m-%d") if now.hour >= 16 else now.strftime("%Y-%m-%d")
 
-    # Persist into state cache & Telegram cloud storage
     state = sync_state_from_cloud(token)
     new_entry = {
         "date": date_str,
-        "night_of": date_str,
+        "night_of": night_of_str,
         "trazodone_mg": traz_mg or 0,
         "quetiapine_mg": quet_mg or 0,
         "time_taken": time_taken_str,
@@ -257,9 +277,190 @@ def parse_and_record_dose(text: str, gemini_key: str, token: str) -> Optional[st
         f"Roger Roger\n"
         f"Trazadone Dosage: {traz_val}\n"
         f"Quetiapine Dosage: {quet_val}\n"
-        f"Date: {date_str}\n"
+        f"Date: {night_of_str}\n"
         f"Time taken: {time_taken_str}"
     )
+
+
+def sync_oura_cloud(gemini_key: str, token: str) -> str:
+    """Syncs Oura Ring data directly from Render cloud, auto-refreshing OAuth tokens."""
+    global OURA_SYNC_RUNNING
+    if OURA_SYNC_RUNNING:
+        return "Oura sync is already running in background."
+    OURA_SYNC_RUNNING = True
+    try:
+        vault = load_vault(gemini_key)
+        files = vault.get("files", {})
+        state = sync_state_from_cloud(token)
+
+        cred_raw = files.get("bot/.oura_credentials.json", "{}")
+        tokens_raw = files.get("bot/.oura_tokens.json", "{}")
+        try:
+            credentials = json.loads(cred_raw)
+        except Exception:
+            credentials = {}
+        try:
+            tokens = state.get("oura_tokens") or json.loads(tokens_raw)
+        except Exception:
+            tokens = {}
+
+        client_id = credentials.get("client_id")
+        client_secret = credentials.get("client_secret")
+        access_token = tokens.get("access_token")
+        refresh_token = tokens.get("refresh_token")
+        expires_at = tokens.get("expires_at", 0)
+
+        if not client_id or not client_secret or not refresh_token:
+            return "Oura sync skipped: OAuth credentials not available in vault."
+
+        now_ts = int(time.time())
+        if now_ts >= (expires_at - 300) or not access_token:
+            try:
+                refresh_data = urllib.parse.urlencode({
+                    "grant_type": "refresh_token",
+                    "refresh_token": refresh_token,
+                    "client_id": client_id,
+                    "client_secret": client_secret,
+                }).encode("utf-8")
+                req = urllib.request.Request(
+                    "https://api.ouraring.com/oauth/token",
+                    data=refresh_data,
+                    headers={"Content-Type": "application/x-www-form-urlencoded"}
+                )
+                with _open_url(req, timeout=20) as resp:
+                    new_tokens = json.loads(resp.read().decode("utf-8"))
+                access_token = new_tokens.get("access_token")
+                refresh_token = new_tokens.get("refresh_token", refresh_token)
+                expires_in = new_tokens.get("expires_in", 2592000)
+                tokens = {
+                    "access_token": access_token,
+                    "refresh_token": refresh_token,
+                    "expires_in": expires_in,
+                    "expires_at": int(time.time()) + expires_in,
+                    "created_at": datetime.now().isoformat()
+                }
+                state["oura_tokens"] = tokens
+                save_state_to_cloud(token, state)
+            except Exception as e:
+                return f"Failed to refresh Oura token: {e}"
+
+        # Fetch daily sleep, readiness, and sleep sessions for last 7 days
+        end_dt = now_cst() + timedelta(days=1)
+        start_dt = end_dt - timedelta(days=8)
+        start_str = start_dt.strftime("%Y-%m-%d")
+        end_str = end_dt.strftime("%Y-%m-%d")
+
+        headers = {"Authorization": f"Bearer {access_token}"}
+
+        req1 = urllib.request.Request(f"https://api.ouraring.com/v2/usercollection/daily_sleep?start_date={start_str}&end_date={end_str}", headers=headers)
+        with _open_url(req1, timeout=20) as r:
+            sleep_docs = json.loads(r.read().decode("utf-8")).get("data", [])
+
+        req2 = urllib.request.Request(f"https://api.ouraring.com/v2/usercollection/daily_readiness?start_date={start_str}&end_date={end_str}", headers=headers)
+        with _open_url(req2, timeout=20) as r:
+            readiness_docs = json.loads(r.read().decode("utf-8")).get("data", [])
+
+        req3 = urllib.request.Request(f"https://api.ouraring.com/v2/usercollection/sleep?start_date={start_str}&end_date={end_str}", headers=headers)
+        with _open_url(req3, timeout=20) as r:
+            session_docs = json.loads(r.read().decode("utf-8")).get("data", [])
+
+        cache = {}
+        raw_cache = state.get("oura_cache") or files.get("data/oura_cache.json", "{}")
+        try:
+            cache = json.loads(raw_cache).get("daily_records", {}) if isinstance(raw_cache, str) else raw_cache.get("daily_records", {})
+        except Exception:
+            cache = {}
+
+        for item in sleep_docs:
+            day = item.get("day")
+            if day:
+                entry = cache.setdefault(day, {"date": day})
+                entry["sleep_score"] = item.get("score")
+                entry["sleep_contributors"] = item.get("contributors", {})
+
+        for item in readiness_docs:
+            day = item.get("day")
+            if day:
+                entry = cache.setdefault(day, {"date": day})
+                entry["readiness_score"] = item.get("score")
+                entry["readiness_contributors"] = item.get("contributors", {})
+                if "resting_heart_rate" in item.get("contributors", {}):
+                    entry["resting_heart_rate"] = item["contributors"]["resting_heart_rate"]
+
+        for session in session_docs:
+            day = session.get("day")
+            if not day:
+                continue
+            entry = cache.setdefault(day, {"date": day})
+            dur = session.get("total_sleep_duration", 0)
+            if dur >= entry.get("total_sleep_seconds", 0):
+                entry["total_sleep_seconds"] = dur
+                entry["total_sleep_formatted"] = format_seconds(dur)
+                deep = session.get("deep_sleep_duration", 0)
+                entry["deep_sleep_seconds"] = deep
+                entry["deep_sleep_formatted"] = format_seconds(deep)
+                entry["deep_sleep_pct"] = round((deep / dur * 100), 1) if dur > 0 else 0
+                rem = session.get("rem_sleep_duration", 0)
+                entry["rem_sleep_seconds"] = rem
+                entry["rem_sleep_formatted"] = format_seconds(rem)
+                entry["rem_sleep_pct"] = round((rem / dur * 100), 1) if dur > 0 else 0
+                awake = session.get("awake_time", 0)
+                entry["awake_seconds"] = awake
+                entry["awake_formatted"] = format_seconds(awake)
+                entry["awake_mins"] = round(awake / 60) if awake else 0
+
+                phases_5m = session.get("sleep_phase_5_min", "")
+                if phases_5m:
+                    mid_5m = phases_5m.lstrip("4").rstrip("4")
+                    entry["wakeups"] = len(re.findall(r"4+", mid_5m))
+                else:
+                    entry["wakeups"] = entry.get("wakeups", 0)
+
+                entry["sleep_efficiency"] = session.get("efficiency", 0)
+                entry["lowest_heart_rate"] = session.get("lowest_heart_rate")
+                entry["average_heart_rate"] = round(session.get("average_heart_rate", 0)) if session.get("average_heart_rate") else None
+                entry["average_hrv"] = session.get("average_hrv")
+                entry["bedtime_start"] = session.get("bedtime_start")
+                entry["bedtime_end"] = session.get("bedtime_end")
+
+        state["oura_cache"] = {"last_synced": now_cst().isoformat(), "daily_records": cache}
+        save_state_to_cloud(token, state)
+        latest_day = sorted(cache.keys())[-1] if cache else "—"
+        latest_rec = cache.get(latest_day, {})
+        return (
+            f"Roger Roger.\n\n"
+            f"Oura Ring Sync Complete ({len(cache)} days in cache).\n"
+            f"Latest Night: {latest_day}\n"
+            f"- Sleep Score: {latest_rec.get('sleep_score', '—')}\n"
+            f"- Readiness: {latest_rec.get('readiness_score', '—')}\n"
+            f"- Wakeups: {latest_rec.get('wakeups', '—')}\n"
+            f"- Duration: {latest_rec.get('total_sleep_formatted', '—')}\n"
+            f"- Deep: {latest_rec.get('deep_sleep_pct', '—')}%\n"
+            f"- Avg HRV: {latest_rec.get('average_hrv', '—')} ms"
+        )
+    except Exception as e:
+        return f"Oura sync failed: {e}"
+    finally:
+        OURA_SYNC_RUNNING = False
+
+
+def _auto_sync_loop(gemini_key: str, token: str):
+    """Background loop: automatically syncs fresh Oura records during morning hours."""
+    time.sleep(30)
+    while True:
+        try:
+            now = now_cst()
+            # If morning (5:30 AM to 10:30 AM CST), check if today's record exists in cache
+            if 5 <= now.hour <= 10:
+                state = sync_state_from_cloud(token)
+                today_str = now.strftime("%Y-%m-%d")
+                cache = (state.get("oura_cache") or {}).get("daily_records", {})
+                if today_str not in cache or not cache[today_str].get("total_sleep_seconds"):
+                    print(f"[sleep-cron] Auto-syncing Oura for morning {today_str}...", flush=True)
+                    sync_oura_cloud(gemini_key, token)
+        except Exception as e:
+            print(f"[sleep-cron] Auto sync error: {e}", flush=True)
+        time.sleep(1800)  # Check every 30 minutes
 
 
 def build_context(gemini_key: str, token: str) -> str:
@@ -269,7 +470,7 @@ def build_context(gemini_key: str, token: str) -> str:
 
     sections = []
     for rel, content in files.items():
-        if rel == "dashboard.html":
+        if rel in ["dashboard.html", "bot/.oura_credentials.json", "bot/.oura_tokens.json"]:
             continue
         sections.append(f"=== {rel} ===\n{content}")
 
@@ -277,6 +478,8 @@ def build_context(gemini_key: str, token: str) -> str:
         sections.append("=== Cloud Synced Recent Doses ===\n" + json.dumps(state.get("medication_logs"), indent=2))
     if state.get("notes"):
         sections.append("=== Cloud Synced Notes ===\n" + json.dumps(state.get("notes"), indent=2))
+    if state.get("hunger_logs"):
+        sections.append("=== Cloud Synced Night Hunger ===\n" + json.dumps(state.get("hunger_logs"), indent=2))
 
     return "\n\n".join(sections)
 
@@ -320,6 +523,12 @@ def _handle_sleep_batch(gemini_key: str, token: str, chat_id: int):
         send_message(token, chat_id, "Roger Roger.")
         return
 
+    if text_lower in ["/sync", "sync", "sync oura", "/sync oura"]:
+        send_message(token, chat_id, "Syncing with Oura Ring...")
+        reply = sync_oura_cloud(gemini_key, token)
+        send_message(token, chat_id, reply)
+        return
+
     dose_reply = parse_and_record_dose(text, gemini_key, token)
     if dose_reply:
         send_message(token, chat_id, dose_reply)
@@ -328,7 +537,7 @@ def _handle_sleep_batch(gemini_key: str, token: str, chat_id: int):
     if text_lower.startswith("idea dump") or "idea dump" in text_lower:
         state = sync_state_from_cloud(token)
         state.setdefault("notes", []).append({
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": now_cst().isoformat(),
             "note": text
         })
         save_state_to_cloud(token, state)
@@ -347,8 +556,14 @@ def _handle_sleep_batch(gemini_key: str, token: str, chat_id: int):
             level = "None"
 
         state = sync_state_from_cloud(token)
-        today_key = datetime.now().strftime("%Y-%m-%d")
+        now = now_cst()
+        today_key = now.strftime("%Y-%m-%d")
+        night_of_key = (now - timedelta(days=1)).strftime("%Y-%m-%d") if now.hour < 14 else today_key
+        target_date_key = today_key if now.hour < 14 else (now + timedelta(days=1)).strftime("%Y-%m-%d")
+
         state.setdefault("hunger_logs", {})[today_key] = level
+        state["hunger_logs"][night_of_key] = level
+        state["hunger_logs"][target_date_key] = level
         save_state_to_cloud(token, state)
         send_message(token, chat_id, f"Roger Roger.\n\nLogged Night Hunger: {level}")
         return
@@ -414,6 +629,9 @@ def register_sleep_webhook(gemini_key: str, external_url: str):
         tg_api(token, "setWebhook", {"url": webhook_url})
         sync_state_from_cloud(token)
         print(f"[sleep] Webhook registered at {webhook_url}", flush=True)
+        # Start morning auto-sync background thread
+        t = threading.Thread(target=_auto_sync_loop, args=(gemini_key, token), daemon=True)
+        t.start()
     except Exception as e:
         print(f"[sleep] Webhook setup failed: {e}", flush=True)
 
@@ -425,8 +643,15 @@ def get_dashboard_html(gemini_key: str) -> str:
     files: Dict[str, str] = vault.get("files", {})
     html = files.get("dashboard.html", "<h1>Sleep Dashboard not found in vault</h1>")
     hunger_map = state.get("hunger_logs", {})
+    inject_parts = []
     if hunger_map:
-        inject_js = f"<script>const CLOUD_HUNGER = {json.dumps(hunger_map)};</script>"
+        inject_parts.append(f"const CLOUD_HUNGER = {json.dumps(hunger_map)};")
+    if state.get("medication_logs"):
+        inject_parts.append(f"const CLOUD_DOSES = {json.dumps(state['medication_logs'])};")
+    if state.get("oura_cache"):
+        inject_parts.append(f"const CLOUD_OURA = {json.dumps(state['oura_cache'])};")
+    if inject_parts:
+        inject_js = "<script>" + " ".join(inject_parts) + "</script>"
         html = html.replace("<script>", f"{inject_js}\n  <script>", 1)
     return html
 
@@ -439,9 +664,10 @@ def get_live_sleep_json(gemini_key: str) -> str:
     raw_meds = files.get("data/medication_logs.json", "[]")
     raw_oura = files.get("data/oura_cache.json", "{}")
     try:
-        meds = json.loads(raw_meds)
+        med_dict = json.loads(raw_meds)
+        meds = med_dict.get("logs", []) if isinstance(med_dict, dict) else med_dict
         meds.extend(state.get("medication_logs", []))
-        oura = json.loads(raw_oura)
-        return json.dumps({"medication_logs": meds, "oura_cache": oura}, indent=2)
+        oura = state.get("oura_cache") or json.loads(raw_oura)
+        return json.dumps({"medication_logs": meds, "oura_cache": oura, "hunger_logs": state.get("hunger_logs", {})}, indent=2)
     except Exception:
         return raw_meds
