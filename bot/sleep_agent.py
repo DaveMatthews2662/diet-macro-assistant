@@ -124,22 +124,23 @@ def send_message(token: str, chat_id: int, text: str):
 def save_state_to_cloud(token: str, data: Dict[str, Any]):
     if not token:
         return
-    try:
-        raw_bytes = json.dumps(data, separators=(",", ":")).encode("utf-8")
-        b64_str = base64.b64encode(raw_bytes).decode("ascii")
-        chunks = [b64_str[i : i + 240] for i in range(0, len(b64_str), 240)][:95]
-        commands = [{"command": f"s{idx}", "description": ch} for idx, ch in enumerate(chunks)]
-        tg_api(
-            token,
-            "setMyCommands",
-            {
-                "commands": commands,
-                "scope": {"type": "all_chat_administrators"},
-                "language_code": "eo",
-            },
-        )
-    except Exception as e:
-        print(f"[sleep] Cloud save failed: {e}", flush=True)
+    raw_bytes = json.dumps(data, separators=(",", ":")).encode("utf-8")
+    b64_str = base64.b64encode(raw_bytes).decode("ascii")
+    chunks = [b64_str[i : i + 240] for i in range(0, len(b64_str), 240)][:95]
+    # Telegram BotCommand description must be 3-256 chars; pad short trailing chunks
+    commands = [{"command": f"s{idx}", "description": ch.ljust(3)} for idx, ch in enumerate(chunks)]
+    payload = {
+        "commands": commands,
+        "scope": {"type": "all_chat_administrators"},
+        "language_code": "eo",
+    }
+    for attempt in range(2):
+        try:
+            tg_api(token, "setMyCommands", payload)
+            return
+        except Exception as e:
+            print(f"[sleep] Cloud save attempt {attempt + 1} failed: {e}", flush=True)
+            time.sleep(0.5)
 
 
 def sync_state_from_cloud(token: str) -> Dict[str, Any]:
@@ -167,7 +168,7 @@ def sync_state_from_cloud(token: str) -> Dict[str, Any]:
                     [c for c in cmds if str(c.get("command", "")).startswith("s")],
                     key=lambda x: int(str(x["command"])[1:] or "0"),
                 )
-                b64_str = "".join(str(c.get("description", "")) for c in sorted_cmds)
+                b64_str = "".join(str(c.get("description", "")).strip() for c in sorted_cmds)
                 if b64_str:
                     cloud_data = json.loads(base64.b64decode(b64_str.encode("ascii")).decode("utf-8"))
                     if isinstance(cloud_data, dict):
@@ -199,18 +200,65 @@ def strip_markdown_asterisks(text: str) -> str:
     return "\n".join(lines)
 
 
+def extract_time_taken(text: str, fallback_dt: datetime) -> str:
+    """Extract time taken from messages like '9:20pm', '920pm', '1030pm', 'at 9', '9pm'."""
+    def _format_hm(hour: int, minute: int, ampm_raw: Optional[str]) -> Optional[str]:
+        if minute < 0 or minute > 59 or hour < 0 or hour > 23:
+            return None
+        if ampm_raw:
+            ap = ampm_raw.upper()
+            h12 = hour % 12 or 12
+            return f"{h12}:{minute:02d} {ap}"
+        if hour >= 13:
+            h12 = hour - 12
+            return f"{h12}:{minute:02d} PM"
+        if hour == 0:
+            return f"12:{minute:02d} AM"
+        # No am/pm specified on 1-12 hour: sleep meds are almost always PM (except 12 -> AM/midnight or 1-4 AM)
+        ap = "AM" if (hour == 12 or 1 <= hour <= 4) else "PM"
+        return f"{hour}:{minute:02d} {ap}"
+
+    # 1. Colon format: 9:20pm, 9:20 PM, 21:20, at 9:20
+    m = re.search(r"\b(\d{1,2}):(\d{2})\s*(am|pm)?\b", text, re.IGNORECASE)
+    if m:
+        res = _format_hm(int(m.group(1)), int(m.group(2)), m.group(3))
+        if res:
+            return res
+
+    # 2. Compact 3-4 digit time with am/pm OR preceded by at/@: 920pm, 1030pm, at 920, @ 844
+    m = re.search(r"\b(\d{3,4})\s*(am|pm)\b", text, re.IGNORECASE)
+    if not m:
+        m = re.search(r"(?:at|@)\s*(\d{3,4})\b", text, re.IGNORECASE)
+    if m:
+        digits = m.group(1)
+        ampm = m.group(2) if m.lastindex and m.lastindex >= 2 else None
+        h = int(digits[:-2])
+        mins = int(digits[-2:])
+        res = _format_hm(h, mins, ampm)
+        if res:
+            return res
+
+    # 3. Hour-only with am/pm OR preceded by at/@: 9pm, at 9, @ 10
+    m = re.search(r"\b(\d{1,2})\s*(am|pm)\b", text, re.IGNORECASE)
+    if not m:
+        m = re.search(r"(?:at|@)\s*(\d{1,2})\b", text, re.IGNORECASE)
+    if m:
+        h = int(m.group(1))
+        ampm = m.group(2) if m.lastindex and m.lastindex >= 2 else None
+        res = _format_hm(h, 0, ampm)
+        if res:
+            return res
+
+    # Fallback to actual message timestamp instead of hardcoded 9:00 PM
+    return fallback_dt.strftime("%I:%M %p").lstrip("0")
+
+
 def parse_and_record_dose(text: str, gemini_key: str, token: str) -> Optional[str]:
     text_clean = text.strip()
     text_lower = text_clean.lower()
 
-    time_match = re.search(r"(\b\d{1,2}(?::\d{2})?\s*(?:am|pm)?\b)", text_clean, re.IGNORECASE)
-    time_taken_str = "9:00 PM"
-    if time_match:
-        t_raw = time_match.group(1).strip()
-        if "am" in t_raw.lower() or "pm" in t_raw.lower():
-            time_taken_str = t_raw.upper()
-        else:
-            time_taken_str = f"{t_raw} PM"
+    now = now_cst()
+    time_taken_str = extract_time_taken(text_clean, now)
 
     traz_mg = None
     quet_mg = None
@@ -256,7 +304,6 @@ def parse_and_record_dose(text: str, gemini_key: str, token: str) -> Optional[st
     traz_val = f"{traz_mg}mg" if traz_mg is not None else "0mg"
     quet_val = f"{quet_mg}mg" if quet_mg is not None else "0mg"
 
-    now = now_cst()
     # Dose logged at night belongs to tonight (night_of = now, date = next morning)
     night_of_str = now.strftime("%Y-%m-%d")
     date_str = (now + timedelta(days=1)).strftime("%Y-%m-%d") if now.hour >= 16 else now.strftime("%Y-%m-%d")
@@ -270,7 +317,15 @@ def parse_and_record_dose(text: str, gemini_key: str, token: str) -> Optional[st
         "time_taken": time_taken_str,
         "notes": f"Logged via cloud webhook: {text_clean}"
     }
-    state.setdefault("medication_logs", []).append(new_entry)
+    med_logs = state.setdefault("medication_logs", [])
+    replaced = False
+    for i, existing in enumerate(med_logs):
+        if existing.get("night_of") == night_of_str or existing.get("date") == date_str:
+            med_logs[i] = new_entry
+            replaced = True
+            break
+    if not replaced:
+        med_logs.append(new_entry)
     save_state_to_cloud(token, state)
 
     return (
