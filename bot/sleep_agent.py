@@ -599,27 +599,42 @@ def _handle_sleep_batch(gemini_key: str, token: str, chat_id: int):
         send_message(token, chat_id, "Roger Roger.\n\nUpdate Summary:\n- Logged idea dump note to cloud memory.")
         return
 
-    if "hunger" in text_lower:
-        level = "None"
-        if "high" in text_lower:
-            level = "High"
-        elif "med" in text_lower:
-            level = "Medium"
-        elif "low" in text_lower:
-            level = "Low"
-        elif "none" in text_lower or "non" in text_lower or "zero" in text_lower or "no hunger" in text_lower:
-            level = "None"
-
+    if "hunger" in text_lower or "alcohol" in text_lower or "nicotine" in text_lower:
         state = sync_state_from_cloud(token)
         now = now_cst()
-        # Hunger is evaluated after waking from a sleep session.
-        # If logged before 2pm, it belongs strictly to last night's sleep (night_of).
-        # If logged after 2pm, it belongs to tonight.
         night_of_key = (now - timedelta(days=1)).strftime("%Y-%m-%d") if now.hour < 14 else now.strftime("%Y-%m-%d")
+        logged_msgs = []
 
-        state.setdefault("hunger_logs", {})[night_of_key] = level
+        if "hunger" in text_lower:
+            level = "None"
+            if "high" in text_lower:
+                level = "High"
+            elif "med" in text_lower:
+                level = "Medium"
+            elif "low" in text_lower:
+                level = "Low"
+            elif "none" in text_lower or "non" in text_lower or "zero" in text_lower or "no hunger" in text_lower:
+                level = "None"
+            state.setdefault("hunger_logs", {})[night_of_key] = level
+            logged_msgs.append(f"Logged Night Hunger: {level}")
+
+        if "alcohol" in text_lower:
+            alc_val = "No" if re.search(r"\b(?:no|none|0|false)\b", text_lower) else "Yes"
+            state.setdefault("alcohol_logs", {})[night_of_key] = alc_val
+            logged_msgs.append(f"Logged Alcohol ({night_of_key}): {alc_val}")
+
+        if "nicotine" in text_lower:
+            if "unknown" in text_lower:
+                nic_val = "Unknown"
+            elif re.search(r"\b(?:no|none|0|false)\b", text_lower):
+                nic_val = "No"
+            else:
+                nic_val = "Yes"
+            state.setdefault("nicotine_logs", {})[night_of_key] = nic_val
+            logged_msgs.append(f"Logged Nicotine ({night_of_key}): {nic_val}")
+
         save_state_to_cloud(token, state)
-        send_message(token, chat_id, f"Roger Roger.\n\nLogged Night Hunger: {level}")
+        send_message(token, chat_id, "Roger Roger.\n\n" + "\n".join(logged_msgs))
         return
 
     # Question or conversation turn
@@ -697,9 +712,15 @@ def get_dashboard_html(gemini_key: str) -> str:
     files: Dict[str, str] = vault.get("files", {})
     html = files.get("dashboard.html", "<h1>Sleep Dashboard not found in vault</h1>")
     hunger_map = state.get("hunger_logs", {})
+    alcohol_map = state.get("alcohol_logs", {})
+    nicotine_map = state.get("nicotine_logs", {})
     inject_parts = []
     if hunger_map:
         inject_parts.append(f"const CLOUD_HUNGER = {json.dumps(hunger_map)};")
+    if alcohol_map:
+        inject_parts.append(f"const CLOUD_ALCOHOL = {json.dumps(alcohol_map)};")
+    if nicotine_map:
+        inject_parts.append(f"const CLOUD_NICOTINE = {json.dumps(nicotine_map)};")
     if state.get("medication_logs"):
         inject_parts.append(f"const CLOUD_DOSES = {json.dumps(state['medication_logs'])};")
     if state.get("oura_cache"):
