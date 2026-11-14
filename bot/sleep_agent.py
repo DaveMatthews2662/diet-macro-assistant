@@ -124,7 +124,9 @@ def send_message(token: str, chat_id: int, text: str):
 def save_state_to_cloud(token: str, data: Dict[str, Any]):
     if not token:
         return
-    raw_bytes = json.dumps(data, separators=(",", ":")).encode("utf-8")
+    # Keep setMyCommands compact & within Telegram's size limits by excluding large oura_cache (kept in RAM & vault)
+    compact_data = {k: v for k, v in data.items() if k != "oura_cache"}
+    raw_bytes = json.dumps(compact_data, separators=(",", ":")).encode("utf-8")
     b64_str = base64.b64encode(raw_bytes).decode("ascii")
     chunks = [b64_str[i : i + 240] for i in range(0, len(b64_str), 240)][:95]
     # Telegram BotCommand description must be 3-256 chars; pad short trailing chunks
@@ -477,6 +479,10 @@ def sync_oura_cloud(gemini_key: str, token: str) -> str:
                 entry["average_hrv"] = session.get("average_hrv")
                 entry["bedtime_start"] = session.get("bedtime_start")
                 entry["bedtime_end"] = session.get("bedtime_end")
+                lat_sec = session.get("latency")
+                if lat_sec is not None:
+                    entry["latency_seconds"] = lat_sec
+                    entry["latency_mins"] = round(lat_sec / 60)
 
         state["oura_cache"] = {"last_synced": now_cst().isoformat(), "daily_records": cache}
         save_state_to_cloud(token, state)
@@ -565,6 +571,231 @@ def call_gemini(gemini_key: str, prompt: str, system_inst: str) -> str:
     return "Roger Roger. Processed your message."
 
 
+def _parse_ampm_minutes(t_str: str) -> Optional[int]:
+    if not t_str or t_str == "—":
+        return None
+    m = re.match(r"^\s*(\d{1,2}):(\d{2})\s*(AM|PM)?\s*$", t_str, re.IGNORECASE)
+    if not m:
+        return None
+    h = int(m.group(1))
+    mins = int(m.group(2))
+    ap = m.group(3).upper() if m.group(3) else None
+    if ap == "PM" and h != 12:
+        h += 12
+    elif ap == "AM" and h == 12:
+        h = 0
+    return h * 60 + mins
+
+
+def _calc_med_to_sleep_str(med_time_str: str, sleep_time_str: str) -> str:
+    m1 = _parse_ampm_minutes(med_time_str)
+    m2 = _parse_ampm_minutes(sleep_time_str)
+    if m1 is None or m2 is None:
+        return "—"
+    if m1 < 720:
+        m1 += 1440
+    if m2 < 720:
+        m2 += 1440
+    diff = m2 - m1
+    if diff < 0 or diff > 720:
+        return "—"
+    if diff >= 60:
+        return f"{diff // 60}h {diff % 60:02d}m"
+    return f"{diff}m"
+
+
+def _calc_custom_scores_py(oura: Dict[str, Any], hunger_val: Optional[str]) -> Dict[str, Optional[int]]:
+    if not oura:
+        return {"continuity": None, "restoration": None, "balanced": None}
+    wakeups = oura.get("wakeups") if oura.get("wakeups") is not None else 0
+    awake_mins = oura.get("awake_mins") if oura.get("awake_mins") is not None else 0
+    latency = oura.get("latency_mins") if oura.get("latency_mins") is not None else 10
+    restfulness = (oura.get("sleep_contributors") or {}).get("restfulness")
+    if restfulness is None:
+        restfulness = oura.get("restfulness")
+
+    cont = 100 - (wakeups * 8) - max(0, awake_mins - 20) * 0.5 - max(0, latency - 10) * 0.5
+    if restfulness is not None:
+        cont += (restfulness - 70) * 0.3
+
+    deep_pct = round(oura.get("deep_sleep_pct") or 0)
+    rem_pct = round(oura.get("rem_sleep_pct") or 0)
+    hrv = oura.get("average_hrv") if oura.get("average_hrv") is not None else 50
+    low_hr = oura.get("lowest_heart_rate") if oura.get("lowest_heart_rate") is not None else 50
+    rest = (
+        min(30, (deep_pct / 20) * 30)
+        + min(25, (rem_pct / 20) * 25)
+        + min(25, (hrv / 80) * 25)
+        + max(0, min(20, 20 - max(0, low_hr - 44) * 1.1))
+    )
+
+    eff = oura.get("sleep_efficiency") if oura.get("sleep_efficiency") is not None else 85
+    tot_hrs = round((oura.get("total_sleep_seconds") or 0) / 3600, 1)
+    bal = (
+        min(30, (eff / 92) * 30)
+        + min(25, (tot_hrs / 8.0) * 25)
+        + max(0, 25 - (wakeups * 2.8) - max(0, awake_mins - 25) * 0.25)
+        + min(20, (hrv / 75) * 20)
+    )
+
+    if hunger_val:
+        hl = hunger_val.lower()
+        if hl == "high":
+            cont -= 15
+            bal -= 10
+        elif hl in ("medium", "med"):
+            cont -= 8
+            bal -= 5
+        elif hl == "low":
+            cont -= 3
+            bal -= 2
+
+    return {
+        "continuity": max(0, min(100, round(cont))),
+        "restoration": max(0, min(100, round(rest))),
+        "balanced": max(0, min(100, round(bal))),
+    }
+
+
+def format_sleep_status_reply(text: str, gemini_key: str, token: str) -> Optional[str]:
+    """Handle /sleep, /lastnight, 'sleep status', 'last night', or '/sleep MM-DD' queries."""
+    t_clean = text.strip()
+    t_low = t_clean.lower()
+
+    is_cmd = bool(re.match(r"^/(?:sleep|lastnight|status)\b", t_low))
+    is_phrase = bool(
+        re.match(r"^(?:sleep\s*status|last\s*night(?:\s+sleep)?|how\s+did\s+i\s+sleep(?:\s+(?:last\s+night|on\s+.+))?|sleep\s+report|status(?:\s+[\d/\-]+)?)$", t_low)
+    )
+    if not (is_cmd or is_phrase):
+        return None
+
+    now = now_cst()
+    target_night_of = (now - timedelta(days=1)).strftime("%Y-%m-%d")
+
+    m_iso = re.search(r"\b(\d{4}-\d{2}-\d{2})\b", t_clean)
+    m_md = re.search(r"\b(\d{1,2})[/-](\d{1,2})(?:[/-](\d{2,4}))?\b", t_clean)
+    if m_iso:
+        target_night_of = m_iso.group(1)
+    elif m_md:
+        mo, dy = int(m_md.group(1)), int(m_md.group(2))
+        yr_raw = m_md.group(3)
+        yr = int(yr_raw) + 2000 if (yr_raw and len(yr_raw) == 2) else (int(yr_raw) if yr_raw else now.year)
+        try:
+            cand = datetime(yr, mo, dy)
+            if not yr_raw and cand.date() > now.date():
+                cand = datetime(yr - 1, mo, dy)
+            target_night_of = cand.strftime("%Y-%m-%d")
+        except ValueError:
+            pass
+
+    try:
+        wakeup_date = (datetime.strptime(target_night_of, "%Y-%m-%d") + timedelta(days=1)).strftime("%Y-%m-%d")
+    except ValueError:
+        return "Roger Roger.\n\nInvalid date format. Try /sleep or /sleep 11-12."
+
+    vault = load_vault(gemini_key)
+    files = vault.get("files", {})
+    state = sync_state_from_cloud(token)
+
+    def _collect_records():
+        recs = {}
+        try:
+            recs.update(json.loads(files.get("data/oura_cache.json", "{}")).get("daily_records", {}))
+        except Exception:
+            pass
+        recs.update((state.get("oura_cache") or {}).get("daily_records", {}))
+        return recs
+
+    daily_records = _collect_records()
+    if wakeup_date not in daily_records and wakeup_date == now.strftime("%Y-%m-%d"):
+        sync_oura_cloud(gemini_key, token)
+        state = sync_state_from_cloud(token)
+        daily_records = _collect_records()
+
+    oura = daily_records.get(wakeup_date)
+
+    # Merge medication logs
+    med_by_night = {}
+    try:
+        for log in json.loads(files.get("data/medication_logs.json", "{}")).get("logs", []):
+            if log.get("night_of"):
+                med_by_night[log["night_of"]] = dict(log)
+    except Exception:
+        pass
+    for log in state.get("medication_logs", []):
+        if log.get("night_of"):
+            med_by_night[log["night_of"]] = dict(log)
+
+    med = med_by_night.get(target_night_of, {})
+    hunger = (state.get("hunger_logs") or {}).get(target_night_of) or med.get("hunger_level") or "—"
+    alcohol = (state.get("alcohol_logs") or {}).get(target_night_of) or med.get("alcohol") or "—"
+    nicotine = (state.get("nicotine_logs") or {}).get(target_night_of) or med.get("nicotine") or "—"
+
+    if not oura and not med:
+        return f"Roger Roger.\n\nNo sleep or medication data found for night of {target_night_of}."
+
+    def _fmt_iso(iso_s: Optional[str]) -> str:
+        if not iso_s:
+            return "—"
+        try:
+            return datetime.fromisoformat(iso_s).strftime("%I:%M %p").lstrip("0")
+        except Exception:
+            return "—"
+
+    med_time = med.get("time_taken", "—")
+    traz = f"{med.get('trazodone_mg')}mg" if med.get("trazodone_mg") is not None else "—"
+    quet = f"{med.get('quetiapine_mg')}mg" if med.get("quetiapine_mg") is not None else "—"
+
+    if not oura:
+        return (
+            f"Roger Roger.\n\n"
+            f"Sleep Status — Night of {target_night_of} (Oura Pending)\n"
+            f"- Meds: Traz {traz} / Quet {quet} @ {med_time}\n"
+            f"- Hunger: {hunger} | Alcohol: {alcohol} | Nicotine: {nicotine}\n"
+            f"- Oura data for {wakeup_date} is not synced yet."
+        )
+
+    b_start = oura.get("bedtime_start")
+    b_end = oura.get("bedtime_end")
+    lat_sec = oura.get("latency_seconds")
+    lat_mins = oura.get("latency_mins")
+    if lat_sec is None and lat_mins is not None:
+        lat_sec = lat_mins * 60
+    elif lat_sec is None:
+        lat_sec = 0
+        lat_mins = 0
+    if lat_mins is None:
+        lat_mins = round(lat_sec / 60)
+
+    bedtime_str = _fmt_iso(b_start)
+    wake_str = _fmt_iso(b_end)
+    sleep_time_str = "—"
+    if b_start:
+        try:
+            sleep_dt = datetime.fromisoformat(b_start) + timedelta(seconds=lat_sec)
+            sleep_time_str = sleep_dt.strftime("%I:%M %p").lstrip("0")
+        except Exception:
+            pass
+
+    med_to_sleep = _calc_med_to_sleep_str(med_time, sleep_time_str)
+    custom = _calc_custom_scores_py(oura, None if hunger == "—" else hunger)
+    restfulness = (oura.get("sleep_contributors") or {}).get("restfulness")
+    if restfulness is None:
+        restfulness = oura.get("restfulness", "—")
+
+    return (
+        f"Roger Roger.\n\n"
+        f"Sleep Status — Night of {target_night_of} (Wake {wakeup_date})\n"
+        f"- Scores: Sleep {oura.get('sleep_score', '—')} | Continuity {custom['continuity'] if custom['continuity'] is not None else '—'} | Restoration {custom['restoration'] if custom['restoration'] is not None else '—'} | Balanced {custom['balanced'] if custom['balanced'] is not None else '—'}\n"
+        f"- Restfulness: {restfulness} | Efficiency: {oura.get('sleep_efficiency', '—')}%\n"
+        f"- Sleep: {oura.get('total_sleep_formatted', '—')} | Wakeups: {oura.get('wakeups', '—')} | Awake: {oura.get('awake_mins', '—')}m\n"
+        f"- Timing: Med {med_time} -> Bed {bedtime_str} -> Asleep {sleep_time_str} -> Wake {wake_str}\n"
+        f"- Latency: {lat_mins}m | Med-to-Sleep: {med_to_sleep}\n"
+        f"- Recovery: Deep {round(oura.get('deep_sleep_pct') or 0)}% | REM {round(oura.get('rem_sleep_pct') or 0)}% | Avg HR {oura.get('average_heart_rate', '—')} | Low HR {oura.get('lowest_heart_rate', '—')} | HRV {oura.get('average_hrv', '—')}ms\n"
+        f"- Inputs: Traz {traz} / Quet {quet} | Hunger: {hunger} | Alcohol: {alcohol} | Nicotine: {nicotine}"
+    )
+
+
 def _handle_sleep_batch(gemini_key: str, token: str, chat_id: int):
     with SLEEP_BATCH_LOCK:
         item = SLEEP_BATCH.pop(chat_id, None)
@@ -582,6 +813,11 @@ def _handle_sleep_batch(gemini_key: str, token: str, chat_id: int):
         send_message(token, chat_id, "Syncing with Oura Ring...")
         reply = sync_oura_cloud(gemini_key, token)
         send_message(token, chat_id, reply)
+        return
+
+    status_reply = format_sleep_status_reply(text, gemini_key, token)
+    if status_reply:
+        send_message(token, chat_id, status_reply)
         return
 
     dose_reply = parse_and_record_dose(text, gemini_key, token)
